@@ -1,0 +1,65 @@
+name: e2e-ingest
+
+# Development trigger: workflow_dispatch only works from the default
+# branch, so on feature branches a push touching .github/e2e-trigger runs
+# the same full ingest -> pulses -> dashboard -> commit pipeline as
+# ingest-weekly. Harmless after merge; delete once cron on main is live.
+on:
+  push:
+    branches: ["claude/**"]
+    paths: [".github/e2e-trigger"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: store-commit
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev,browser]"
+
+      - name: Full ingest (announcement backfill)
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SEC_CONTACT_EMAIL: ${{ secrets.SEC_CONTACT_EMAIL }}
+          IMPORTGENIUS_API_KEY: ${{ secrets.IMPORTGENIUS_API_KEY }}
+        run: python -m lbl_tracker.cli ingest --backfill | tee ingest-result.json
+
+      - name: Compute pulses, backtest, dashboard
+        run: |
+          python -m lbl_tracker.cli pulses
+          python -m lbl_tracker.cli backtest || true
+          python -m lbl_tracker.cli dashboard
+          python -m lbl_tracker.cli status
+
+      - name: Commit store + dashboard
+        run: |
+          git config user.name "lbl-tracker[bot]"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/ docs/
+          if git diff --cached --quiet; then
+            echo "no data changes"
+          else
+            git commit -m "ingest: end-to-end run $(date -u +%FT%H:%M)"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+
+      - name: Report source failures (non-fatal for e2e)
+        run: |
+          python - <<'EOF'
+          import json
+          results = json.load(open("ingest-result.json"))
+          for r in results:
+              print(r.get("source"), r.get("status"), r.get("error", ""))
+          EOF
