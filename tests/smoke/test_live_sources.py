@@ -111,10 +111,18 @@ def test_cat_edgar():
         pytest.skip("cat_edgar pending SEC_CONTACT_EMAIL - EDGAR 403s requests "
                     "whose User-Agent lacks a contact address")
     import lbl_tracker.ingest.cat_edgar as cat
+    from lbl_tracker.http import SourceFetchError
     old = cat.MAX_FILINGS
     cat.MAX_FILINGS = 8  # smoke: newest filings only
     try:
         df = cat.fetch()
+    except SourceFetchError as exc:
+        if "Undeclared" in str(exc):
+            pytest.skip("SEC serves 'Undeclared Automated Tool' to this runner's "
+                        "IP range regardless of User-Agent (known block of "
+                        "GitHub-hosted runners) - run from a self-hosted runner "
+                        "or locally to enable this source")
+        raise
     finally:
         cat.MAX_FILINGS = old
     assert_obs_schema(df)

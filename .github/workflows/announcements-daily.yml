@@ -2,8 +2,10 @@ name: announcements-daily
 
 on:
   schedule:
-    # daily 22:30 UTC = 08:30 AEST, after ASX morning releases start
-    - cron: "30 22 * * *"
+    # every 6 hours: the anonymous Markit list endpoint returns only the
+    # latest 5 announcements (no pagination - verified live), so frequent
+    # polling is what guarantees complete forward coverage
+    - cron: "30 */6 * * *"
   workflow_dispatch: {}
 
 permissions:

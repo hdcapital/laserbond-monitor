@@ -81,7 +81,7 @@ pytest -m live tests/smoke # live source-drift gate
 |---|---|---|
 | `verify` | on push + manual | unit tests, live probes, live smoke tests |
 | `ingest-weekly` | Mon 20:30 UTC | full ingest → pulses → dashboard → commit; then smoke gate |
-| `announcements-daily` | daily 22:30 UTC | ASX announcements + tungsten flags → dashboard → commit |
+| `announcements-daily` | every 6h | ASX announcements + tungsten flags → dashboard → commit |
 | `email-monthly` | 1st, 21:00 UTC | monthly SMTP brief |
 
 Cron triggers run on the **default branch**; enable GitHub Pages
