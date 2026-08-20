@@ -387,8 +387,17 @@ def probe_asx():
         _p(f"fetch_list failed: {exc}")
 
 
+def probe_nsw_coal():
+    from .ingest import nsw_coal_exports
+    df = nsw_coal_exports.fetch()
+    _p(f"nsw_coal_exports: {len(df)} rows "
+       f"{df['date'].min().date()}..{df['date'].max().date()} "
+       f"last value {df['value'].iloc[-1]:.0f} A$k")
+
+
 PROBES = {
     "abs": probe_abs,
+    "nsw_coal": probe_nsw_coal,
     "qld_coal": probe_qld_coal,
     "pilbara": probe_pilbara,
     "rba": probe_rba,

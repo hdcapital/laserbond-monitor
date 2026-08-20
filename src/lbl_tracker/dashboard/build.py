@@ -30,6 +30,7 @@ SERIES_META = {
     "abs.capex.mining_expected": ("ABS private new capex - mining, expectations", "A$m/quarter"),
     "abs.exploration.metres_drilled_total": ("ABS mineral exploration metres drilled, Australia", "'000 m/quarter"),
     "abs.exploration.expenditure_wa": ("ABS mineral exploration expenditure, WA", "A$m/quarter"),
+    "abs.merch_exp.nsw_coal_value": ("NSW coal export value (ABS merchandise exports, SITC 32)", "A$'000/month"),
     "rba.commodity_index_aud": ("RBA index of commodity prices (AUD)", "index"),
     "rba.audusd": ("AUD/USD daily", "USD"),
     "rba.audusd_monthly": ("AUD/USD monthly average", "USD"),

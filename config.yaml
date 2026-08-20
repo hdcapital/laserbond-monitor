@@ -61,30 +61,47 @@ fred:
 pulses:
   services:
     title: "Services Pulse"
+    # Weights recalibrated 2026-08-21 against actual LBL segment history
+    # (FY21-FY26 halves + FY16-FY26 annual, from LBL filings): NSW coal
+    # export values, RBA commodity prices and capex EXPECTATIONS lead
+    # Services revenue by 6-12 months; Pilbara throughput carried no
+    # signal and metres drilled correlated negatively. Composite check:
+    # r=+0.83 (p=0.003) at 6-month lead vs +0.52 for the old weights.
     components:
-      - {series: qld_coal.saleable_tonnes_total, weight: 0.25, invert: false, max_stale_months: 5, label: "QLD coal saleable tonnes"}
-      - {series: pilbara.iron_ore_throughput_mt, weight: 0.25, invert: false, max_stale_months: 3, label: "Pilbara Ports iron ore"}
-      - {series: abs.capex.mining_actual, weight: 0.125, invert: false, max_stale_months: 5, label: "ABS mining capex (actual)"}
-      - {series: abs.capex.mining_expected, weight: 0.125, invert: false, max_stale_months: 5, label: "ABS mining capex (expectations)"}
-      - {series: rba.commodity_index_aud, weight: 0.15, invert: false, max_stale_months: 3, label: "RBA commodity price index"}
-      - {series: abs.exploration.metres_drilled_total, weight: 0.10, invert: false, max_stale_months: 5, label: "ABS metres drilled"}
+      - {series: abs.merch_exp.nsw_coal_value, weight: 0.20, invert: false, max_stale_months: 4, label: "NSW coal export value"}
+      - {series: rba.commodity_index_aud, weight: 0.20, invert: false, max_stale_months: 3, label: "RBA commodity price index"}
+      - {series: abs.capex.mining_expected, weight: 0.20, invert: false, max_stale_months: 5, label: "ABS mining capex (expectations)"}
+      - {series: qld_coal.saleable_tonnes_total, weight: 0.15, invert: false, max_stale_months: 5, label: "QLD coal saleable tonnes"}
+      - {series: abs.capex.mining_actual, weight: 0.10, invert: false, max_stale_months: 5, label: "ABS mining capex (actual)"}
+      - {series: pilbara.iron_ore_throughput_mt, weight: 0.10, invert: false, max_stale_months: 3, label: "Pilbara Ports iron ore"}
+      - {series: abs.exploration.metres_drilled_total, weight: 0.05, invert: false, max_stale_months: 5, label: "ABS metres drilled"}
   products:
     title: "Products Pulse"
+    # Validation caveat (2026-08-21): NO external input significantly
+    # predicts Products revenue on LBL's actual history - the segment is
+    # ~2 customers' order flow (Weir, FLSmidth). Read this pulse as a
+    # demand-environment gauge, not a forecaster. Baker Hughes intl was
+    # the best single input (r=+0.60 coincident) and is weighted up;
+    # CAT is discontinued (last data Dec 2020) and weighted down.
     components:
       - {series: aisi.capacity_utilisation_pct, weight: 0.20, invert: false, max_stale_months: 2, label: "AISI raw-steel capacity utilisation"}
       - {series: fred.steel_new_orders, weight: 0.20, invert: false, max_stale_months: 3, label: "US new orders, iron & steel mills"}
-      - {series: cat.resource_industries_yoy_pct, weight: 0.20, invert: false, max_stale_months: 3, label: "CAT Resource Industries retail sales YoY"}
+      - {series: cat.resource_industries_yoy_pct, weight: 0.10, invert: false, max_stale_months: 3, label: "CAT Resource Industries retail sales YoY"}
       - {series: bh.rigcount_na_total, weight: 0.10, invert: false, max_stale_months: 2, label: "Baker Hughes NA rig count"}
-      - {series: bh.rigcount_intl_total, weight: 0.10, invert: false, max_stale_months: 3, label: "Baker Hughes intl rig count"}
+      - {series: bh.rigcount_intl_total, weight: 0.20, invert: false, max_stale_months: 3, label: "Baker Hughes intl rig count"}
       - {series: rba.audusd, weight: 0.20, invert: true, max_stale_months: 2, label: "AUD/USD (inverted)"}
   margin:
     title: "Margin Pulse"
     # All three components are cost/margin headwinds when rising, so all
     # are inverted: higher pulse = margin tailwind.
+    # Reweighted 2026-08-21: vacancy tightness is the one input validated
+    # against actual LBL margins (r=-0.55 vs group EBITDA margin at a
+    # 12-month lead); AUD/USD and tungsten flags remain priors (their
+    # stored history is too short to test yet).
     components:
-      - {series: tungsten.flag_count, weight: 0.34, invert: true, max_stale_months: 2, label: "Tungsten policy flags (proxy)"}
-      - {series: jsa.ivi_trades_tightness, weight: 0.33, invert: true, max_stale_months: 3, label: "Fitter/welder vacancy tightness"}
-      - {series: rba.audusd, weight: 0.33, invert: true, max_stale_months: 2, label: "AUD/USD"}
+      - {series: jsa.ivi_trades_tightness, weight: 0.45, invert: true, max_stale_months: 3, label: "Fitter/welder vacancy tightness"}
+      - {series: rba.audusd, weight: 0.35, invert: true, max_stale_months: 2, label: "AUD/USD"}
+      - {series: tungsten.flag_count, weight: 0.20, invert: true, max_stale_months: 2, label: "Tungsten policy flags (proxy)"}
   # Technology Pipeline is intentionally NOT a scored composite; it is an
   # event table rendered as facts (see analytics/pulses.py: technology_pipeline).
 

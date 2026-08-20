@@ -14,6 +14,7 @@ INGESTERS = [
     "pilbara_ports",
     "abs_capex",
     "abs_exploration",
+    "nsw_coal_exports",
     "rba",
     "aisi",
     "fred_steel",
