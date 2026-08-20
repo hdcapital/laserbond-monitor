@@ -42,11 +42,10 @@ LIST_ENDPOINTS = [
     "https://asx.api.markitdigital.com/asx-research/1.0/companies/{ticker}/announcements?itemsPerPage={count}",
     "https://www.asx.com.au/asx/1/company/{ticker}/announcements?count={count}&market_sensitive=false",
 ]
-# Public access token embedded in www.asx.com.au's announcement pages; if
-# ASX rotates it the PDF probe fails loudly and it needs re-lifting from
-# the site (see SOURCES.md).
+# Verified live 2026-08-20: the file gateway serves the announcement PDF
+# with no access token required.
 PDF_GATEWAY = ("https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0"
-               "/file/{key}?access_token=83ff96335c2d45a094df02a206a39ff4")
+               "/file/{key}")
 
 # Only spend extraction calls on announcements that can carry the fields we
 # track. LBL gets everything (Technology events show up under many titles).

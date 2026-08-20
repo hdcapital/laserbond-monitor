@@ -30,40 +30,44 @@ PAGES = [
     "https://rigcount.bakerhughes.com/intl-rig-count",
     "https://rigcount.bakerhughes.com/",
 ]
-NA_LINK = re.compile(r"north.?americ.*rig.*count|rig.*count.*north.?americ", re.I)
-INTL_LINK = re.compile(r"(worldwide|international).*rig.*count|"
-                       r"rig.*count.*(worldwide|international)", re.I)
+# Anchor texts verified live 2026-08-20, e.g.:
+#   "North America Rig Count Report - New Report" (current weekly workbook)
+#   "North America Rig Count New Report (2013-Aug 2025)" (archive)
+#   "North America Rotary Rig Count (Jan 2000 - Mar 2024)" (older archive)
+#   "Worldwide Rig Count Report - New Report" / "(2013-Jul 2025)" /
+#   "Worldwide Rig Count Jan 2007_Mar 2024"
+# Workbooks are served from /static-files/<uuid> (no extension); some are
+# .xlsb (pyxlsb required).
+NA_LINK = re.compile(r"north.?americ.*rig.*count", re.I)
+INTL_LINK = re.compile(r"(worldwide|international).*rig.*count", re.I)
+INCLUDE = re.compile(r"new report|\(jan 2000|20\d\d\s*[-_]\s*[A-Za-z]*\s*20\d\d", re.I)
+EXCLUDE = re.compile(r"pivot|by state|average|workover|through 2016|overview|"
+                     r"iphone|app|faq", re.I)
 
 
-def discover_links(session) -> dict:
-    """The rig-count site serves workbooks from /static-files/<uuid> links
-    (no .xlsx extension - verified live 2026-08-20), so match on the anchor
-    TEXT and accept any href, preferring static-files ones."""
-    links = {"na": None, "intl": None}
+def discover_files(session) -> dict:
+    files = {"na": [], "intl": []}
     for page in PAGES:
         try:
             soup = BeautifulSoup(get(page, session=session).text, "lxml")
         except Exception as exc:  # noqa: BLE001
             log.warning("bh: page %s failed: %s", page, exc)
             continue
-        candidates = {"na": [], "intl": []}
         for a in soup.find_all("a", href=True):
             href = a["href"]
-            text = f"{a.get_text(' ', strip=True)} {href}"
+            text = a.get_text(" ", strip=True)
+            if "static-files" not in href and not re.search(r"\.xls[xbm]?($|\?)",
+                                                            href, re.I):
+                continue
+            if EXCLUDE.search(text) or not INCLUDE.search(text):
+                continue
             full = urljoin(page, href)
-            is_file = ("static-files" in href or
-                       re.search(r"\.xls[xbm]?($|\?)", href, re.I))
-            if NA_LINK.search(text):
-                candidates["na"].append((0 if is_file else 1, full))
-            elif INTL_LINK.search(text):
-                candidates["intl"].append((0 if is_file else 1, full))
-        for kind in ("na", "intl"):
-            if links[kind] is None and candidates[kind]:
-                links[kind] = sorted(candidates[kind])[0][1]
-        if links["na"] and links["intl"]:
-            break
-    log.info("bh links: %s", links)
-    return links
+            if NA_LINK.search(text) and full not in files["na"]:
+                files["na"].append(full)
+            elif INTL_LINK.search(text) and full not in files["intl"]:
+                files["intl"].append(full)
+    log.info("bh files: %s", files)
+    return files
 
 
 def _find_header(df: pd.DataFrame, required: list[str]) -> int | None:
@@ -145,20 +149,27 @@ def parse_intl(content: bytes, url: str, retrieved) -> pd.DataFrame:
 
 def fetch() -> pd.DataFrame:
     session = make_session()
-    links = discover_links(session)
+    files = discover_files(session)
     retrieved = now_utc()
-    frames = []
-    if links["na"]:
-        frames.append(parse_na(get(links["na"], session=session).content, links["na"], retrieved))
-    else:
-        log_gap(SOURCE, "bh.rigcount_na_total", "NA workbook link not found")
-    if links["intl"]:
-        frames.append(parse_intl(get(links["intl"], session=session).content,
-                                 links["intl"], retrieved))
-    else:
-        log_gap(SOURCE, "bh.rigcount_intl_total", "international workbook link not found")
+    frames, errors = [], []
+    for url in files["na"]:
+        try:
+            frames.append(parse_na(get(url, session=session).content, url, retrieved))
+        except Exception as exc:  # noqa: BLE001
+            errors.append(f"na {url}: {exc}")
+    for url in files["intl"]:
+        try:
+            frames.append(parse_intl(get(url, session=session).content, url, retrieved))
+        except Exception as exc:  # noqa: BLE001
+            errors.append(f"intl {url}: {exc}")
+    if not files["na"]:
+        log_gap(SOURCE, "bh.rigcount_na_total", "NA workbook links not found")
+    if not files["intl"]:
+        log_gap(SOURCE, "bh.rigcount_intl_total", "international workbook links not found")
+    if errors:
+        log.warning("baker_hughes parse errors: %s", errors)
     if not frames:
-        raise RuntimeError("baker_hughes: no workbook links discovered; run probe")
+        raise RuntimeError(f"baker_hughes: no workbook parsed; errors={errors}")
     return pd.concat(frames, ignore_index=True)
 
 

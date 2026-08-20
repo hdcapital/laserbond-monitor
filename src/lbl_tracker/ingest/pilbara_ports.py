@@ -61,7 +61,12 @@ def discover_listing(session) -> str:
     raise RuntimeError(f"pilbara_ports: no listing path worked; last: {last_error}")
 
 
+NEWS_HREF = re.compile(r"/news/[^/?#]+/?$", re.I)
+
+
 def list_statements(session) -> list[dict]:
+    """Collect news-article links (hrefs under .../news/<slug>) across the
+    paginated listing; the trade statements are identified when parsing."""
     listing_url = discover_listing(session)
     items, seen = [], set()
     for page in range(1, MAX_PAGES + 1):
@@ -72,18 +77,16 @@ def list_statements(session) -> list[dict]:
             break
         page_items = 0
         for a in soup.find_all("a", href=True):
-            title = " ".join(a.get_text(" ", strip=True).split())
             href = urljoin(BASE, a["href"])
-            if not title or href in seen:
+            if not NEWS_HREF.search(href) or href in seen:
                 continue
-            if MONTHLY_TITLE.search(title) and "/20" in href or (
-                    MONTHLY_TITLE.search(title) and "media" in href.lower()):
-                seen.add(href)
-                items.append({"title": title, "url": href})
-                page_items += 1
+            title = " ".join(a.get_text(" ", strip=True).split())
+            seen.add(href)
+            items.append({"title": title, "url": href})
+            page_items += 1
         if page_items == 0 and page > 1:
             break
-    log.info("pilbara_ports: %d candidate statements", len(items))
+    log.info("pilbara_ports: %d news articles found", len(items))
     return items
 
 
@@ -105,9 +108,9 @@ def parse_statement(url: str, title: str, session) -> list[dict]:
         value = iron.group(1) or iron.group(2)
         rows.append({"series_id": "pilbara.iron_ore_throughput_mt", "date": period,
                      "value": _num(value), "source_url": url})
-    if not rows:
+    if not rows and re.search(r"trade|throughput|tonnes", title, re.I):
         log_gap(SOURCE, "pilbara.total_throughput_mt",
-                f"statement matched no tonnage patterns: {url}")
+                f"trade-looking statement matched no tonnage patterns: {url}")
     return rows
 
 
@@ -115,15 +118,19 @@ def fetch() -> pd.DataFrame:
     session = make_session()
     statements = list_statements(session)
     if not statements:
-        raise RuntimeError("pilbara_ports: no monthly statements found on listing")
+        raise RuntimeError("pilbara_ports: no news articles found on listing")
+    trade_like = [s for s in statements
+                  if re.search(r"trade|throughput|tonnes|export", s["title"], re.I)]
+    to_parse = trade_like or statements  # anchor text can be empty on this CMS
     rows = []
-    for item in statements:
+    for item in to_parse:
         try:
             rows.extend(parse_statement(item["url"], item["title"], session))
         except Exception as exc:  # noqa: BLE001
             log.warning("pilbara_ports: %s failed: %s", item["url"], exc)
     if not rows:
-        raise RuntimeError("pilbara_ports: statements found but none parsed; run probe")
+        raise RuntimeError(f"pilbara_ports: {len(to_parse)} articles parsed but no "
+                           "tonnage figures found; run probe")
     df = pd.DataFrame(rows)
     df["retrieved_at"] = now_utc()
     return df

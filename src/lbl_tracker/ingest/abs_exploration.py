@@ -11,7 +11,9 @@ from . import abs_sdmx
 log = logging.getLogger("lbl_tracker.abs_exploration")
 
 SOURCE = "abs_exploration"
-FLOW_CANDIDATES = ["MERALS_EXP", "MIN_EXP", "MINERAL_EXPLORATION"]
+# Verified live 2026-08-20: MIN_EXP "Mineral Exploration" with dims
+# MEASURE / DEPOSIT_TYPE / MINERAL_TYPE / TSEST / REGION / FREQ.
+FLOW_CANDIDATES = ["MIN_EXP"]
 FLOW_KEYWORD = "mineral exploration"
 SOURCE_URL = "https://data.api.abs.gov.au/rest/data/ABS,{flow}/all"
 
@@ -34,61 +36,77 @@ def resolve_flow() -> str:
     raise RuntimeError(f"no ABS dataflow matching {FLOW_KEYWORD!r} found")
 
 
+STATE_ABBREV = {"nsw": "nsw", "vic": "vic", "qld": "qld", "sa": "sa", "wa": "wa",
+                "tas": "tas", "nt": "nt", "act": "act", "aus": "total",
+                "aust": "total"}
+
+
+def _region_slug(name: str) -> str | None:
+    """Map a REGION_name label to a state slug, tolerant of abbreviations,
+    'Total (X)' wrappers and case (MIN_EXP labels confirmed live to sit in
+    a REGION dimension)."""
+    low = str(name).strip().lower()
+    for full, slug in STATE_SLUGS.items():
+        if full.lower() in low:
+            return slug
+    compact = "".join(ch for ch in low if ch.isalpha())
+    return STATE_ABBREV.get(compact)
+
+
+def _prefer(df: pd.DataFrame, col: str, order: list[str]) -> pd.DataFrame:
+    if col not in df.columns:
+        return df
+    vals = df[col].astype(str)
+    for want in order:
+        pick = df[vals.str.contains(want, case=False, na=False)]
+        if len(pick):
+            return pick
+    return df
+
+
 def fetch() -> pd.DataFrame:
     flow = resolve_flow()
     df = abs_sdmx.get_data(flow, "all", params={"startPeriod": "1990"})
     if df.empty:
         raise RuntimeError(f"ABS flow {flow} returned no observations")
 
-    # Keep metres-drilled measures only (8412.0 also carries expenditure).
-    measure_col = None
-    for col in df.columns:
-        if col.endswith("_name"):
-            vals = " | ".join(str(v).lower() for v in df[col].dropna().unique())
-            if "metres" in vals or "drilled" in vals:
-                measure_col = col
-                break
-    if measure_col:
-        df = df[df[measure_col].str.contains("metre|drill", case=False, na=False)]
-    if df.empty:
-        raise RuntimeError(f"ABS {flow}: no metres-drilled rows found")
+    # Metres drilled only (8412.0 also carries expenditure measures).
+    if "MEASURE_name" in df.columns:
+        metres = df[df["MEASURE_name"].str.contains("metre|drill", case=False, na=False)]
+    else:
+        metres = df
+    if metres.empty:
+        raise RuntimeError(f"ABS {flow}: no metres-drilled rows; measures="
+                           f"{sorted(df.get('MEASURE_name', pd.Series()).dropna().unique())}")
 
-    # Region dimension.
-    region_col = None
-    for col in df.columns:
-        if col.endswith("_name"):
-            vals = set(str(v) for v in df[col].dropna().unique())
-            if "Western Australia" in vals or "Queensland" in vals:
+    # Collapse the deposit/mineral splits to their totals where present.
+    metres = _prefer(metres, "DEPOSIT_TYPE_name", ["total", "all deposit"])
+    metres = _prefer(metres, "MINERAL_TYPE_name", ["total", "all mineral"])
+    metres = _prefer(metres, "TSEST_name", ["Seasonally Adjusted", "Original", "Trend"])
+
+    region_col = "REGION_name" if "REGION_name" in metres.columns else None
+    if region_col is None:
+        for col in metres.columns:
+            if col.endswith("_name") and metres[col].map(_region_slug).notna().any():
                 region_col = col
                 break
     if region_col is None:
-        raise RuntimeError(f"ABS {flow}: no state dimension; cols={list(df.columns)}")
+        raise RuntimeError(f"ABS {flow}: no region dimension; cols={list(metres.columns)}"
+                           f"; sample values: "
+                           f"{ {c: sorted(map(str, metres[c].dropna().unique()))[:10] for c in metres.columns if c.endswith('_name')} }")
 
-    # Prefer total-type drilling (all deposits, new + existing) and
-    # seasonally adjusted where offered; keep deterministic first sub-series
-    # per (region, period) otherwise.
     retrieved = now_utc()
     url = SOURCE_URL.format(flow=flow)
     rows = []
-    for region_name, slug in STATE_SLUGS.items():
-        sel = df[df[region_col] == region_name]
-        if sel.empty:
+    for region_name in metres[region_col].dropna().unique():
+        slug = _region_slug(region_name)
+        if slug is None:
             continue
-        adj_col = None
-        for col in sel.columns:
-            if col.endswith("_name"):
-                vals = " | ".join(str(v).lower() for v in sel[col].dropna().unique())
-                if "seasonal" in vals or "original" in vals:
-                    adj_col = col
-                    break
-        if adj_col:
-            for pref in ("seasonal", "original", "trend"):
-                pick = sel[sel[adj_col].str.contains(pref, case=False, na=False)]
-                if len(pick):
-                    sel = pick
-                    break
-        name_cols = [c for c in sel.columns if c.endswith("_name")]
-        sel = sel.sort_values(name_cols).drop_duplicates("TIME_PERIOD", keep="first")
+        sel = metres[metres[region_col] == region_name]
+        dupes = sel["TIME_PERIOD"].duplicated()
+        if dupes.any():
+            raise RuntimeError(f"ABS {flow}: region {region_name!r} ambiguous after "
+                               f"filters; dims sample:\n{sel[dupes].head(4)}")
         series_id = ("abs.exploration.metres_drilled_total" if slug == "total"
                      else f"abs.exploration.metres_drilled_{slug}")
         rows.append(pd.DataFrame({
@@ -99,7 +117,8 @@ def fetch() -> pd.DataFrame:
             "retrieved_at": retrieved,
         }))
     if not rows:
-        raise RuntimeError(f"ABS {flow}: no state series extracted")
+        raise RuntimeError(f"ABS {flow}: no state series extracted; regions="
+                           f"{sorted(map(str, metres[region_col].dropna().unique()))}")
     return pd.concat(rows, ignore_index=True)
 
 

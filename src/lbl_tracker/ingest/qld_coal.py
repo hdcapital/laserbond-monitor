@@ -1,9 +1,11 @@
 """Queensland coal production - quarterly saleable tonnes, mine level.
 
-Source: Queensland Open Data portal (CKAN, www.data.qld.gov.au), the
-"Coal industry review statistical tables" datasets carry quarterly
-saleable-production-by-mine spreadsheets. Resources are discovered through
-the CKAN API each run so annual dataset roll-overs keep working.
+Source: Queensland Open Data portal (CKAN, www.data.qld.gov.au), dataset
+"quarterly-coal-reports", resource "Quarterly Coal Production" (mine-level,
+2010 -> current; verified live 2026-08-20). The portal's file-download
+endpoint answers HTTP 202 (staging) indefinitely for non-browser clients,
+so rows are pulled through the CKAN datastore API instead, with the file
+download kept as a fallback.
 
 Series stored:
   qld_coal.saleable_tonnes_total      quarterly, sum over mines (as published)
@@ -14,6 +16,7 @@ from __future__ import annotations
 import io
 import logging
 import re
+import time
 
 import pandas as pd
 
@@ -24,12 +27,10 @@ log = logging.getLogger("lbl_tracker.qld_coal")
 
 SOURCE = "qld_coal"
 CKAN = "https://www.data.qld.gov.au/api/3/action"
-# Verified live 2026-08-20: the "quarterly-coal-reports" dataset carries
-# "Quarterly Coal Production" (mine-level, 2010->current); the coal
-# industry review dataset carries financial-year files. Quarterly is what
-# the pulse uses, so it is matched first.
-SEARCH_QUERIES = ["quarterly coal reports", "coal industry review statistical tables"]
-RESOURCE_PATTERN = re.compile(r"quarterly coal production|saleable", re.I)
+SEARCH_QUERIES = ["quarterly coal reports"]
+RESOURCE_PATTERN = re.compile(r"quarterly coal production", re.I)
+
+QUARTER_PAT = re.compile(r"(mar|jun|sep|dec)[a-z]*[\s\-.]*(\d{2,4})", re.I)
 
 
 def _slug(name: str) -> str:
@@ -37,7 +38,6 @@ def _slug(name: str) -> str:
 
 
 def discover_resources(session=None) -> list[dict]:
-    """Find CSV/XLSX resources about saleable coal production."""
     session = session or make_session()
     found, seen = [], set()
     for query in SEARCH_QUERIES:
@@ -46,23 +46,33 @@ def discover_resources(session=None) -> list[dict]:
         for pkg in resp.json()["result"]["results"]:
             for res in pkg.get("resources", []):
                 name = f"{res.get('name', '')} {res.get('description', '')}"
-                fmt = (res.get("format") or "").lower()
-                if RESOURCE_PATTERN.search(name) and fmt in ("csv", "xlsx", "xls"):
-                    if res["id"] in seen:
-                        continue
+                if RESOURCE_PATTERN.search(name) and res["id"] not in seen:
                     seen.add(res["id"])
                     found.append({
                         "package": pkg.get("name"),
                         "name": res.get("name"),
+                        "id": res["id"],
                         "url": res.get("url"),
-                        "format": fmt,
-                        "created": res.get("created"),
+                        "format": (res.get("format") or "").lower(),
+                        "datastore_active": bool(res.get("datastore_active")),
                     })
-    log.info("qld_coal: discovered %d saleable-production resources", len(found))
+    log.info("qld_coal: discovered %d quarterly-production resources", len(found))
     return found
 
 
-QUARTER_PAT = re.compile(r"(mar|jun|sep|dec)[a-z]*[\s\-.]*(\d{2,4})", re.I)
+def datastore_records(resource_id: str, session) -> pd.DataFrame:
+    """Page through the CKAN datastore for one resource."""
+    rows, offset = [], 0
+    while True:
+        resp = get(f"{CKAN}/datastore_search", session=session, params={
+            "resource_id": resource_id, "limit": 10000, "offset": offset})
+        result = resp.json()["result"]
+        batch = result.get("records", [])
+        rows.extend(batch)
+        offset += len(batch)
+        if not batch or offset >= result.get("total", 0):
+            break
+    return pd.DataFrame(rows)
 
 
 def _parse_period(text: str) -> pd.Timestamp | None:
@@ -76,10 +86,52 @@ def _parse_period(text: str) -> pd.Timestamp | None:
     return pd.Period(f"{year}-{mon:02d}", freq="M").end_time.normalize()
 
 
+def records_to_long(df: pd.DataFrame, url: str) -> pd.DataFrame:
+    """Datastore records -> long (mine, date, value). Field names are
+    detected, not assumed: a mine column, a period column (values like
+    'Mar-24' / 'March quarter 2024'), and a saleable/production tonnes
+    column."""
+    if df.empty:
+        raise ValueError("datastore returned no records")
+    cols = {str(c).lower(): c for c in df.columns}
+
+    def find(*keys, exclude=()):
+        for low, orig in cols.items():
+            if any(k in low for k in keys) and not any(x in low for x in exclude):
+                return orig
+        return None
+
+    mine_col = find("mine", exclude=("mineral",)) or find("operation", "site")
+    period_col = None
+    for low, orig in cols.items():
+        sample = df[orig].astype(str).head(50)
+        if sample.map(_parse_period).notna().mean() > 0.8:
+            period_col = orig
+            break
+    value_col = find("saleable") or find("production", exclude=("type",)) \
+        or find("tonn", exclude=("type",))
+    if not (mine_col and period_col and value_col):
+        raise ValueError(f"could not identify columns: mine={mine_col} "
+                         f"period={period_col} value={value_col}; "
+                         f"available={list(df.columns)}")
+
+    out = pd.DataFrame({
+        "mine": df[mine_col].astype(str).str.strip(),
+        "date": df[period_col].map(_parse_period),
+        "value": pd.to_numeric(df[value_col].astype(str).str.replace(",", ""),
+                               errors="coerce"),
+        "url": url,
+    })
+    out = out[out["date"].notna() & (out["mine"] != "")]
+    out = out[~out["mine"].str.fullmatch(r"(?i)total|grand total|nan")]
+    if out.empty:
+        raise ValueError("no parseable datastore rows")
+    return out
+
+
+# --- fallback: direct file download (202 staging retried) -------------------
+
 def _download(url: str, session):
-    """data.qld.gov.au answers 202 while the download service stages a file;
-    poll until the payload is ready."""
-    import time
     for attempt in range(8):
         resp = session.get(url, timeout=120)
         if resp.status_code == 200 and resp.content:
@@ -90,62 +142,54 @@ def _download(url: str, session):
     raise RuntimeError(f"qld_coal: {url} still HTTP 202 after retries")
 
 
-def parse_resource(url: str, fmt: str, session=None) -> pd.DataFrame:
-    """Parse one saleable-production resource into long (mine, period, tonnes)."""
-    resp = _download(url, session)
-    if fmt == "csv":
-        tables = [pd.read_csv(io.BytesIO(resp.content), header=None, dtype=str)]
-    else:
-        book = pd.read_excel(io.BytesIO(resp.content), sheet_name=None, header=None, dtype=str)
-        tables = list(book.values())
-
-    rows = []
-    for raw in tables:
+def parse_workbook(content: bytes, url: str) -> pd.DataFrame:
+    book = pd.read_excel(io.BytesIO(content), sheet_name=None, header=None, dtype=str)
+    frames = []
+    for _, raw in book.items():
         raw = raw.dropna(how="all").reset_index(drop=True)
-        header_idx = None
         for i in range(min(len(raw), 15)):
-            line = " ".join(str(v) for v in raw.iloc[i].tolist())
-            if QUARTER_PAT.search(line) and ("mine" in line.lower() or i > 0):
-                header_idx = i
-                break
-        if header_idx is None:
-            continue
-        header = raw.iloc[header_idx].tolist()
-        period_cols = {j: _parse_period(h) for j, h in enumerate(header)}
-        period_cols = {j: p for j, p in period_cols.items() if p is not None}
-        if not period_cols:
-            continue
-        name_col = 0
-        for i in range(header_idx + 1, len(raw)):
-            mine = str(raw.iloc[i, name_col]).strip()
-            if not mine or mine.lower() in ("nan", "total", "grand total"):
+            header = raw.iloc[i].tolist()
+            period_cols = {j: _parse_period(h) for j, h in enumerate(header)}
+            period_cols = {j: p for j, p in period_cols.items() if p is not None}
+            if len(period_cols) < 4:
                 continue
-            for j, period in period_cols.items():
-                val = str(raw.iloc[i, j]).replace(",", "").strip()
-                try:
-                    tonnes = float(val)
-                except ValueError:
+            for r in range(i + 1, len(raw)):
+                mine = str(raw.iloc[r, 0]).strip()
+                if not mine or mine.lower() in ("nan", "total", "grand total"):
                     continue
-                rows.append({"mine": mine, "date": period, "value": tonnes, "url": url})
-    return pd.DataFrame(rows)
+                for j, period in period_cols.items():
+                    val = str(raw.iloc[r, j]).replace(",", "").strip()
+                    try:
+                        frames.append({"mine": mine, "date": period,
+                                       "value": float(val), "url": url})
+                    except ValueError:
+                        continue
+            break
+    return pd.DataFrame(frames)
 
 
 def fetch() -> pd.DataFrame:
     session = make_session()
     resources = discover_resources(session)
     if not resources:
-        raise RuntimeError("qld_coal: no saleable-production resources found via CKAN")
-    frames = []
+        raise RuntimeError("qld_coal: no quarterly-production resource found via CKAN")
+    long = None
+    errors = []
     for res in resources:
         try:
-            df = parse_resource(res["url"], res["format"], session)
-            if len(df):
-                frames.append(df)
+            records = datastore_records(res["id"], session)
+            long = records_to_long(records, res["url"])
+            break
         except Exception as exc:  # noqa: BLE001
-            log.warning("qld_coal: resource %s failed: %s", res["name"], exc)
-    if not frames:
-        raise RuntimeError("qld_coal: resources found but none parsed; run probe")
-    long = pd.concat(frames, ignore_index=True)
+            errors.append(f"datastore {res['name']}: {exc}")
+        try:
+            long = parse_workbook(_download(res["url"], session).content, res["url"])
+            if len(long):
+                break
+        except Exception as exc:  # noqa: BLE001
+            errors.append(f"download {res['name']}: {exc}")
+    if long is None or long.empty:
+        raise RuntimeError(f"qld_coal: nothing parsed; attempts: {errors}")
     long = long.drop_duplicates(["mine", "date"], keep="last")
 
     retrieved = now_utc()
@@ -156,7 +200,8 @@ def fetch() -> pd.DataFrame:
         "source_url": long["url"],
         "retrieved_at": retrieved,
     })
-    total = long.groupby("date").agg(value=("value", "sum"), url=("url", "first")).reset_index()
+    total = long.groupby("date").agg(value=("value", "sum"),
+                                     url=("url", "first")).reset_index()
     total_rows = pd.DataFrame({
         "series_id": "qld_coal.saleable_tonnes_total",
         "date": total["date"],

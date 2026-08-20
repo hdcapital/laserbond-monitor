@@ -46,7 +46,9 @@ def jsa_session():
     return make_session(extra_headers=BROWSER_HEADERS)
 
 
-DATA_GOV_CKAN = "https://data.gov.au/api/3/action"
+# data.gov.au's CKAN API lives under /data/ (bare /api/3 404s - verified
+# live 2026-08-20).
+DATA_GOV_CKAN = "https://data.gov.au/data/api/3/action"
 
 
 def discover_via_data_gov(session) -> str | None:

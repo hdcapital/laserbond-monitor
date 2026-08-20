@@ -36,9 +36,22 @@ def fetch_flags() -> pd.DataFrame:
         raise RuntimeError("tungsten: no keywords configured")
     retrieved = now_utc()
     rows = []
+    failures = []
     for keyword in keywords:
         url = RSS_URL.format(query=quote(f'"{keyword}"'))
-        root = ET.fromstring(get(url, session=session).content)
+        # Google News 503s bursts from datacenter IPs; pace the queries and
+        # tolerate a keyword failing this run (events are deduped, so the
+        # next run catches up - nothing is lost or invented).
+        import time
+        time.sleep(3)
+        try:
+            root = ET.fromstring(get(url, session=session).content)
+        except Exception as exc:  # noqa: BLE001
+            failures.append(keyword)
+            from ..store import log_gap
+            log_gap("tungsten_news", "tungsten.flag_count",
+                    f"RSS fetch failed for {keyword!r}: {exc}")
+            continue
         for item in root.iter("item"):
             title = (item.findtext("title") or "").strip()
             link = (item.findtext("link") or "").strip()
@@ -60,7 +73,8 @@ def fetch_flags() -> pd.DataFrame:
                 "retrieved_at": retrieved,
             })
     if not rows:
-        raise RuntimeError("tungsten: RSS returned no items for any keyword")
+        raise RuntimeError(f"tungsten: RSS returned no items for any keyword "
+                           f"(failed: {failures})")
     return pd.DataFrame(rows).drop_duplicates("id")
 
 

@@ -34,7 +34,7 @@ def probe_abs():
         hits = abs_sdmx.find_dataflows(kw)
         _p(f"-- flows matching {kw!r}:")
         _p(hits.to_string(max_rows=30))
-    for flow in ("CAPEX", "MERALS_EXP"):
+    for flow in ("CAPEX", "MIN_EXP"):
         try:
             df = abs_sdmx.get_data(flow, "all", params={"startPeriod": "2023"})
             _p(f"-- {flow}: {len(df)} obs since 2023; columns={list(df.columns)}")
@@ -58,18 +58,16 @@ def probe_qld_coal():
         for res in pkg.get("resources", [])[:30]:
             _p(f"    res: [{res.get('format')}] {res.get('name')} -> {res.get('url')}")
     found = qld_coal.discover_resources(session)
-    _p(f"discovered saleable resources: {json.dumps(found, indent=1)[:3000]}")
+    _p(f"discovered resources: {json.dumps(found, indent=1)[:3000]}")
     if found:
         res = found[0]
-        content = qld_coal._download(res["url"], session).content
-        _p(f"first resource bytes: {len(content)}")
-        if res["format"] == "csv":
-            _p(_head(content.decode("utf-8", "replace"), 2500))
-        else:
-            book = pd.read_excel(io.BytesIO(content), sheet_name=None, header=None)
-            for sheet, raw in list(book.items())[:4]:
-                _p(f"  sheet {sheet!r} shape={raw.shape}")
-                _p(raw.head(12).to_string()[:2500])
+        records = qld_coal.datastore_records(res["id"], session)
+        _p(f"datastore records: {len(records)} columns={list(records.columns)}")
+        _p(records.head(10).to_string()[:2500])
+        long = qld_coal.records_to_long(records, res["url"])
+        _p(f"long rows: {len(long)}; range {long['date'].min()}..{long['date'].max()}; "
+           f"mines={long['mine'].nunique()}")
+        _p(long.tail(8).to_string())
 
 
 def probe_pilbara():
@@ -81,20 +79,20 @@ def probe_pilbara():
     _p(f"listing resolved: {url}")
     for probe_url in (url, f"{url}?page=2"):
         soup = BeautifulSoup(get(probe_url, session=session).text, "lxml")
-        _p(f"-- anchors on {probe_url}:")
-        for a in soup.find_all("a", href=True)[:150]:
-            text = " ".join(a.get_text(" ", strip=True).split())
-            if text:
-                _p(f"   {text[:110]} -> {a['href'][:130]}")
+        _p(f"-- /news/ anchors on {probe_url}:")
+        for a in soup.find_all("a", href=True):
+            if "/news/" in a["href"]:
+                text = " ".join(a.get_text(" ", strip=True).split())
+                _p(f"   {text[:110]!r} -> {a['href'][:130]}")
     items = pilbara_ports.list_statements(session)
-    _p(f"candidates: {len(items)}")
-    for item in items[:15]:
-        _p(f"- {item['title']} -> {item['url']}")
-    if items:
-        text = BeautifulSoup(get(items[0]["url"], session=session).text,
+    _p(f"articles: {len(items)}")
+    for item in items[:20]:
+        _p(f"- {item['title']!r} -> {item['url']}")
+    for item in items[:3]:
+        text = BeautifulSoup(get(item["url"], session=session).text,
                              "lxml").get_text(" ", strip=True)
-        _p("first statement text excerpt:")
-        _p(_head(" ".join(text.split()), 3500))
+        _p(f"article text excerpt ({item['url']}):")
+        _p(_head(" ".join(text.split()), 2500))
 
 
 def probe_rba():
@@ -167,17 +165,20 @@ def probe_baker_hughes():
                     _p(f"   {text[:100]} -> {a['href'][:120]}")
         except Exception as exc:  # noqa: BLE001
             _p(f"-- {page} FAILED: {exc}")
-    links = baker_hughes.discover_links(session)
-    _p(f"resolved: {links}")
-    for kind, url in links.items():
-        if not url:
-            continue
-        content = get(url, session=session).content
-        book = pd.read_excel(io.BytesIO(content), sheet_name=None, header=None)
-        _p(f"-- {kind} workbook sheets: {list(book)}")
-        for sheet, raw in list(book.items())[:3]:
-            _p(f"   sheet {sheet!r} shape={raw.shape}")
-            _p(raw.head(10).to_string()[:2000])
+    files = baker_hughes.discover_files(session)
+    _p(f"resolved: {files}")
+    for kind, urls in files.items():
+        for url in urls[:2]:
+            content = get(url, session=session).content
+            try:
+                book = pd.read_excel(io.BytesIO(content), sheet_name=None, header=None)
+            except Exception as exc:  # noqa: BLE001
+                _p(f"-- {kind} {url}: read_excel failed: {exc}")
+                continue
+            _p(f"-- {kind} {url} sheets: {list(book)}")
+            for sheet, raw in list(book.items())[:3]:
+                _p(f"   sheet {sheet!r} shape={raw.shape}")
+                _p(raw.head(10).iloc[:, :12].to_string()[:2200])
 
 
 def probe_cat_edgar():
