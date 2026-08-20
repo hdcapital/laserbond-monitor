@@ -70,19 +70,22 @@ def fetch() -> pd.DataFrame:
     if df.empty:
         raise RuntimeError(f"ABS flow {flow} returned no observations")
 
-    # Metres drilled only (8412.0 also carries expenditure measures).
-    if "MEASURE_name" in df.columns:
-        metres = df[df["MEASURE_name"].str.contains("metre|drill", case=False, na=False)]
-    else:
-        metres = df
-    if metres.empty:
-        raise RuntimeError(f"ABS {flow}: no metres-drilled rows; measures="
-                           f"{sorted(df.get('MEASURE_name', pd.Series()).dropna().unique())}")
-
-    # Collapse the deposit/mineral splits to their totals where present.
-    metres = _prefer(metres, "DEPOSIT_TYPE_name", ["total", "all deposit"])
-    metres = _prefer(metres, "MINERAL_TYPE_name", ["total", "all mineral"])
-    metres = _prefer(metres, "TSEST_name", ["Seasonally Adjusted", "Original", "Trend"])
+    # Dimension values confirmed live 2026-08-20:
+    # MEASURE_name: Expenditure / Metres drilled
+    # DEPOSIT_TYPE_name: Existing / New / Total deposits
+    # MINERAL_TYPE_name: per-mineral + 'Total' (exact match needed - the
+    #   'Selected base metals total' label also contains "total")
+    # REGION_name: Australia + the 7 states/territories (no ACT)
+    metres = df
+    for col, exact in [("MEASURE_name", "Metres drilled"),
+                       ("DEPOSIT_TYPE_name", "Total deposits"),
+                       ("MINERAL_TYPE_name", "Total")]:
+        if col in metres.columns:
+            pick = metres[metres[col] == exact]
+            if pick.empty:
+                raise RuntimeError(f"ABS {flow}: no rows with {col} == {exact!r}; "
+                                   f"have {sorted(metres[col].dropna().unique())}")
+            metres = pick
 
     region_col = "REGION_name" if "REGION_name" in metres.columns else None
     if region_col is None:
@@ -103,6 +106,8 @@ def fetch() -> pd.DataFrame:
         if slug is None:
             continue
         sel = metres[metres[region_col] == region_name]
+        # adjustment availability differs by region, so prefer per region
+        sel = _prefer(sel, "TSEST_name", ["Seasonally Adjusted", "Original", "Trend"])
         dupes = sel["TIME_PERIOD"].duplicated()
         if dupes.any():
             raise RuntimeError(f"ABS {flow}: region {region_name!r} ambiguous after "

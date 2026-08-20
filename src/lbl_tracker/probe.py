@@ -61,6 +61,9 @@ def probe_qld_coal():
     _p(f"discovered resources: {json.dumps(found, indent=1)[:3000]}")
     if found:
         res = found[0]
+        raw = get(f"{qld_coal.CKAN}/datastore_search", session=session,
+                  params={"resource_id": res["id"], "limit": 3})
+        _p(f"datastore_search raw: {_head(raw.text, 1200)}")
         records = qld_coal.datastore_records(res["id"], session)
         _p(f"datastore records: {len(records)} columns={list(records.columns)}")
         _p(records.head(10).to_string()[:2500])
@@ -75,15 +78,15 @@ def probe_pilbara():
 
     from .ingest import pilbara_ports
     session = make_session()
-    url = pilbara_ports.discover_listing(session)
-    _p(f"listing resolved: {url}")
-    for probe_url in (url, f"{url}?page=2"):
-        soup = BeautifulSoup(get(probe_url, session=session).text, "lxml")
-        _p(f"-- /news/ anchors on {probe_url}:")
-        for a in soup.find_all("a", href=True):
-            if "/news/" in a["href"]:
-                text = " ".join(a.get_text(" ", strip=True).split())
-                _p(f"   {text[:110]!r} -> {a['href'][:130]}")
+    try:
+        robots = get(f"{pilbara_ports.BASE}/robots.txt", session=session).text
+        _p(f"robots.txt: {_head(robots, 800)}")
+    except Exception as exc:  # noqa: BLE001
+        _p(f"robots.txt failed: {exc}")
+    urls = pilbara_ports.sitemap_urls(session)
+    _p(f"sitemap urls: {len(urls)}")
+    news = [u for u in urls if "/news/" in u]
+    _p(f"news urls: {len(news)}; sample: {news[:15]}")
     items = pilbara_ports.list_statements(session)
     _p(f"articles: {len(items)}")
     for item in items[:20]:
@@ -176,9 +179,14 @@ def probe_baker_hughes():
                 _p(f"-- {kind} {url}: read_excel failed: {exc}")
                 continue
             _p(f"-- {kind} {url} sheets: {list(book)}")
-            for sheet, raw in list(book.items())[:3]:
-                _p(f"   sheet {sheet!r} shape={raw.shape}")
-                _p(raw.head(10).iloc[:, :12].to_string()[:2200])
+            for sheet in ("NAM Weekly", "NAM Monthly", "WW Monthly",
+                          "Worldwide_Rigcount", "US Oil & Gas Split"):
+                if sheet in book:
+                    raw = book[sheet]
+                    _p(f"   sheet {sheet!r} shape={raw.shape}")
+                    _p(raw.head(14).iloc[:, :16].to_string()[:2600])
+                    _p("   ...tail:")
+                    _p(raw.tail(4).iloc[:, :16].to_string()[:900])
 
 
 def probe_cat_edgar():
@@ -208,6 +216,18 @@ def probe_cat_edgar():
 def probe_jsa():
     from .ingest import jsa_ivi
     session = jsa_ivi.jsa_session()
+    # legacy LMIP portal (data.gov.au's IVI record points there)
+    for url in ("http://lmip.gov.au/default.aspx?LMIP/VacancyReport",
+                "https://lmip.gov.au/default.aspx?LMIP/GainInsights/VacancyReport",
+                "https://labourmarketinsights.gov.au/"):
+        try:
+            resp = get(url, session=session, timeout=30)
+            _p(f"-- {url} -> {resp.url} ({len(resp.content)}B)")
+            import re as _re
+            links = _re.findall(r'href="([^"]+\.xlsx?[^"]*)"', resp.text, _re.I)
+            _p(f"   xlsx links: {links[:20]}")
+        except Exception as exc:  # noqa: BLE001
+            _p(f"-- {url} FAILED: {exc}")
     try:
         resp = get(f"{jsa_ivi.DATA_GOV_CKAN}/package_search", session=session,
                    params={"q": "internet vacancy index", "rows": 20})

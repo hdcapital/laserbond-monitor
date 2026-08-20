@@ -60,8 +60,19 @@ def discover_resources(session=None) -> list[dict]:
     return found
 
 
+DUMP_URL = "https://www.data.qld.gov.au/datastore/dump/{rid}"
+
+
 def datastore_records(resource_id: str, session) -> pd.DataFrame:
-    """Page through the CKAN datastore for one resource."""
+    """Full-table CSV dump of a datastore resource, with the paged
+    datastore_search JSON API as fallback."""
+    try:
+        resp = get(DUMP_URL.format(rid=resource_id), session=session, timeout=180)
+        df = pd.read_csv(io.BytesIO(resp.content))
+        if len(df):
+            return df
+    except Exception as exc:  # noqa: BLE001
+        log.warning("qld_coal: datastore dump failed (%s); trying datastore_search", exc)
     rows, offset = [], 0
     while True:
         resp = get(f"{CKAN}/datastore_search", session=session, params={

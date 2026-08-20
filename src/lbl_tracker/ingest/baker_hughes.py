@@ -70,80 +70,126 @@ def discover_files(session) -> dict:
     return files
 
 
-def _find_header(df: pd.DataFrame, required: list[str]) -> int | None:
-    for i in range(min(len(df), 30)):
-        line = [str(v).strip().lower() for v in df.iloc[i].tolist()]
-        if all(any(req in cell for cell in line) for req in required):
-            return i
+def _read_book(content: bytes) -> dict:
+    return pd.read_excel(io.BytesIO(content), sheet_name=None, header=None)
+
+
+def _find_table(raw: pd.DataFrame, date_pat: str, needed: list[str]) -> pd.DataFrame | None:
+    """Locate a header row whose cells include a date-ish label plus all
+    `needed` labels, and return the table below it with those headers."""
+    for i in range(min(len(raw), 15)):
+        cells = [str(v).strip().lower() for v in raw.iloc[i].tolist()]
+        if not any(re.search(date_pat, c) for c in cells if c and c != "nan"):
+            continue
+        if all(any(need in c for c in cells) for need in needed):
+            data = raw.iloc[i + 1:].copy()
+            data.columns = cells
+            return data
     return None
 
 
+def _col(data: pd.DataFrame, *keys, exclude=()):
+    for j, name in enumerate(data.columns):
+        if any(k in name for k in keys) and not any(x in name for x in exclude):
+            return data.iloc[:, j]
+    return None
+
+
+def _sheet_error(kind: str, url: str, book: dict, wanted: list[str]) -> RuntimeError:
+    dump = []
+    for sheet in wanted:
+        if sheet in book:
+            dump.append(f"--- {sheet} head ---\n"
+                        f"{book[sheet].head(12).iloc[:, :14].to_string()[:1400]}")
+    return RuntimeError(f"bh {kind} workbook not parsed ({url}); "
+                        f"sheets={list(book)}\n" + "\n".join(dump))
+
+
 def parse_na(content: bytes, url: str, retrieved) -> pd.DataFrame:
-    book = pd.read_excel(io.BytesIO(content), sheet_name=None, header=None)
+    """Weekly US/Canada/North America counts. New-report workbooks carry a
+    'NAM Weekly' long table; older archives carry per-country split sheets."""
+    book = _read_book(content)
     rows = []
-    for sheet, raw in book.items():
-        header_idx = _find_header(raw, ["date", "u.s."]) or _find_header(raw, ["date", "us"])
-        if header_idx is None:
+    for sheet in ("NAM Weekly", "NAM Monthly"):
+        raw = book.get(sheet)
+        if raw is None:
             continue
-        header = [str(v).strip().lower() for v in raw.iloc[header_idx].tolist()]
-        data = raw.iloc[header_idx + 1:].copy()
-        data.columns = header
-
-        def col(*keys):
-            for j, h in enumerate(header):
-                if any(k in h for k in keys):
-                    return data.iloc[:, j]
-            return None
-
-        dates = pd.to_datetime(col("date"), errors="coerce")
-        us = pd.to_numeric(col("u.s.", "us"), errors="coerce")
-        canada = pd.to_numeric(col("canada"), errors="coerce")
-        mask = dates.notna()
-        for series_id, vals in [("bh.rigcount_us_total", us),
-                                ("bh.rigcount_canada_total", canada)]:
-            if vals is None:
-                continue
-            rows.append(pd.DataFrame({
-                "series_id": series_id, "date": dates[mask], "value": vals[mask],
-                "source_url": url, "retrieved_at": retrieved}))
-        if us is not None and canada is not None:
-            rows.append(pd.DataFrame({
-                "series_id": "bh.rigcount_na_total", "date": dates[mask],
-                "value": (us + canada)[mask], "source_url": url,
-                "retrieved_at": retrieved}))
+        table = (_find_table(raw, r"date|week", ["country", "count"])
+                 or _find_table(raw, r"date|week", ["count"])
+                 or _find_table(raw, r"date|week", ["u.s", "canada"]))
+        if table is None:
+            continue
+        dates = pd.to_datetime(_col(table, "date", "week"), errors="coerce")
+        country = _col(table, "country", "location")
+        count = _col(table, "count", "rig", exclude=("chg", "%", "change"))
+        if count is None:
+            continue
+        count = pd.to_numeric(count, errors="coerce")
+        if country is not None:
+            frame = pd.DataFrame({"date": dates, "country": country.astype(str).str.strip(),
+                                  "value": count}).dropna(subset=["date", "value"])
+            for label, series_id in [("United States", "bh.rigcount_us_total"),
+                                     ("Canada", "bh.rigcount_canada_total"),
+                                     ("North America", "bh.rigcount_na_total")]:
+                sel = frame[frame["country"].str.casefold() == label.casefold()]
+                sel = sel.groupby("date")["value"].sum()
+                if len(sel):
+                    rows.append(pd.DataFrame({
+                        "series_id": series_id, "date": sel.index, "value": sel.values,
+                        "source_url": url, "retrieved_at": retrieved}))
+        else:
+            us = pd.to_numeric(_col(table, "u.s", "us "), errors="coerce")
+            canada = pd.to_numeric(_col(table, "canada"), errors="coerce")
+            mask = dates.notna()
+            if us is not None and canada is not None:
+                rows.append(pd.DataFrame({
+                    "series_id": "bh.rigcount_na_total", "date": dates[mask],
+                    "value": (us + canada)[mask], "source_url": url,
+                    "retrieved_at": retrieved}))
         if rows:
             break
     if not rows:
-        raise RuntimeError(f"bh NA workbook not parsed; sheets={list(book)}")
+        raise _sheet_error("NA", url, book, ["NAM Weekly", "NAM Monthly",
+                                             "US Oil & Gas Split"])
     return pd.concat(rows, ignore_index=True)
 
 
 def parse_intl(content: bytes, url: str, retrieved) -> pd.DataFrame:
-    book = pd.read_excel(io.BytesIO(content), sheet_name=None, header=None)
+    """Monthly international count from the 'WW Monthly' long table."""
+    book = _read_book(content)
     rows = []
-    for sheet, raw in book.items():
-        header_idx = _find_header(raw, ["date", "total"]) or _find_header(raw, ["year", "total"])
-        if header_idx is None:
+    for sheet in ("WW Monthly", "Worldwide_Rigcount"):
+        raw = book.get(sheet)
+        if raw is None:
             continue
-        header = [str(v).strip().lower() for v in raw.iloc[header_idx].tolist()]
-        data = raw.iloc[header_idx + 1:]
-        date_j = next((j for j, h in enumerate(header) if "date" in h or "month" in h), None)
-        total_j = next((j for j, h in enumerate(header)
-                        if "total inter" in h or h == "total intl" or "world" in h
-                        or h.strip() == "total"), None)
-        if date_j is None or total_j is None:
+        table = (_find_table(raw, r"date|month", ["country", "count"])
+                 or _find_table(raw, r"date|month", ["region", "count"])
+                 or _find_table(raw, r"date|month", ["count"]))
+        if table is None:
             continue
-        dates = pd.to_datetime(data.iloc[:, date_j], errors="coerce")
-        vals = pd.to_numeric(data.iloc[:, total_j], errors="coerce")
-        mask = dates.notna()
-        if mask.sum() < 12:
+        dates = pd.to_datetime(_col(table, "date", "month"), errors="coerce")
+        entity = _col(table, "country", "region", "location")
+        count = pd.to_numeric(_col(table, "count", "rig", exclude=("chg", "%", "change")),
+                              errors="coerce")
+        if count is None:
+            continue
+        frame = pd.DataFrame({"date": dates, "value": count})
+        if entity is not None:
+            frame["entity"] = entity.astype(str).str.strip().str.casefold()
+            sel = frame[frame["entity"] == "international"]
+            if sel.empty:
+                continue
+            sel = sel.dropna(subset=["date", "value"]).groupby("date")["value"].sum()
+        else:
+            sel = frame.dropna(subset=["date", "value"]).set_index("date")["value"]
+        if len(sel) < 12:
             continue
         rows.append(pd.DataFrame({
-            "series_id": "bh.rigcount_intl_total", "date": dates[mask],
-            "value": vals[mask], "source_url": url, "retrieved_at": retrieved}))
+            "series_id": "bh.rigcount_intl_total", "date": sel.index,
+            "value": sel.values, "source_url": url, "retrieved_at": retrieved}))
         break
     if not rows:
-        raise RuntimeError(f"bh intl workbook not parsed; sheets={list(book)}")
+        raise _sheet_error("intl", url, book, ["WW Monthly", "Worldwide_Rigcount"])
     return pd.concat(rows, ignore_index=True)
 
 

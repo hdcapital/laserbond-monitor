@@ -64,29 +64,45 @@ def discover_listing(session) -> str:
 NEWS_HREF = re.compile(r"/news/[^/?#]+/?$", re.I)
 
 
-def list_statements(session) -> list[dict]:
-    """Collect news-article links (hrefs under .../news/<slug>) across the
-    paginated listing; the trade statements are identified when parsing."""
-    listing_url = discover_listing(session)
-    items, seen = [], set()
-    for page in range(1, MAX_PAGES + 1):
-        url = listing_url if page == 1 else f"{listing_url}?page={page}"
+def sitemap_urls(session) -> list[str]:
+    """All URLs from the site's sitemap(s). The news listing itself is
+    JS-rendered (verified live 2026-08-20: zero article anchors in HTML),
+    so articles are discovered via the sitemap instead."""
+    import xml.etree.ElementTree as ET
+    candidates = []
+    try:
+        robots = get(f"{BASE}/robots.txt", session=session).text
+        candidates += re.findall(r"(?im)^sitemap:\s*(\S+)", robots)
+    except Exception as exc:  # noqa: BLE001
+        log.warning("pilbara: robots.txt failed: %s", exc)
+    candidates += [f"{BASE}/sitemap.xml", f"{BASE}/googlesitemap.xml",
+                   f"{BASE}/sitemap_index.xml"]
+    seen_maps, urls = set(), []
+    queue = [c for c in candidates if not (c in seen_maps or seen_maps.add(c))]
+    while queue:
+        sm = queue.pop(0)
         try:
-            soup = BeautifulSoup(get(url, session=session).text, "lxml")
+            root = ET.fromstring(get(sm, session=session).content)
         except Exception:  # noqa: BLE001
-            break
-        page_items = 0
-        for a in soup.find_all("a", href=True):
-            href = urljoin(BASE, a["href"])
-            if not NEWS_HREF.search(href) or href in seen:
-                continue
-            title = " ".join(a.get_text(" ", strip=True).split())
-            seen.add(href)
-            items.append({"title": title, "url": href})
-            page_items += 1
-        if page_items == 0 and page > 1:
-            break
-    log.info("pilbara_ports: %d news articles found", len(items))
+            continue
+        ns = {"s": root.tag.split("}")[0].strip("{")} if "}" in root.tag else {}
+        loc_path = "s:loc" if ns else "loc"
+        if root.tag.endswith("sitemapindex"):
+            for loc in root.iterfind(f".//{loc_path}", ns):
+                if loc.text and loc.text not in seen_maps:
+                    seen_maps.add(loc.text)
+                    queue.append(loc.text)
+        else:
+            urls += [loc.text.strip() for loc in root.iterfind(f".//{loc_path}", ns)
+                     if loc.text]
+    return urls
+
+
+def list_statements(session) -> list[dict]:
+    urls = [u for u in sitemap_urls(session) if NEWS_HREF.search(u)]
+    items = [{"title": u.rstrip("/").rsplit("/", 1)[-1].replace("-", " "),
+              "url": u} for u in dict.fromkeys(urls)]
+    log.info("pilbara_ports: %d news articles from sitemap", len(items))
     return items
 
 
