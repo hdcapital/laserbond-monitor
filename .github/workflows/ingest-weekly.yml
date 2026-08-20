@@ -36,7 +36,8 @@ jobs:
       - name: Ingest all sources
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
           SEC_CONTACT_EMAIL: ${{ secrets.SEC_CONTACT_EMAIL }}
           IMPORTGENIUS_API_KEY: ${{ secrets.IMPORTGENIUS_API_KEY }}
         run: |

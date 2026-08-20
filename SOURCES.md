@@ -20,7 +20,7 @@ series is ever stubbed: anything unavailable is NULL/NO DATA and logged to
 | i | `cat.resource_industries_yoy_pct` (+regions) | SEC EDGAR full-text search → 8-K exhibit parse. EDGAR **403s every request whose User-Agent lacks a contact address** ("Undeclared Automated Tool") | **BLOCKED — pending `SEC_CONTACT_EMAIL` secret** (code ready; smoke test auto-unskips once set) | — |
 | j | `jsa.ivi.<anzsco4>.<state>`, `jsa.ivi_trades_tightness` | jobsandskills.gov.au `internet_vacancies_anzsco4_occupations_states_and_territories_*.xlsx` (monthly file discovered from the IVI page). The site's WAF stalls plain clients → fetched with a browser TLS fingerprint (curl_cffi) | **WORKING** | Mar 2006 → current (monthly; occupations 3232 fitters/machinists + 3223 welders, all states) |
 | k | `tungsten.flag_count` + `events/tungsten_flags` | Google News RSS keyword monitor — **event-flag proxy; no free tungsten/APT spot price exists**. Counts start at monitoring start (2026-08): the shallow RSS window would undercount earlier months, so they are never emitted | **WORKING (proxy)** | events retained from feed (2024→); count series 2026-08 → |
-| l | `events/announcements` (LBL/EHL/MSV/MAD), `events/lbl_technology_events`, `emeco.utilisation_pct`, `mitchell.avg_operating_rigs` | Markit ASX research API (the legacy `asx.com.au/asx/1` API is gone); PDFs via the Markit file gateway (no token needed). PDF classification via Anthropic API | **WORKING** (metadata + PDFs); extractions **pending `ANTHROPIC_API_KEY`** | announcement lists backfilled (500/ticker); extractions start when key is set |
+| l | `events/announcements` (LBL/EHL/MSV/MAD), `events/lbl_technology_events`, `emeco.utilisation_pct`, `mitchell.avg_operating_rigs` | Markit ASX research API (the legacy `asx.com.au/asx/1` API is gone); PDFs via the Markit file gateway (no token needed). PDF classification via OpenAI API | **WORKING** (metadata + PDFs); extractions **pending `OPENAI_API_KEY`** | announcement lists backfilled (500/ticker); extractions start when key is set |
 | — | ImportGenius bill-of-lading module | dormant stub — inert without `IMPORTGENIUS_API_KEY`, never writes placeholder data | DORMANT | — |
 
 ## Composite availability (first build, 2026-08-20)
@@ -30,7 +30,7 @@ series is ever stubbed: anything unavailable is NULL/NO DATA and logged to
 | Services Pulse | −27.5 | 75% | QLD coal enters as z-history accrues in-window; all others live |
 | Products Pulse | +22.8 | 60% | AISI (accumulating), CAT (pending SEC email) |
 | Margin Pulse | −22.6 | 66% | tungsten flags (accumulating from 2026-08) |
-| Technology Pipeline | NO DATA | — | needs `ANTHROPIC_API_KEY` to classify announcement PDFs |
+| Technology Pipeline | NO DATA | — | needs `OPENAI_API_KEY` to classify announcement PDFs |
 
 ## Verification log
 

@@ -143,7 +143,7 @@ def technology_pipeline() -> dict:
     if events.empty:
         return {"available": False, "stages": stages, "events": [],
                 "note": "No classified Technology events yet (needs announcement "
-                        "ingest + ANTHROPIC_API_KEY)."}
+                        "ingest + OPENAI_API_KEY)."}
     events = events.copy()
     events["date"] = pd.to_datetime(events["date"])
     now = events["date"].max()

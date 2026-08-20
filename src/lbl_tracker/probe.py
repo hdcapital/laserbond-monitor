@@ -302,6 +302,9 @@ def probe_asx():
             except Exception as exc:  # noqa: BLE001
                 _p(f"-- {url} FAILED: {exc}")
     try:
+        deep = asx.fetch_list("LBL", 120, session)
+        dates = sorted(str(i["date"])[:10] for i in deep)
+        _p(f"pagination check: {len(deep)} items, {dates[0]}..{dates[-1]}")
         items = asx.fetch_list("LBL", 5, session)
         _p(f"parsed items: {json.dumps(items, indent=1, default=str)[:2500]}")
         if items:

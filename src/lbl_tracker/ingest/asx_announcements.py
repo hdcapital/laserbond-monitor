@@ -1,8 +1,8 @@
 """ASX announcement monitor for LBL, EHL, MSV, MAD.
 
 Pulls each ticker's announcement list from ASX's public JSON API, stores
-the metadata, then (when ANTHROPIC_API_KEY is set) fetches new
-announcement PDFs and classifies them with the Anthropic API:
+the metadata, then (when OPENAI_API_KEY is set) fetches new
+announcement PDFs and classifies them with the OpenAI API:
 
   EHL  -> Emeco operating utilisation %
   MSV  -> Mitchell Services average operating rigs
@@ -24,7 +24,7 @@ import time
 
 import pandas as pd
 
-from .. import anthropic_client
+from .. import llm_client
 from ..config import cfg
 from ..http import SourceFetchError, get, make_session
 from ..store import (log_gap, now_utc, read_events, stable_id, write_events,
@@ -39,9 +39,12 @@ SOURCE = "asx_announcements"
 # isPriceSensitive, url("")} - the PDF is served by the Markit file gateway
 # keyed on documentKey.
 LIST_ENDPOINTS = [
-    "https://asx.api.markitdigital.com/asx-research/1.0/companies/{ticker}/announcements?itemsPerPage={count}",
-    "https://www.asx.com.au/asx/1/company/{ticker}/announcements?count={count}&market_sensitive=false",
+    "https://asx.api.markitdigital.com/asx-research/1.0/companies/{ticker}"
+    "/announcements?itemsPerPage={count}&page={page}",
+    "https://www.asx.com.au/asx/1/company/{ticker}/announcements?count={count}"
+    "&market_sensitive=false&page={page}",
 ]
+PAGE_SIZE = 50  # the Markit API quietly caps large itemsPerPage values
 # Verified live 2026-08-20: the file gateway serves the announcement PDF
 # with no access token required.
 PDF_GATEWAY = ("https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0"
@@ -99,42 +102,60 @@ If there are none, return an empty list.""",
 
 
 def fetch_list(ticker: str, count: int, session) -> list[dict]:
+    """Page through the announcement list until `count` items (or the feed
+    runs dry). The Markit API quietly caps itemsPerPage, so deep backfills
+    must paginate."""
     last_err: Exception | None = None
     for template in LIST_ENDPOINTS:
-        url = template.format(ticker=ticker, count=count)
-        try:
-            payload = get(url, session=session).json()
-        except (SourceFetchError, ValueError) as exc:
-            last_err = exc
-            continue
-        items = payload.get("data") or payload.get("items") or []
-        if isinstance(items, dict):
-            items = items.get("items", [])
-        out = []
-        for item in items:
-            header = (item.get("headline") or item.get("header")
-                      or item.get("headerText") or item.get("title") or "")
-            doc_key = str(item.get("documentKey") or "")
-            doc_url = (item.get("url") or item.get("documentUrl")
-                       or item.get("announcementUrl") or "")
-            if not doc_url and doc_key:
-                doc_url = PDF_GATEWAY.format(key=doc_key)
-            date = (item.get("date") or item.get("document_release_date")
-                    or item.get("releaseDate") or item.get("documentDate") or "")
-            ann_id = str(item.get("id") or doc_key
-                         or stable_id(ticker, header, str(date)))
-            out.append({
-                "id": ann_id, "ticker": ticker, "headline": str(header).strip(),
-                "date": date, "url": doc_url,
-                "market_sensitive": bool(item.get("isPriceSensitive")
-                                         or item.get("market_sensitive") or False),
-                "type": str(item.get("announcementType") or ""),
-                "raw": json.dumps(item)[:4000],
-            })
+        out, page = [], 1
+        while len(out) < count:
+            url = template.format(ticker=ticker, count=min(count, PAGE_SIZE), page=page)
+            try:
+                payload = get(url, session=session).json()
+            except (SourceFetchError, ValueError) as exc:
+                last_err = exc
+                break
+            items = payload.get("data") or payload.get("items") or []
+            if isinstance(items, dict):
+                items = items.get("items", [])
+            if not items:
+                break
+            before = len(out)
+            out.extend(_parse_items(ticker, items))
+            if len(out) == before or len(items) < min(count, PAGE_SIZE):
+                break
+            page += 1
+            time.sleep(0.2)
         if out:
-            log.info("asx %s: %d announcements via %s", ticker, len(out), url.split("?")[0])
-            return out
+            log.info("asx %s: %d announcements via %s", ticker, len(out),
+                     template.split("?")[0])
+            return out[:count]
     raise SourceFetchError(f"asx {ticker}: all list endpoints failed; last: {last_err}")
+
+
+def _parse_items(ticker: str, items: list) -> list[dict]:
+    out = []
+    for item in items:
+        header = (item.get("headline") or item.get("header")
+                  or item.get("headerText") or item.get("title") or "")
+        doc_key = str(item.get("documentKey") or "")
+        doc_url = (item.get("url") or item.get("documentUrl")
+                   or item.get("announcementUrl") or "")
+        if not doc_url and doc_key:
+            doc_url = PDF_GATEWAY.format(key=doc_key)
+        date = (item.get("date") or item.get("document_release_date")
+                or item.get("releaseDate") or item.get("documentDate") or "")
+        ann_id = str(item.get("id") or doc_key
+                     or stable_id(ticker, header, str(date)))
+        out.append({
+            "id": ann_id, "ticker": ticker, "headline": str(header).strip(),
+            "date": date, "url": doc_url,
+            "market_sensitive": bool(item.get("isPriceSensitive")
+                                     or item.get("market_sensitive") or False),
+            "type": str(item.get("announcementType") or ""),
+            "raw": json.dumps(item)[:4000],
+        })
+    return out
 
 
 def resolve_pdf_url(item: dict, session) -> str | None:
@@ -181,9 +202,9 @@ def classify_pending(limit: int = 25) -> dict:
     pending = pending.sort_values("date", ascending=False).head(limit)
     if pending.empty:
         return {"processed": 0}
-    if not anthropic_client.have_key():
+    if not llm_client.have_key():
         log_gap(SOURCE, "extractions", f"{len(pending)} announcements pending "
-                                       "classification: ANTHROPIC_API_KEY not set")
+                                       "classification: OPENAI_API_KEY not set")
         return {"processed": 0, "pending": int(len(pending))}
 
     session = make_session()
@@ -196,7 +217,7 @@ def classify_pending(limit: int = 25) -> dict:
             continue
         try:
             pdf = get(pdf_url, session=session).content
-            result = anthropic_client.extract_json_from_pdf(pdf, PROMPTS[item["ticker"]])
+            result = llm_client.extract_json_from_pdf(pdf, PROMPTS[item["ticker"]])
         except Exception as exc:  # noqa: BLE001
             log_gap(SOURCE, f"{item['ticker']}/{item['id']}", f"extraction failed: {exc}")
             continue
@@ -204,7 +225,7 @@ def classify_pending(limit: int = 25) -> dict:
             "id": item["id"], "ticker": item["ticker"], "date": item["date"],
             "headline": item["headline"], "pdf_url": pdf_url,
             "extraction": json.dumps(result),
-            "model": cfg("anthropic", "model", default="claude-sonnet-5"),
+            "model": llm_client.model_name(),
             "retrieved_at": retrieved,
         })
         date = pd.to_datetime(str(item["date"]).split("T")[0], errors="coerce")
@@ -258,6 +279,6 @@ def ingest(backfill: bool = False) -> dict:
     df = pd.DataFrame(all_items)
     df["retrieved_at"] = retrieved
     stats = write_events("announcements", df, key="id")
-    extraction = classify_pending()
+    extraction = classify_pending(limit=500 if backfill else 25)
     return {"rows_written": stats["rows_written"], "rows_total": stats["rows_total"],
             "extraction": extraction, "list_failures": failures}

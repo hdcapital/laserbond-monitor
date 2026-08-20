@@ -14,9 +14,13 @@ store:
   logs_dir: data/logs
   duckdb_path: data/lbl.duckdb   # rebuilt from parquet, not committed
 
-anthropic:
-  model: claude-sonnet-5
-  max_tokens: 2048
+openai:
+  # Announcement-PDF extraction model. Overridable WITHOUT code changes via
+  # the OPENAI_MODEL environment variable - in GitHub Actions that is fed
+  # from the repository *variable* OPENAI_MODEL (Settings -> Secrets and
+  # variables -> Actions -> Variables), so switching model is a UI edit.
+  model: gpt-5-mini
+  max_output_tokens: 2048
 
 announcements:
   tickers: [LBL, EHL, MSV, MAD]

@@ -92,8 +92,8 @@ Cron triggers run on the **default branch**; enable GitHub Pages
 | Secret | Needed for |
 |---|---|
 | `FRED_API_KEY` | US steel new orders via the FRED API (public CSV fallback works without it) |
-| `ANTHROPIC_API_KEY` | announcement PDF classification (Emeco/Mitchell/Mader/LBL Technology events) |
-| `SMTP_HOST/PORT/USER/PASSWORD/FROM/TO` | monthly email brief |
+| `OPENAI_API_KEY` | announcement PDF classification (Emeco/Mitchell/Mader/LBL Technology events); model set by repo variable `OPENAI_MODEL` (default `gpt-5-mini` in config.yaml) |
+| `SMTP_HOST/PORT/USER/PASSWORD/FROM/TO` | monthly email brief. Gmail: host `smtp.gmail.com`, port `587`, user/from = the Gmail address, password = a 16-char [App Password](https://myaccount.google.com/apppasswords) (needs 2-Step Verification; regular passwords won't work) |
 | `SEC_CONTACT_EMAIL` | polite EDGAR User-Agent (optional) |
 | `IMPORTGENIUS_API_KEY` | optional bill-of-lading module (dormant without it) |
 

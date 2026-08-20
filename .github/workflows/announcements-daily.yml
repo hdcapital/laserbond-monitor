@@ -26,7 +26,8 @@ jobs:
 
       - name: Poll announcements + tungsten flags
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
         run: |
           python -m lbl_tracker.cli ingest asx_announcements tungsten_news --strict \
             | tee poll-result.json
