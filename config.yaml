@@ -9,6 +9,9 @@ contact:
   # environment to override the placeholder.
   user_agent: "lbl-tracker/0.1 (https://github.com/hdcapital/laserbond-monitor)"
 
+dashboard:
+  url: https://hdcapital.github.io/laserbond-monitor/
+
 store:
   parquet_dir: data/parquet
   logs_dir: data/logs

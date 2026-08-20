@@ -51,6 +51,17 @@ SERIES_META = {
 # before it has data.
 EXPECTED_SERIES = list(SERIES_META)
 
+# Sources whose publisher has ended the series: absence of new data is the
+# publisher's doing, not drift, and must never read as STALE.
+DISCONTINUED = {
+    "cat.resource_industries_yoy_pct":
+        "CAT discontinued the monthly dealer-statistics filings (last data Dec 2020)",
+}
+
+# Publication lags that the median-gap heuristic under-allows for.
+# US Census M3 (via FRED) publishes ~2 months in arrears.
+MAX_AGE_OVERRIDES = {"fred.steel_new_orders": 100}
+
 
 def _series_payload(obs: pd.DataFrame) -> list[dict]:
     payload = []
@@ -105,11 +116,16 @@ def _freshness(obs: pd.DataFrame, now: pd.Timestamp) -> list[dict]:
         dates = pd.to_datetime(gv["date"]).sort_values()
         gap_days = float(dates.diff().dt.days.dropna().median()) if len(dates) > 3 else 35.0
         age = (now - pd.Timestamp(last["date"])).days
-        status = "OK" if age <= max(2.5 * gap_days, 45) else "STALE"
+        max_age = MAX_AGE_OVERRIDES.get(sid, max(2.5 * gap_days, 45))
+        if sid in DISCONTINUED:
+            status = "DISCONTINUED"
+        else:
+            status = "OK" if age <= max_age else "STALE"
         rows.append({"series": sid, "label": SERIES_META.get(sid, (sid,))[0],
                      "last_date": pd.Timestamp(last["date"]).date().isoformat(),
                      "last_value": float(last["value"]), "rows": int(len(g)),
-                     "status": status, "source_url": str(last["source_url"])})
+                     "status": status, "note": DISCONTINUED.get(sid),
+                     "source_url": str(last["source_url"])})
     return rows
 
 
@@ -365,7 +381,7 @@ $("#built").textContent = DATA.built_at;
     return `<tr><td>${esc(f.label)}<div class="pill">${esc(f.series)}</div></td>
       <td>${esc(f.last_date||"—")}</td><td class="num">${fmt(f.last_value)}</td>
       <td class="num">${f.rows.toLocaleString()}</td>
-      <td><span class="badge ${cls}">${esc(f.status)}</span></td><td>${src}</td></tr>`;
+      <td><span class="badge ${cls}" title="${esc(f.note||"")}">${esc(f.status)}</span></td><td>${src}</td></tr>`;
   }).join("");
   $("#freshness").innerHTML=`<table><thead><tr><th>Series</th><th>Last obs</th>
     <th class="num">Last value</th><th class="num">Rows</th><th>Status</th><th>Link</th></tr></thead>
