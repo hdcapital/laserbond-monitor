@@ -31,6 +31,23 @@ def model_name() -> str:
             or cfg("openai", "model", default="gpt-5-mini"))
 
 
+def complete(prompt: str, max_tokens: int = 400) -> str:
+    """Plain text completion (used for dashboard commentary)."""
+    if not have_key():
+        raise RuntimeError("OPENAI_API_KEY not set")
+    resp = requests.post(API_URL, json={
+        "model": model_name(),
+        "max_completion_tokens": max_tokens,
+        "messages": [{"role": "user", "content": prompt}],
+    }, timeout=120, headers={
+        "Authorization": f"Bearer {os.environ['OPENAI_API_KEY'].strip()}",
+        "content-type": "application/json",
+    })
+    if resp.status_code != 200:
+        raise RuntimeError(f"openai API {resp.status_code}: {resp.text[:400]}")
+    return (resp.json()["choices"][0]["message"]["content"] or "").strip()
+
+
 def extract_json_from_pdf(pdf_bytes: bytes, prompt: str) -> dict:
     """Send a PDF + prompt, expect a single JSON object back."""
     if not have_key():

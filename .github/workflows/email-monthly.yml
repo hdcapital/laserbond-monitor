@@ -21,9 +21,13 @@ jobs:
       - run: pip install -e ".[browser]"
 
       - name: Rebuild summary from committed store
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
         run: |
           python -m lbl_tracker.cli pulses
           python -m lbl_tracker.cli backtest || true
+          python -m lbl_tracker.cli commentary || true
           python -m lbl_tracker.cli dashboard
 
       - name: Send brief

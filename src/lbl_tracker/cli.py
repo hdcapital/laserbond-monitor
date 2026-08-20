@@ -22,6 +22,8 @@ def main(argv: list[str] | None = None) -> int:
     p_probe.add_argument("sources", nargs="*")
 
     sub.add_parser("pulses", help="compute pulse composites -> parquet + docs json")
+    sub.add_parser("commentary", help="AI summary boxes from computed figures "
+                                      "(needs OPENAI_API_KEY; no-op without)")
     sub.add_parser("dashboard", help="build static dashboard -> /docs")
     sub.add_parser("backtest", help="run backtest against manual LBL history")
     sub.add_parser("email", help="send the monthly email brief (SMTP secrets)")
@@ -52,6 +54,13 @@ def main(argv: list[str] | None = None) -> int:
         result = compute_all(write=True)
         summary = {name: p.get("latest_value") for name, p in result["pulses"].items()}
         print(json.dumps(summary, indent=1))
+        return 0
+
+    if args.command == "commentary":
+        from .analytics.commentary import generate
+        result = generate()
+        print(json.dumps({k: v.get("generated_at") for k, v in result.items()},
+                         indent=1))
         return 0
 
     if args.command == "dashboard":

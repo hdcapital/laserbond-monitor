@@ -45,9 +45,13 @@ jobs:
             ${{ inputs.backfill == true && '--backfill' || '' }} | tee ingest-result.json
 
       - name: Compute pulses, backtest, dashboard
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
         run: |
           python -m lbl_tracker.cli pulses
           python -m lbl_tracker.cli backtest || true
+          python -m lbl_tracker.cli commentary || true
           python -m lbl_tracker.cli dashboard
 
       - name: Commit store + dashboard
