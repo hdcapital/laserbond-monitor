@@ -52,7 +52,9 @@ def logs_dir() -> Path:
 def user_agent(sec: bool = False) -> str:
     base = cfg("contact", "user_agent", default="lbl-tracker/0.1")
     if sec:
+        # SEC documents exactly "Company Name AdminContact@domain.com";
+        # URLs/slashes in the UA still trip their automated-tool filter.
         contact = os.environ.get("SEC_CONTACT_EMAIL", "").strip()
         if contact:
-            return f"{base} {contact}"
+            return f"hdcapital lbl-tracker {contact}"
     return base

@@ -300,6 +300,20 @@ def probe_asx():
                 _p(_head(resp.text, 2500))
             except Exception as exc:  # noqa: BLE001
                 _p(f"-- {url} FAILED: {exc}")
+    base = "https://asx.api.markitdigital.com/asx-research/1.0/companies/LBL/announcements"
+    token = "access_token=83ff96335c2d45a094df02a206a39ff4"  # public token on asx.com.au
+    for variant in ("itemsPerPage=20", f"itemsPerPage=20&{token}", "pageSize=20",
+                    "count=20", "limit=20", "itemsPerPage=5&page=2",
+                    f"itemsPerPage=5&page=2&{token}", "itemsPerPage=5&pageNumber=2",
+                    "itemsPerPage=5&offset=5"):
+        try:
+            payload = get(f"{base}?{variant}", session=session).json()
+            items = payload.get("data", {}).get("items", [])
+            first = (items[0].get("headline", "")[:40], str(items[0].get("date"))[:10]) \
+                if items else None
+            _p(f"-- variant {variant}: {len(items)} items; first={first}")
+        except Exception as exc:  # noqa: BLE001
+            _p(f"-- variant {variant}: FAILED {exc}")
     try:
         deep = asx.fetch_list("LBL", 120, session)
         dates = sorted(str(i["date"])[:10] for i in deep)
