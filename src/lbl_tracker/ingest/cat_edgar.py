@@ -1,13 +1,14 @@
 """Caterpillar monthly dealer retail sales statistics from SEC EDGAR 8-Ks.
 
 Caterpillar furnished monthly retail-statistics 8-Ks (Item 7.01) with
-dealer retail sales YoY changes by region and segment **until February
-2017, when CAT discontinued the monthly series** (verified live: item-7.01
-filings since then are quarterly earnings releases). This ingester
-recovers the full published monthly history - Resources Industries block,
-'UP x%' / 'DOWN x%' by region - via the data.sec.gov submissions API and
-the filing archives. The series therefore ends at Jan 2017: it feeds the
-backtest era of the Products Pulse and renormalises out of current months.
+dealer retail sales YoY changes by region and segment **until early 2021,
+when CAT discontinued the monthly series** (verified live: the parseable
+monthly history spans Jan 2014 - Dec 2020 under the 'Resources
+Industries' naming; item-7.01 filings since are quarterly earnings
+releases, and pre-2014 filings use earlier table formats). This ingester
+recovers the published monthly history via the data.sec.gov submissions
+API and the filing archives; it feeds the backtest era of the Products
+Pulse and renormalises out of current months.
 
 Series stored (monthly, percent YoY, negative = decline):
   cat.resource_industries_yoy_pct           World
@@ -35,7 +36,7 @@ CAT_CIK = "0000018230"
 ARCHIVES = "https://www.sec.gov/Archives/edgar/data"
 SUBMISSIONS_BASE = "https://data.sec.gov/submissions"
 # 283 item-7.01 8-Ks exist 2004->current (verified live); monthly
-# dealer-statistics filings ended Feb 2017, later ones are quarterly
+# monthly dealer-statistics filings ended early 2021, later ones are quarterly
 # earnings releases that parse to nothing.
 MAX_FILINGS = 400
 
@@ -73,7 +74,7 @@ def parse_exhibit(html: str, url: str) -> list[dict]:
     region rows valued 'UP x%' / 'DOWN x%'. Each filing carries the
     current month plus the two prior months. Quarterly earnings releases
     (the only 7.01 filings since CAT discontinued the monthly series in
-    Feb 2017) contain no such block and parse to []."""
+    early 2021) contain no such block and parse to []."""
     import io as _io
     try:
         tables = pd.read_html(_io.StringIO(html))
@@ -199,7 +200,7 @@ def fetch() -> pd.DataFrame:
         if cutoff is not None:
             # discontinued series: no new monthly filings is the normal state
             log.info("cat_edgar: no new dealer-statistics filings (series "
-                     "discontinued by CAT in Feb 2017)")
+                     "discontinued by CAT in early 2021)")
             return pd.DataFrame(columns=["series_id", "date", "value",
                                          "source_url", "retrieved_at"])
         raise RuntimeError("cat_edgar: filings found but no Resource Industries "

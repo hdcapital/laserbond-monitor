@@ -106,7 +106,7 @@ def test_baker_hughes():
 
 
 def test_cat_edgar():
-    """CAT discontinued the monthly dealer-statistics 8-Ks in Feb 2017, so
+    """CAT discontinued the monthly dealer-statistics 8-Ks in early 2021, so
     freshness cannot be asserted; instead assert the historical monthly era
     still parses (the drift that matters is EDGAR access + layout)."""
     import os
