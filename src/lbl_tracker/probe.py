@@ -203,27 +203,52 @@ def probe_baker_hughes():
 
 
 def probe_cat_edgar():
+    import time as _time
+
+    from bs4 import BeautifulSoup
+
     from .ingest import cat_edgar
     session = make_session(sec=True)
-    hits = cat_edgar.search_filings(session)
+    old = cat_edgar.MAX_FILINGS
+    cat_edgar.MAX_FILINGS = 400
+    try:
+        hits = cat_edgar.search_filings(session)
+    finally:
+        cat_edgar.MAX_FILINGS = old
     _p(f"8-K item-7.01 filings: {len(hits)}")
-    for hit in hits[:10]:
-        _p(f"- {hit}")
     if hits:
-        url = cat_edgar.exhibit_url(hits[0], session)
-        _p(f"first exhibit: {url}")
-        html = get(url, session=session, sec=True).text
-        from bs4 import BeautifulSoup
-        text = " ".join(BeautifulSoup(html, "lxml").get_text(" ", strip=True).split())
-        _p(_head(text, 5000))
+        _p(f"date range: {hits[-1]['file_date']} .. {hits[0]['file_date']}")
+        _p(f"recent dates: {[h['file_date'] for h in hits[:12]]}")
+    # walk newest -> older until an exhibit mentions Resource Industries
+    shown = 0
+    for hit in hits[:40]:
         try:
-            tables = pd.read_html(io.StringIO(html))
-            _p(f"tables: {len(tables)}")
-            for i, table in enumerate(tables[:6]):
-                _p(f"-- table {i} shape={table.shape}")
-                _p(table.head(8).to_string()[:1800])
-        except ValueError as exc:
-            _p(f"read_html: {exc}")
+            url = cat_edgar.exhibit_url(hit, session)
+            if not url:
+                _p(f"- {hit['file_date']}: no exhibit")
+                continue
+            html = get(url, session=session, sec=True).text
+            text = " ".join(BeautifulSoup(html, "lxml").get_text(" ", strip=True).split())
+            has_ri = "resource industries" in text.lower()
+            _p(f"- {hit['file_date']} {url.rsplit('/',1)[-1]}: RI={has_ri} :: {text[:160]}")
+            if has_ri:
+                _p("exhibit text excerpt:")
+                _p(_head(text, 4000))
+                try:
+                    tables = pd.read_html(io.StringIO(html))
+                    _p(f"tables: {len(tables)}")
+                    for i, table in enumerate(tables[:5]):
+                        _p(f"-- table {i} shape={table.shape}")
+                        _p(table.head(10).to_string()[:2000])
+                except ValueError as exc:
+                    _p(f"read_html: {exc}")
+                parsed = cat_edgar.parse_exhibit(html, url)
+                _p(f"parse_exhibit -> {parsed}")
+                break
+            shown += 1
+        except Exception as exc:  # noqa: BLE001
+            _p(f"- {hit.get('file_date')}: FAILED {exc}")
+        _time.sleep(0.15)
 
 
 def probe_jsa():

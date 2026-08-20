@@ -40,6 +40,8 @@ jobs:
           cache: pip
       - run: pip install -e ".[dev,browser]"
       - name: Probe live sources (diagnostics)
+        env:
+          SEC_CONTACT_EMAIL: ${{ secrets.SEC_CONTACT_EMAIL }}
         run: python -m lbl_tracker.probe ${{ inputs.probes }}
 
   smoke:
