@@ -4,19 +4,5326 @@
    "title": "Services Pulse",
    "latest_month": null,
    "latest_value": null,
-   "history": []
+   "history": [
+    {
+     "month": "1984-06-30",
+     "value": null
+    },
+    {
+     "month": "1984-07-31",
+     "value": null
+    },
+    {
+     "month": "1984-08-31",
+     "value": null
+    },
+    {
+     "month": "1984-09-30",
+     "value": null
+    },
+    {
+     "month": "1984-10-31",
+     "value": null
+    },
+    {
+     "month": "1984-11-30",
+     "value": null
+    },
+    {
+     "month": "1984-12-31",
+     "value": null
+    },
+    {
+     "month": "1985-01-31",
+     "value": null
+    },
+    {
+     "month": "1985-02-28",
+     "value": null
+    },
+    {
+     "month": "1985-03-31",
+     "value": null
+    },
+    {
+     "month": "1985-04-30",
+     "value": null
+    },
+    {
+     "month": "1985-05-31",
+     "value": null
+    },
+    {
+     "month": "1985-06-30",
+     "value": null
+    },
+    {
+     "month": "1985-07-31",
+     "value": null
+    },
+    {
+     "month": "1985-08-31",
+     "value": null
+    },
+    {
+     "month": "1985-09-30",
+     "value": null
+    },
+    {
+     "month": "1985-10-31",
+     "value": null
+    },
+    {
+     "month": "1985-11-30",
+     "value": null
+    },
+    {
+     "month": "1985-12-31",
+     "value": null
+    },
+    {
+     "month": "1986-01-31",
+     "value": null
+    },
+    {
+     "month": "1986-02-28",
+     "value": null
+    },
+    {
+     "month": "1986-03-31",
+     "value": null
+    },
+    {
+     "month": "1986-04-30",
+     "value": null
+    },
+    {
+     "month": "1986-05-31",
+     "value": null
+    },
+    {
+     "month": "1986-06-30",
+     "value": null
+    },
+    {
+     "month": "1986-07-31",
+     "value": null
+    },
+    {
+     "month": "1986-08-31",
+     "value": null
+    },
+    {
+     "month": "1986-09-30",
+     "value": null
+    },
+    {
+     "month": "1986-10-31",
+     "value": null
+    },
+    {
+     "month": "1986-11-30",
+     "value": null
+    },
+    {
+     "month": "1986-12-31",
+     "value": null
+    },
+    {
+     "month": "1987-01-31",
+     "value": null
+    },
+    {
+     "month": "1987-02-28",
+     "value": null
+    },
+    {
+     "month": "1987-03-31",
+     "value": null
+    },
+    {
+     "month": "1987-04-30",
+     "value": null
+    },
+    {
+     "month": "1987-05-31",
+     "value": null
+    },
+    {
+     "month": "1987-06-30",
+     "value": null
+    },
+    {
+     "month": "1987-07-31",
+     "value": null
+    },
+    {
+     "month": "1987-08-31",
+     "value": null
+    },
+    {
+     "month": "1987-09-30",
+     "value": null
+    },
+    {
+     "month": "1987-10-31",
+     "value": null
+    },
+    {
+     "month": "1987-11-30",
+     "value": null
+    },
+    {
+     "month": "1987-12-31",
+     "value": null
+    },
+    {
+     "month": "1988-01-31",
+     "value": null
+    },
+    {
+     "month": "1988-02-29",
+     "value": null
+    },
+    {
+     "month": "1988-03-31",
+     "value": null
+    },
+    {
+     "month": "1988-04-30",
+     "value": null
+    },
+    {
+     "month": "1988-05-31",
+     "value": null
+    },
+    {
+     "month": "1988-06-30",
+     "value": null
+    },
+    {
+     "month": "1988-07-31",
+     "value": null
+    },
+    {
+     "month": "1988-08-31",
+     "value": null
+    },
+    {
+     "month": "1988-09-30",
+     "value": null
+    },
+    {
+     "month": "1988-10-31",
+     "value": null
+    },
+    {
+     "month": "1988-11-30",
+     "value": null
+    },
+    {
+     "month": "1988-12-31",
+     "value": null
+    },
+    {
+     "month": "1989-01-31",
+     "value": null
+    },
+    {
+     "month": "1989-02-28",
+     "value": null
+    },
+    {
+     "month": "1989-03-31",
+     "value": null
+    },
+    {
+     "month": "1989-04-30",
+     "value": null
+    },
+    {
+     "month": "1989-05-31",
+     "value": null
+    },
+    {
+     "month": "1989-06-30",
+     "value": null
+    },
+    {
+     "month": "1989-07-31",
+     "value": null
+    },
+    {
+     "month": "1989-08-31",
+     "value": null
+    },
+    {
+     "month": "1989-09-30",
+     "value": null
+    },
+    {
+     "month": "1989-10-31",
+     "value": null
+    },
+    {
+     "month": "1989-11-30",
+     "value": null
+    },
+    {
+     "month": "1989-12-31",
+     "value": null
+    },
+    {
+     "month": "1990-01-31",
+     "value": null
+    },
+    {
+     "month": "1990-02-28",
+     "value": null
+    },
+    {
+     "month": "1990-03-31",
+     "value": null
+    },
+    {
+     "month": "1990-04-30",
+     "value": null
+    },
+    {
+     "month": "1990-05-31",
+     "value": null
+    },
+    {
+     "month": "1990-06-30",
+     "value": null
+    },
+    {
+     "month": "1990-07-31",
+     "value": null
+    },
+    {
+     "month": "1990-08-31",
+     "value": null
+    },
+    {
+     "month": "1990-09-30",
+     "value": null
+    },
+    {
+     "month": "1990-10-31",
+     "value": null
+    },
+    {
+     "month": "1990-11-30",
+     "value": null
+    },
+    {
+     "month": "1990-12-31",
+     "value": null
+    },
+    {
+     "month": "1991-01-31",
+     "value": null
+    },
+    {
+     "month": "1991-02-28",
+     "value": null
+    },
+    {
+     "month": "1991-03-31",
+     "value": null
+    },
+    {
+     "month": "1991-04-30",
+     "value": null
+    },
+    {
+     "month": "1991-05-31",
+     "value": null
+    },
+    {
+     "month": "1991-06-30",
+     "value": null
+    },
+    {
+     "month": "1991-07-31",
+     "value": null
+    },
+    {
+     "month": "1991-08-31",
+     "value": null
+    },
+    {
+     "month": "1991-09-30",
+     "value": null
+    },
+    {
+     "month": "1991-10-31",
+     "value": null
+    },
+    {
+     "month": "1991-11-30",
+     "value": null
+    },
+    {
+     "month": "1991-12-31",
+     "value": null
+    },
+    {
+     "month": "1992-01-31",
+     "value": null
+    },
+    {
+     "month": "1992-02-29",
+     "value": null
+    },
+    {
+     "month": "1992-03-31",
+     "value": null
+    },
+    {
+     "month": "1992-04-30",
+     "value": null
+    },
+    {
+     "month": "1992-05-31",
+     "value": null
+    },
+    {
+     "month": "1992-06-30",
+     "value": null
+    },
+    {
+     "month": "1992-07-31",
+     "value": null
+    },
+    {
+     "month": "1992-08-31",
+     "value": null
+    },
+    {
+     "month": "1992-09-30",
+     "value": null
+    },
+    {
+     "month": "1992-10-31",
+     "value": null
+    },
+    {
+     "month": "1992-11-30",
+     "value": null
+    },
+    {
+     "month": "1992-12-31",
+     "value": null
+    },
+    {
+     "month": "1993-01-31",
+     "value": null
+    },
+    {
+     "month": "1993-02-28",
+     "value": null
+    },
+    {
+     "month": "1993-03-31",
+     "value": null
+    },
+    {
+     "month": "1993-04-30",
+     "value": null
+    },
+    {
+     "month": "1993-05-31",
+     "value": null
+    },
+    {
+     "month": "1993-06-30",
+     "value": null
+    },
+    {
+     "month": "1993-07-31",
+     "value": null
+    },
+    {
+     "month": "1993-08-31",
+     "value": null
+    },
+    {
+     "month": "1993-09-30",
+     "value": null
+    },
+    {
+     "month": "1993-10-31",
+     "value": null
+    },
+    {
+     "month": "1993-11-30",
+     "value": null
+    },
+    {
+     "month": "1993-12-31",
+     "value": null
+    },
+    {
+     "month": "1994-01-31",
+     "value": null
+    },
+    {
+     "month": "1994-02-28",
+     "value": null
+    },
+    {
+     "month": "1994-03-31",
+     "value": null
+    },
+    {
+     "month": "1994-04-30",
+     "value": null
+    },
+    {
+     "month": "1994-05-31",
+     "value": null
+    },
+    {
+     "month": "1994-06-30",
+     "value": null
+    },
+    {
+     "month": "1994-07-31",
+     "value": null
+    },
+    {
+     "month": "1994-08-31",
+     "value": null
+    },
+    {
+     "month": "1994-09-30",
+     "value": null
+    },
+    {
+     "month": "1994-10-31",
+     "value": null
+    },
+    {
+     "month": "1994-11-30",
+     "value": null
+    },
+    {
+     "month": "1994-12-31",
+     "value": null
+    },
+    {
+     "month": "1995-01-31",
+     "value": null
+    },
+    {
+     "month": "1995-02-28",
+     "value": null
+    },
+    {
+     "month": "1995-03-31",
+     "value": null
+    },
+    {
+     "month": "1995-04-30",
+     "value": null
+    },
+    {
+     "month": "1995-05-31",
+     "value": null
+    },
+    {
+     "month": "1995-06-30",
+     "value": null
+    },
+    {
+     "month": "1995-07-31",
+     "value": null
+    },
+    {
+     "month": "1995-08-31",
+     "value": null
+    },
+    {
+     "month": "1995-09-30",
+     "value": null
+    },
+    {
+     "month": "1995-10-31",
+     "value": null
+    },
+    {
+     "month": "1995-11-30",
+     "value": null
+    },
+    {
+     "month": "1995-12-31",
+     "value": null
+    },
+    {
+     "month": "1996-01-31",
+     "value": null
+    },
+    {
+     "month": "1996-02-29",
+     "value": null
+    },
+    {
+     "month": "1996-03-31",
+     "value": null
+    },
+    {
+     "month": "1996-04-30",
+     "value": null
+    },
+    {
+     "month": "1996-05-31",
+     "value": null
+    },
+    {
+     "month": "1996-06-30",
+     "value": null
+    },
+    {
+     "month": "1996-07-31",
+     "value": null
+    },
+    {
+     "month": "1996-08-31",
+     "value": null
+    },
+    {
+     "month": "1996-09-30",
+     "value": null
+    },
+    {
+     "month": "1996-10-31",
+     "value": null
+    },
+    {
+     "month": "1996-11-30",
+     "value": null
+    },
+    {
+     "month": "1996-12-31",
+     "value": null
+    },
+    {
+     "month": "1997-01-31",
+     "value": null
+    },
+    {
+     "month": "1997-02-28",
+     "value": null
+    },
+    {
+     "month": "1997-03-31",
+     "value": null
+    },
+    {
+     "month": "1997-04-30",
+     "value": null
+    },
+    {
+     "month": "1997-05-31",
+     "value": null
+    },
+    {
+     "month": "1997-06-30",
+     "value": null
+    },
+    {
+     "month": "1997-07-31",
+     "value": null
+    },
+    {
+     "month": "1997-08-31",
+     "value": null
+    },
+    {
+     "month": "1997-09-30",
+     "value": null
+    },
+    {
+     "month": "1997-10-31",
+     "value": null
+    },
+    {
+     "month": "1997-11-30",
+     "value": null
+    },
+    {
+     "month": "1997-12-31",
+     "value": null
+    },
+    {
+     "month": "1998-01-31",
+     "value": null
+    },
+    {
+     "month": "1998-02-28",
+     "value": null
+    },
+    {
+     "month": "1998-03-31",
+     "value": null
+    },
+    {
+     "month": "1998-04-30",
+     "value": null
+    },
+    {
+     "month": "1998-05-31",
+     "value": null
+    },
+    {
+     "month": "1998-06-30",
+     "value": null
+    },
+    {
+     "month": "1998-07-31",
+     "value": null
+    },
+    {
+     "month": "1998-08-31",
+     "value": null
+    },
+    {
+     "month": "1998-09-30",
+     "value": null
+    },
+    {
+     "month": "1998-10-31",
+     "value": null
+    },
+    {
+     "month": "1998-11-30",
+     "value": null
+    },
+    {
+     "month": "1998-12-31",
+     "value": null
+    },
+    {
+     "month": "1999-01-31",
+     "value": null
+    },
+    {
+     "month": "1999-02-28",
+     "value": null
+    },
+    {
+     "month": "1999-03-31",
+     "value": null
+    },
+    {
+     "month": "1999-04-30",
+     "value": null
+    },
+    {
+     "month": "1999-05-31",
+     "value": null
+    },
+    {
+     "month": "1999-06-30",
+     "value": null
+    },
+    {
+     "month": "1999-07-31",
+     "value": null
+    },
+    {
+     "month": "1999-08-31",
+     "value": null
+    },
+    {
+     "month": "1999-09-30",
+     "value": null
+    },
+    {
+     "month": "1999-10-31",
+     "value": null
+    },
+    {
+     "month": "1999-11-30",
+     "value": null
+    },
+    {
+     "month": "1999-12-31",
+     "value": null
+    },
+    {
+     "month": "2000-01-31",
+     "value": null
+    },
+    {
+     "month": "2000-02-29",
+     "value": null
+    },
+    {
+     "month": "2000-03-31",
+     "value": null
+    },
+    {
+     "month": "2000-04-30",
+     "value": null
+    },
+    {
+     "month": "2000-05-31",
+     "value": null
+    },
+    {
+     "month": "2000-06-30",
+     "value": null
+    },
+    {
+     "month": "2000-07-31",
+     "value": null
+    },
+    {
+     "month": "2000-08-31",
+     "value": null
+    },
+    {
+     "month": "2000-09-30",
+     "value": null
+    },
+    {
+     "month": "2000-10-31",
+     "value": null
+    },
+    {
+     "month": "2000-11-30",
+     "value": null
+    },
+    {
+     "month": "2000-12-31",
+     "value": null
+    },
+    {
+     "month": "2001-01-31",
+     "value": null
+    },
+    {
+     "month": "2001-02-28",
+     "value": null
+    },
+    {
+     "month": "2001-03-31",
+     "value": null
+    },
+    {
+     "month": "2001-04-30",
+     "value": null
+    },
+    {
+     "month": "2001-05-31",
+     "value": null
+    },
+    {
+     "month": "2001-06-30",
+     "value": null
+    },
+    {
+     "month": "2001-07-31",
+     "value": null
+    },
+    {
+     "month": "2001-08-31",
+     "value": null
+    },
+    {
+     "month": "2001-09-30",
+     "value": null
+    },
+    {
+     "month": "2001-10-31",
+     "value": null
+    },
+    {
+     "month": "2001-11-30",
+     "value": null
+    },
+    {
+     "month": "2001-12-31",
+     "value": null
+    },
+    {
+     "month": "2002-01-31",
+     "value": null
+    },
+    {
+     "month": "2002-02-28",
+     "value": null
+    },
+    {
+     "month": "2002-03-31",
+     "value": null
+    },
+    {
+     "month": "2002-04-30",
+     "value": null
+    },
+    {
+     "month": "2002-05-31",
+     "value": null
+    },
+    {
+     "month": "2002-06-30",
+     "value": null
+    },
+    {
+     "month": "2002-07-31",
+     "value": null
+    },
+    {
+     "month": "2002-08-31",
+     "value": null
+    },
+    {
+     "month": "2002-09-30",
+     "value": null
+    },
+    {
+     "month": "2002-10-31",
+     "value": null
+    },
+    {
+     "month": "2002-11-30",
+     "value": null
+    },
+    {
+     "month": "2002-12-31",
+     "value": null
+    },
+    {
+     "month": "2003-01-31",
+     "value": null
+    },
+    {
+     "month": "2003-02-28",
+     "value": null
+    },
+    {
+     "month": "2003-03-31",
+     "value": null
+    },
+    {
+     "month": "2003-04-30",
+     "value": null
+    },
+    {
+     "month": "2003-05-31",
+     "value": null
+    },
+    {
+     "month": "2003-06-30",
+     "value": null
+    },
+    {
+     "month": "2003-07-31",
+     "value": null
+    },
+    {
+     "month": "2003-08-31",
+     "value": null
+    },
+    {
+     "month": "2003-09-30",
+     "value": null
+    },
+    {
+     "month": "2003-10-31",
+     "value": null
+    },
+    {
+     "month": "2003-11-30",
+     "value": null
+    },
+    {
+     "month": "2003-12-31",
+     "value": null
+    },
+    {
+     "month": "2004-01-31",
+     "value": null
+    },
+    {
+     "month": "2004-02-29",
+     "value": null
+    },
+    {
+     "month": "2004-03-31",
+     "value": null
+    },
+    {
+     "month": "2004-04-30",
+     "value": null
+    },
+    {
+     "month": "2004-05-31",
+     "value": null
+    },
+    {
+     "month": "2004-06-30",
+     "value": null
+    },
+    {
+     "month": "2004-07-31",
+     "value": null
+    },
+    {
+     "month": "2004-08-31",
+     "value": null
+    },
+    {
+     "month": "2004-09-30",
+     "value": null
+    },
+    {
+     "month": "2004-10-31",
+     "value": null
+    },
+    {
+     "month": "2004-11-30",
+     "value": null
+    },
+    {
+     "month": "2004-12-31",
+     "value": null
+    },
+    {
+     "month": "2005-01-31",
+     "value": null
+    },
+    {
+     "month": "2005-02-28",
+     "value": null
+    },
+    {
+     "month": "2005-03-31",
+     "value": null
+    },
+    {
+     "month": "2005-04-30",
+     "value": null
+    },
+    {
+     "month": "2005-05-31",
+     "value": null
+    },
+    {
+     "month": "2005-06-30",
+     "value": null
+    },
+    {
+     "month": "2005-07-31",
+     "value": null
+    },
+    {
+     "month": "2005-08-31",
+     "value": null
+    },
+    {
+     "month": "2005-09-30",
+     "value": null
+    },
+    {
+     "month": "2005-10-31",
+     "value": null
+    },
+    {
+     "month": "2005-11-30",
+     "value": null
+    },
+    {
+     "month": "2005-12-31",
+     "value": null
+    },
+    {
+     "month": "2006-01-31",
+     "value": null
+    },
+    {
+     "month": "2006-02-28",
+     "value": null
+    },
+    {
+     "month": "2006-03-31",
+     "value": null
+    },
+    {
+     "month": "2006-04-30",
+     "value": null
+    },
+    {
+     "month": "2006-05-31",
+     "value": null
+    },
+    {
+     "month": "2006-06-30",
+     "value": null
+    },
+    {
+     "month": "2006-07-31",
+     "value": null
+    },
+    {
+     "month": "2006-08-31",
+     "value": null
+    },
+    {
+     "month": "2006-09-30",
+     "value": null
+    },
+    {
+     "month": "2006-10-31",
+     "value": null
+    },
+    {
+     "month": "2006-11-30",
+     "value": null
+    },
+    {
+     "month": "2006-12-31",
+     "value": null
+    },
+    {
+     "month": "2007-01-31",
+     "value": null
+    },
+    {
+     "month": "2007-02-28",
+     "value": null
+    },
+    {
+     "month": "2007-03-31",
+     "value": null
+    },
+    {
+     "month": "2007-04-30",
+     "value": null
+    },
+    {
+     "month": "2007-05-31",
+     "value": null
+    },
+    {
+     "month": "2007-06-30",
+     "value": null
+    },
+    {
+     "month": "2007-07-31",
+     "value": null
+    },
+    {
+     "month": "2007-08-31",
+     "value": null
+    },
+    {
+     "month": "2007-09-30",
+     "value": null
+    },
+    {
+     "month": "2007-10-31",
+     "value": null
+    },
+    {
+     "month": "2007-11-30",
+     "value": null
+    },
+    {
+     "month": "2007-12-31",
+     "value": null
+    },
+    {
+     "month": "2008-01-31",
+     "value": null
+    },
+    {
+     "month": "2008-02-29",
+     "value": null
+    },
+    {
+     "month": "2008-03-31",
+     "value": null
+    },
+    {
+     "month": "2008-04-30",
+     "value": null
+    },
+    {
+     "month": "2008-05-31",
+     "value": null
+    },
+    {
+     "month": "2008-06-30",
+     "value": null
+    },
+    {
+     "month": "2008-07-31",
+     "value": null
+    },
+    {
+     "month": "2008-08-31",
+     "value": null
+    },
+    {
+     "month": "2008-09-30",
+     "value": null
+    },
+    {
+     "month": "2008-10-31",
+     "value": null
+    },
+    {
+     "month": "2008-11-30",
+     "value": null
+    },
+    {
+     "month": "2008-12-31",
+     "value": null
+    },
+    {
+     "month": "2009-01-31",
+     "value": null
+    },
+    {
+     "month": "2009-02-28",
+     "value": null
+    },
+    {
+     "month": "2009-03-31",
+     "value": null
+    },
+    {
+     "month": "2009-04-30",
+     "value": null
+    },
+    {
+     "month": "2009-05-31",
+     "value": null
+    },
+    {
+     "month": "2009-06-30",
+     "value": null
+    },
+    {
+     "month": "2009-07-31",
+     "value": null
+    },
+    {
+     "month": "2009-08-31",
+     "value": null
+    },
+    {
+     "month": "2009-09-30",
+     "value": null
+    },
+    {
+     "month": "2009-10-31",
+     "value": null
+    },
+    {
+     "month": "2009-11-30",
+     "value": null
+    },
+    {
+     "month": "2009-12-31",
+     "value": null
+    },
+    {
+     "month": "2010-01-31",
+     "value": null
+    },
+    {
+     "month": "2010-02-28",
+     "value": null
+    },
+    {
+     "month": "2010-03-31",
+     "value": null
+    },
+    {
+     "month": "2010-04-30",
+     "value": null
+    },
+    {
+     "month": "2010-05-31",
+     "value": null
+    },
+    {
+     "month": "2010-06-30",
+     "value": null
+    },
+    {
+     "month": "2010-07-31",
+     "value": null
+    },
+    {
+     "month": "2010-08-31",
+     "value": null
+    },
+    {
+     "month": "2010-09-30",
+     "value": null
+    },
+    {
+     "month": "2010-10-31",
+     "value": null
+    },
+    {
+     "month": "2010-11-30",
+     "value": null
+    },
+    {
+     "month": "2010-12-31",
+     "value": null
+    },
+    {
+     "month": "2011-01-31",
+     "value": null
+    },
+    {
+     "month": "2011-02-28",
+     "value": null
+    },
+    {
+     "month": "2011-03-31",
+     "value": null
+    },
+    {
+     "month": "2011-04-30",
+     "value": null
+    },
+    {
+     "month": "2011-05-31",
+     "value": null
+    },
+    {
+     "month": "2011-06-30",
+     "value": null
+    },
+    {
+     "month": "2011-07-31",
+     "value": null
+    },
+    {
+     "month": "2011-08-31",
+     "value": null
+    },
+    {
+     "month": "2011-09-30",
+     "value": null
+    },
+    {
+     "month": "2011-10-31",
+     "value": null
+    },
+    {
+     "month": "2011-11-30",
+     "value": null
+    },
+    {
+     "month": "2011-12-31",
+     "value": null
+    },
+    {
+     "month": "2012-01-31",
+     "value": null
+    },
+    {
+     "month": "2012-02-29",
+     "value": null
+    },
+    {
+     "month": "2012-03-31",
+     "value": null
+    },
+    {
+     "month": "2012-04-30",
+     "value": null
+    },
+    {
+     "month": "2012-05-31",
+     "value": null
+    },
+    {
+     "month": "2012-06-30",
+     "value": null
+    },
+    {
+     "month": "2012-07-31",
+     "value": null
+    },
+    {
+     "month": "2012-08-31",
+     "value": null
+    },
+    {
+     "month": "2012-09-30",
+     "value": null
+    },
+    {
+     "month": "2012-10-31",
+     "value": null
+    },
+    {
+     "month": "2012-11-30",
+     "value": null
+    },
+    {
+     "month": "2012-12-31",
+     "value": null
+    },
+    {
+     "month": "2013-01-31",
+     "value": null
+    },
+    {
+     "month": "2013-02-28",
+     "value": null
+    },
+    {
+     "month": "2013-03-31",
+     "value": null
+    },
+    {
+     "month": "2013-04-30",
+     "value": null
+    },
+    {
+     "month": "2013-05-31",
+     "value": null
+    },
+    {
+     "month": "2013-06-30",
+     "value": null
+    },
+    {
+     "month": "2013-07-31",
+     "value": null
+    },
+    {
+     "month": "2013-08-31",
+     "value": null
+    },
+    {
+     "month": "2013-09-30",
+     "value": null
+    },
+    {
+     "month": "2013-10-31",
+     "value": null
+    },
+    {
+     "month": "2013-11-30",
+     "value": null
+    },
+    {
+     "month": "2013-12-31",
+     "value": null
+    },
+    {
+     "month": "2014-01-31",
+     "value": null
+    },
+    {
+     "month": "2014-02-28",
+     "value": null
+    },
+    {
+     "month": "2014-03-31",
+     "value": null
+    },
+    {
+     "month": "2014-04-30",
+     "value": null
+    },
+    {
+     "month": "2014-05-31",
+     "value": null
+    },
+    {
+     "month": "2014-06-30",
+     "value": null
+    },
+    {
+     "month": "2014-07-31",
+     "value": null
+    },
+    {
+     "month": "2014-08-31",
+     "value": null
+    },
+    {
+     "month": "2014-09-30",
+     "value": null
+    },
+    {
+     "month": "2014-10-31",
+     "value": null
+    },
+    {
+     "month": "2014-11-30",
+     "value": null
+    },
+    {
+     "month": "2014-12-31",
+     "value": null
+    },
+    {
+     "month": "2015-01-31",
+     "value": null
+    },
+    {
+     "month": "2015-02-28",
+     "value": null
+    },
+    {
+     "month": "2015-03-31",
+     "value": null
+    },
+    {
+     "month": "2015-04-30",
+     "value": null
+    },
+    {
+     "month": "2015-05-31",
+     "value": null
+    },
+    {
+     "month": "2015-06-30",
+     "value": null
+    },
+    {
+     "month": "2015-07-31",
+     "value": null
+    },
+    {
+     "month": "2015-08-31",
+     "value": null
+    },
+    {
+     "month": "2015-09-30",
+     "value": null
+    },
+    {
+     "month": "2015-10-31",
+     "value": null
+    },
+    {
+     "month": "2015-11-30",
+     "value": null
+    },
+    {
+     "month": "2015-12-31",
+     "value": null
+    },
+    {
+     "month": "2016-01-31",
+     "value": null
+    },
+    {
+     "month": "2016-02-29",
+     "value": null
+    },
+    {
+     "month": "2016-03-31",
+     "value": null
+    },
+    {
+     "month": "2016-04-30",
+     "value": null
+    },
+    {
+     "month": "2016-05-31",
+     "value": null
+    },
+    {
+     "month": "2016-06-30",
+     "value": null
+    },
+    {
+     "month": "2016-07-31",
+     "value": null
+    },
+    {
+     "month": "2016-08-31",
+     "value": null
+    },
+    {
+     "month": "2016-09-30",
+     "value": null
+    },
+    {
+     "month": "2016-10-31",
+     "value": null
+    },
+    {
+     "month": "2016-11-30",
+     "value": null
+    },
+    {
+     "month": "2016-12-31",
+     "value": null
+    },
+    {
+     "month": "2017-01-31",
+     "value": null
+    },
+    {
+     "month": "2017-02-28",
+     "value": null
+    },
+    {
+     "month": "2017-03-31",
+     "value": null
+    },
+    {
+     "month": "2017-04-30",
+     "value": null
+    },
+    {
+     "month": "2017-05-31",
+     "value": null
+    },
+    {
+     "month": "2017-06-30",
+     "value": null
+    },
+    {
+     "month": "2017-07-31",
+     "value": null
+    },
+    {
+     "month": "2017-08-31",
+     "value": null
+    },
+    {
+     "month": "2017-09-30",
+     "value": null
+    },
+    {
+     "month": "2017-10-31",
+     "value": null
+    },
+    {
+     "month": "2017-11-30",
+     "value": null
+    },
+    {
+     "month": "2017-12-31",
+     "value": null
+    },
+    {
+     "month": "2018-01-31",
+     "value": null
+    },
+    {
+     "month": "2018-02-28",
+     "value": null
+    },
+    {
+     "month": "2018-03-31",
+     "value": null
+    },
+    {
+     "month": "2018-04-30",
+     "value": null
+    },
+    {
+     "month": "2018-05-31",
+     "value": null
+    },
+    {
+     "month": "2018-06-30",
+     "value": null
+    },
+    {
+     "month": "2018-07-31",
+     "value": null
+    },
+    {
+     "month": "2018-08-31",
+     "value": null
+    },
+    {
+     "month": "2018-09-30",
+     "value": null
+    },
+    {
+     "month": "2018-10-31",
+     "value": null
+    },
+    {
+     "month": "2018-11-30",
+     "value": null
+    },
+    {
+     "month": "2018-12-31",
+     "value": null
+    },
+    {
+     "month": "2019-01-31",
+     "value": null
+    },
+    {
+     "month": "2019-02-28",
+     "value": null
+    },
+    {
+     "month": "2019-03-31",
+     "value": null
+    },
+    {
+     "month": "2019-04-30",
+     "value": null
+    },
+    {
+     "month": "2019-05-31",
+     "value": null
+    },
+    {
+     "month": "2019-06-30",
+     "value": null
+    },
+    {
+     "month": "2019-07-31",
+     "value": null
+    },
+    {
+     "month": "2019-08-31",
+     "value": null
+    },
+    {
+     "month": "2019-09-30",
+     "value": null
+    },
+    {
+     "month": "2019-10-31",
+     "value": null
+    },
+    {
+     "month": "2019-11-30",
+     "value": null
+    },
+    {
+     "month": "2019-12-31",
+     "value": null
+    },
+    {
+     "month": "2020-01-31",
+     "value": null
+    },
+    {
+     "month": "2020-02-29",
+     "value": null
+    },
+    {
+     "month": "2020-03-31",
+     "value": null
+    },
+    {
+     "month": "2020-04-30",
+     "value": null
+    },
+    {
+     "month": "2020-05-31",
+     "value": null
+    },
+    {
+     "month": "2020-06-30",
+     "value": null
+    },
+    {
+     "month": "2020-07-31",
+     "value": null
+    },
+    {
+     "month": "2020-08-31",
+     "value": null
+    },
+    {
+     "month": "2020-09-30",
+     "value": null
+    },
+    {
+     "month": "2020-10-31",
+     "value": null
+    },
+    {
+     "month": "2020-11-30",
+     "value": null
+    },
+    {
+     "month": "2020-12-31",
+     "value": null
+    },
+    {
+     "month": "2021-01-31",
+     "value": null
+    },
+    {
+     "month": "2021-02-28",
+     "value": null
+    },
+    {
+     "month": "2021-03-31",
+     "value": null
+    },
+    {
+     "month": "2021-04-30",
+     "value": null
+    },
+    {
+     "month": "2021-05-31",
+     "value": null
+    },
+    {
+     "month": "2021-06-30",
+     "value": null
+    },
+    {
+     "month": "2021-07-31",
+     "value": null
+    },
+    {
+     "month": "2021-08-31",
+     "value": null
+    },
+    {
+     "month": "2021-09-30",
+     "value": null
+    },
+    {
+     "month": "2021-10-31",
+     "value": null
+    },
+    {
+     "month": "2021-11-30",
+     "value": null
+    },
+    {
+     "month": "2021-12-31",
+     "value": null
+    },
+    {
+     "month": "2022-01-31",
+     "value": null
+    },
+    {
+     "month": "2022-02-28",
+     "value": null
+    },
+    {
+     "month": "2022-03-31",
+     "value": null
+    },
+    {
+     "month": "2022-04-30",
+     "value": null
+    },
+    {
+     "month": "2022-05-31",
+     "value": null
+    },
+    {
+     "month": "2022-06-30",
+     "value": null
+    },
+    {
+     "month": "2022-07-31",
+     "value": null
+    },
+    {
+     "month": "2022-08-31",
+     "value": null
+    },
+    {
+     "month": "2022-09-30",
+     "value": null
+    },
+    {
+     "month": "2022-10-31",
+     "value": null
+    },
+    {
+     "month": "2022-11-30",
+     "value": null
+    },
+    {
+     "month": "2022-12-31",
+     "value": null
+    },
+    {
+     "month": "2023-01-31",
+     "value": null
+    },
+    {
+     "month": "2023-02-28",
+     "value": null
+    },
+    {
+     "month": "2023-03-31",
+     "value": null
+    },
+    {
+     "month": "2023-04-30",
+     "value": null
+    },
+    {
+     "month": "2023-05-31",
+     "value": null
+    },
+    {
+     "month": "2023-06-30",
+     "value": null
+    },
+    {
+     "month": "2023-07-31",
+     "value": null
+    },
+    {
+     "month": "2023-08-31",
+     "value": null
+    },
+    {
+     "month": "2023-09-30",
+     "value": null
+    },
+    {
+     "month": "2023-10-31",
+     "value": null
+    },
+    {
+     "month": "2023-11-30",
+     "value": null
+    },
+    {
+     "month": "2023-12-31",
+     "value": null
+    },
+    {
+     "month": "2024-01-31",
+     "value": null
+    },
+    {
+     "month": "2024-02-29",
+     "value": null
+    },
+    {
+     "month": "2024-03-31",
+     "value": null
+    },
+    {
+     "month": "2024-04-30",
+     "value": null
+    },
+    {
+     "month": "2024-05-31",
+     "value": null
+    },
+    {
+     "month": "2024-06-30",
+     "value": null
+    },
+    {
+     "month": "2024-07-31",
+     "value": null
+    },
+    {
+     "month": "2024-08-31",
+     "value": null
+    },
+    {
+     "month": "2024-09-30",
+     "value": null
+    },
+    {
+     "month": "2024-10-31",
+     "value": null
+    },
+    {
+     "month": "2024-11-30",
+     "value": null
+    },
+    {
+     "month": "2024-12-31",
+     "value": null
+    },
+    {
+     "month": "2025-01-31",
+     "value": null
+    },
+    {
+     "month": "2025-02-28",
+     "value": null
+    },
+    {
+     "month": "2025-03-31",
+     "value": null
+    },
+    {
+     "month": "2025-04-30",
+     "value": null
+    },
+    {
+     "month": "2025-05-31",
+     "value": null
+    },
+    {
+     "month": "2025-06-30",
+     "value": null
+    },
+    {
+     "month": "2025-07-31",
+     "value": null
+    },
+    {
+     "month": "2025-08-31",
+     "value": null
+    },
+    {
+     "month": "2025-09-30",
+     "value": null
+    },
+    {
+     "month": "2025-10-31",
+     "value": null
+    },
+    {
+     "month": "2025-11-30",
+     "value": null
+    },
+    {
+     "month": "2025-12-31",
+     "value": null
+    },
+    {
+     "month": "2026-01-31",
+     "value": null
+    },
+    {
+     "month": "2026-02-28",
+     "value": null
+    },
+    {
+     "month": "2026-03-31",
+     "value": null
+    },
+    {
+     "month": "2026-04-30",
+     "value": null
+    },
+    {
+     "month": "2026-05-31",
+     "value": null
+    },
+    {
+     "month": "2026-06-30",
+     "value": null
+    },
+    {
+     "month": "2026-07-31",
+     "value": null
+    }
+   ]
   },
   "products": {
    "title": "Products Pulse",
-   "latest_month": null,
-   "latest_value": null,
-   "history": []
+   "latest_month": "2026-08-31",
+   "latest_value": 22.8,
+   "history": [
+    {
+     "month": "1976-12-31",
+     "value": null
+    },
+    {
+     "month": "1977-01-31",
+     "value": null
+    },
+    {
+     "month": "1977-02-28",
+     "value": null
+    },
+    {
+     "month": "1977-03-31",
+     "value": null
+    },
+    {
+     "month": "1977-04-30",
+     "value": null
+    },
+    {
+     "month": "1977-05-31",
+     "value": null
+    },
+    {
+     "month": "1977-06-30",
+     "value": null
+    },
+    {
+     "month": "1977-07-31",
+     "value": null
+    },
+    {
+     "month": "1977-08-31",
+     "value": null
+    },
+    {
+     "month": "1977-09-30",
+     "value": null
+    },
+    {
+     "month": "1977-10-31",
+     "value": null
+    },
+    {
+     "month": "1977-11-30",
+     "value": null
+    },
+    {
+     "month": "1977-12-31",
+     "value": null
+    },
+    {
+     "month": "1978-01-31",
+     "value": null
+    },
+    {
+     "month": "1978-02-28",
+     "value": null
+    },
+    {
+     "month": "1978-03-31",
+     "value": null
+    },
+    {
+     "month": "1978-04-30",
+     "value": null
+    },
+    {
+     "month": "1978-05-31",
+     "value": null
+    },
+    {
+     "month": "1978-06-30",
+     "value": null
+    },
+    {
+     "month": "1978-07-31",
+     "value": null
+    },
+    {
+     "month": "1978-08-31",
+     "value": null
+    },
+    {
+     "month": "1978-09-30",
+     "value": null
+    },
+    {
+     "month": "1978-10-31",
+     "value": null
+    },
+    {
+     "month": "1978-11-30",
+     "value": null
+    },
+    {
+     "month": "1978-12-31",
+     "value": null
+    },
+    {
+     "month": "1979-01-31",
+     "value": null
+    },
+    {
+     "month": "1979-02-28",
+     "value": null
+    },
+    {
+     "month": "1979-03-31",
+     "value": null
+    },
+    {
+     "month": "1979-04-30",
+     "value": null
+    },
+    {
+     "month": "1979-05-31",
+     "value": null
+    },
+    {
+     "month": "1979-06-30",
+     "value": null
+    },
+    {
+     "month": "1979-07-31",
+     "value": null
+    },
+    {
+     "month": "1979-08-31",
+     "value": null
+    },
+    {
+     "month": "1979-09-30",
+     "value": null
+    },
+    {
+     "month": "1979-10-31",
+     "value": null
+    },
+    {
+     "month": "1979-11-30",
+     "value": null
+    },
+    {
+     "month": "1979-12-31",
+     "value": null
+    },
+    {
+     "month": "1980-01-31",
+     "value": null
+    },
+    {
+     "month": "1980-02-29",
+     "value": null
+    },
+    {
+     "month": "1980-03-31",
+     "value": null
+    },
+    {
+     "month": "1980-04-30",
+     "value": null
+    },
+    {
+     "month": "1980-05-31",
+     "value": null
+    },
+    {
+     "month": "1980-06-30",
+     "value": null
+    },
+    {
+     "month": "1980-07-31",
+     "value": null
+    },
+    {
+     "month": "1980-08-31",
+     "value": null
+    },
+    {
+     "month": "1980-09-30",
+     "value": null
+    },
+    {
+     "month": "1980-10-31",
+     "value": null
+    },
+    {
+     "month": "1980-11-30",
+     "value": null
+    },
+    {
+     "month": "1980-12-31",
+     "value": null
+    },
+    {
+     "month": "1981-01-31",
+     "value": null
+    },
+    {
+     "month": "1981-02-28",
+     "value": null
+    },
+    {
+     "month": "1981-03-31",
+     "value": null
+    },
+    {
+     "month": "1981-04-30",
+     "value": null
+    },
+    {
+     "month": "1981-05-31",
+     "value": null
+    },
+    {
+     "month": "1981-06-30",
+     "value": null
+    },
+    {
+     "month": "1981-07-31",
+     "value": null
+    },
+    {
+     "month": "1981-08-31",
+     "value": null
+    },
+    {
+     "month": "1981-09-30",
+     "value": null
+    },
+    {
+     "month": "1981-10-31",
+     "value": null
+    },
+    {
+     "month": "1981-11-30",
+     "value": null
+    },
+    {
+     "month": "1981-12-31",
+     "value": null
+    },
+    {
+     "month": "1982-01-31",
+     "value": null
+    },
+    {
+     "month": "1982-02-28",
+     "value": null
+    },
+    {
+     "month": "1982-03-31",
+     "value": null
+    },
+    {
+     "month": "1982-04-30",
+     "value": null
+    },
+    {
+     "month": "1982-05-31",
+     "value": null
+    },
+    {
+     "month": "1982-06-30",
+     "value": null
+    },
+    {
+     "month": "1982-07-31",
+     "value": null
+    },
+    {
+     "month": "1982-08-31",
+     "value": null
+    },
+    {
+     "month": "1982-09-30",
+     "value": null
+    },
+    {
+     "month": "1982-10-31",
+     "value": null
+    },
+    {
+     "month": "1982-11-30",
+     "value": null
+    },
+    {
+     "month": "1982-12-31",
+     "value": null
+    },
+    {
+     "month": "1983-01-31",
+     "value": null
+    },
+    {
+     "month": "1983-02-28",
+     "value": null
+    },
+    {
+     "month": "1983-03-31",
+     "value": null
+    },
+    {
+     "month": "1983-04-30",
+     "value": null
+    },
+    {
+     "month": "1983-05-31",
+     "value": null
+    },
+    {
+     "month": "1983-06-30",
+     "value": null
+    },
+    {
+     "month": "1983-07-31",
+     "value": null
+    },
+    {
+     "month": "1983-08-31",
+     "value": null
+    },
+    {
+     "month": "1983-09-30",
+     "value": null
+    },
+    {
+     "month": "1983-10-31",
+     "value": null
+    },
+    {
+     "month": "1983-11-30",
+     "value": null
+    },
+    {
+     "month": "1983-12-31",
+     "value": null
+    },
+    {
+     "month": "1984-01-31",
+     "value": null
+    },
+    {
+     "month": "1984-02-29",
+     "value": null
+    },
+    {
+     "month": "1984-03-31",
+     "value": null
+    },
+    {
+     "month": "1984-04-30",
+     "value": null
+    },
+    {
+     "month": "1984-05-31",
+     "value": null
+    },
+    {
+     "month": "1984-06-30",
+     "value": null
+    },
+    {
+     "month": "1984-07-31",
+     "value": null
+    },
+    {
+     "month": "1984-08-31",
+     "value": null
+    },
+    {
+     "month": "1984-09-30",
+     "value": null
+    },
+    {
+     "month": "1984-10-31",
+     "value": null
+    },
+    {
+     "month": "1984-11-30",
+     "value": null
+    },
+    {
+     "month": "1984-12-31",
+     "value": null
+    },
+    {
+     "month": "1985-01-31",
+     "value": null
+    },
+    {
+     "month": "1985-02-28",
+     "value": null
+    },
+    {
+     "month": "1985-03-31",
+     "value": null
+    },
+    {
+     "month": "1985-04-30",
+     "value": null
+    },
+    {
+     "month": "1985-05-31",
+     "value": null
+    },
+    {
+     "month": "1985-06-30",
+     "value": null
+    },
+    {
+     "month": "1985-07-31",
+     "value": null
+    },
+    {
+     "month": "1985-08-31",
+     "value": null
+    },
+    {
+     "month": "1985-09-30",
+     "value": null
+    },
+    {
+     "month": "1985-10-31",
+     "value": null
+    },
+    {
+     "month": "1985-11-30",
+     "value": null
+    },
+    {
+     "month": "1985-12-31",
+     "value": null
+    },
+    {
+     "month": "1986-01-31",
+     "value": null
+    },
+    {
+     "month": "1986-02-28",
+     "value": null
+    },
+    {
+     "month": "1986-03-31",
+     "value": null
+    },
+    {
+     "month": "1986-04-30",
+     "value": null
+    },
+    {
+     "month": "1986-05-31",
+     "value": null
+    },
+    {
+     "month": "1986-06-30",
+     "value": null
+    },
+    {
+     "month": "1986-07-31",
+     "value": null
+    },
+    {
+     "month": "1986-08-31",
+     "value": null
+    },
+    {
+     "month": "1986-09-30",
+     "value": null
+    },
+    {
+     "month": "1986-10-31",
+     "value": null
+    },
+    {
+     "month": "1986-11-30",
+     "value": null
+    },
+    {
+     "month": "1986-12-31",
+     "value": null
+    },
+    {
+     "month": "1987-01-31",
+     "value": null
+    },
+    {
+     "month": "1987-02-28",
+     "value": null
+    },
+    {
+     "month": "1987-03-31",
+     "value": null
+    },
+    {
+     "month": "1987-04-30",
+     "value": null
+    },
+    {
+     "month": "1987-05-31",
+     "value": null
+    },
+    {
+     "month": "1987-06-30",
+     "value": null
+    },
+    {
+     "month": "1987-07-31",
+     "value": null
+    },
+    {
+     "month": "1987-08-31",
+     "value": null
+    },
+    {
+     "month": "1987-09-30",
+     "value": null
+    },
+    {
+     "month": "1987-10-31",
+     "value": null
+    },
+    {
+     "month": "1987-11-30",
+     "value": null
+    },
+    {
+     "month": "1987-12-31",
+     "value": null
+    },
+    {
+     "month": "1988-01-31",
+     "value": null
+    },
+    {
+     "month": "1988-02-29",
+     "value": null
+    },
+    {
+     "month": "1988-03-31",
+     "value": null
+    },
+    {
+     "month": "1988-04-30",
+     "value": null
+    },
+    {
+     "month": "1988-05-31",
+     "value": null
+    },
+    {
+     "month": "1988-06-30",
+     "value": null
+    },
+    {
+     "month": "1988-07-31",
+     "value": null
+    },
+    {
+     "month": "1988-08-31",
+     "value": null
+    },
+    {
+     "month": "1988-09-30",
+     "value": null
+    },
+    {
+     "month": "1988-10-31",
+     "value": null
+    },
+    {
+     "month": "1988-11-30",
+     "value": null
+    },
+    {
+     "month": "1988-12-31",
+     "value": null
+    },
+    {
+     "month": "1989-01-31",
+     "value": null
+    },
+    {
+     "month": "1989-02-28",
+     "value": null
+    },
+    {
+     "month": "1989-03-31",
+     "value": null
+    },
+    {
+     "month": "1989-04-30",
+     "value": null
+    },
+    {
+     "month": "1989-05-31",
+     "value": null
+    },
+    {
+     "month": "1989-06-30",
+     "value": null
+    },
+    {
+     "month": "1989-07-31",
+     "value": null
+    },
+    {
+     "month": "1989-08-31",
+     "value": null
+    },
+    {
+     "month": "1989-09-30",
+     "value": null
+    },
+    {
+     "month": "1989-10-31",
+     "value": null
+    },
+    {
+     "month": "1989-11-30",
+     "value": null
+    },
+    {
+     "month": "1989-12-31",
+     "value": null
+    },
+    {
+     "month": "1990-01-31",
+     "value": null
+    },
+    {
+     "month": "1990-02-28",
+     "value": null
+    },
+    {
+     "month": "1990-03-31",
+     "value": null
+    },
+    {
+     "month": "1990-04-30",
+     "value": null
+    },
+    {
+     "month": "1990-05-31",
+     "value": null
+    },
+    {
+     "month": "1990-06-30",
+     "value": null
+    },
+    {
+     "month": "1990-07-31",
+     "value": null
+    },
+    {
+     "month": "1990-08-31",
+     "value": null
+    },
+    {
+     "month": "1990-09-30",
+     "value": null
+    },
+    {
+     "month": "1990-10-31",
+     "value": null
+    },
+    {
+     "month": "1990-11-30",
+     "value": null
+    },
+    {
+     "month": "1990-12-31",
+     "value": null
+    },
+    {
+     "month": "1991-01-31",
+     "value": null
+    },
+    {
+     "month": "1991-02-28",
+     "value": null
+    },
+    {
+     "month": "1991-03-31",
+     "value": null
+    },
+    {
+     "month": "1991-04-30",
+     "value": null
+    },
+    {
+     "month": "1991-05-31",
+     "value": null
+    },
+    {
+     "month": "1991-06-30",
+     "value": null
+    },
+    {
+     "month": "1991-07-31",
+     "value": null
+    },
+    {
+     "month": "1991-08-31",
+     "value": null
+    },
+    {
+     "month": "1991-09-30",
+     "value": null
+    },
+    {
+     "month": "1991-10-31",
+     "value": null
+    },
+    {
+     "month": "1991-11-30",
+     "value": null
+    },
+    {
+     "month": "1991-12-31",
+     "value": null
+    },
+    {
+     "month": "1992-01-31",
+     "value": null
+    },
+    {
+     "month": "1992-02-29",
+     "value": null
+    },
+    {
+     "month": "1992-03-31",
+     "value": null
+    },
+    {
+     "month": "1992-04-30",
+     "value": null
+    },
+    {
+     "month": "1992-05-31",
+     "value": null
+    },
+    {
+     "month": "1992-06-30",
+     "value": null
+    },
+    {
+     "month": "1992-07-31",
+     "value": null
+    },
+    {
+     "month": "1992-08-31",
+     "value": null
+    },
+    {
+     "month": "1992-09-30",
+     "value": null
+    },
+    {
+     "month": "1992-10-31",
+     "value": null
+    },
+    {
+     "month": "1992-11-30",
+     "value": null
+    },
+    {
+     "month": "1992-12-31",
+     "value": null
+    },
+    {
+     "month": "1993-01-31",
+     "value": null
+    },
+    {
+     "month": "1993-02-28",
+     "value": null
+    },
+    {
+     "month": "1993-03-31",
+     "value": null
+    },
+    {
+     "month": "1993-04-30",
+     "value": null
+    },
+    {
+     "month": "1993-05-31",
+     "value": null
+    },
+    {
+     "month": "1993-06-30",
+     "value": null
+    },
+    {
+     "month": "1993-07-31",
+     "value": null
+    },
+    {
+     "month": "1993-08-31",
+     "value": null
+    },
+    {
+     "month": "1993-09-30",
+     "value": null
+    },
+    {
+     "month": "1993-10-31",
+     "value": null
+    },
+    {
+     "month": "1993-11-30",
+     "value": null
+    },
+    {
+     "month": "1993-12-31",
+     "value": null
+    },
+    {
+     "month": "1994-01-31",
+     "value": null
+    },
+    {
+     "month": "1994-02-28",
+     "value": null
+    },
+    {
+     "month": "1994-03-31",
+     "value": null
+    },
+    {
+     "month": "1994-04-30",
+     "value": null
+    },
+    {
+     "month": "1994-05-31",
+     "value": null
+    },
+    {
+     "month": "1994-06-30",
+     "value": null
+    },
+    {
+     "month": "1994-07-31",
+     "value": null
+    },
+    {
+     "month": "1994-08-31",
+     "value": null
+    },
+    {
+     "month": "1994-09-30",
+     "value": null
+    },
+    {
+     "month": "1994-10-31",
+     "value": null
+    },
+    {
+     "month": "1994-11-30",
+     "value": null
+    },
+    {
+     "month": "1994-12-31",
+     "value": null
+    },
+    {
+     "month": "1995-01-31",
+     "value": null
+    },
+    {
+     "month": "1995-02-28",
+     "value": null
+    },
+    {
+     "month": "1995-03-31",
+     "value": null
+    },
+    {
+     "month": "1995-04-30",
+     "value": null
+    },
+    {
+     "month": "1995-05-31",
+     "value": null
+    },
+    {
+     "month": "1995-06-30",
+     "value": null
+    },
+    {
+     "month": "1995-07-31",
+     "value": null
+    },
+    {
+     "month": "1995-08-31",
+     "value": null
+    },
+    {
+     "month": "1995-09-30",
+     "value": null
+    },
+    {
+     "month": "1995-10-31",
+     "value": null
+    },
+    {
+     "month": "1995-11-30",
+     "value": null
+    },
+    {
+     "month": "1995-12-31",
+     "value": null
+    },
+    {
+     "month": "1996-01-31",
+     "value": null
+    },
+    {
+     "month": "1996-02-29",
+     "value": null
+    },
+    {
+     "month": "1996-03-31",
+     "value": null
+    },
+    {
+     "month": "1996-04-30",
+     "value": null
+    },
+    {
+     "month": "1996-05-31",
+     "value": null
+    },
+    {
+     "month": "1996-06-30",
+     "value": null
+    },
+    {
+     "month": "1996-07-31",
+     "value": null
+    },
+    {
+     "month": "1996-08-31",
+     "value": null
+    },
+    {
+     "month": "1996-09-30",
+     "value": null
+    },
+    {
+     "month": "1996-10-31",
+     "value": null
+    },
+    {
+     "month": "1996-11-30",
+     "value": null
+    },
+    {
+     "month": "1996-12-31",
+     "value": null
+    },
+    {
+     "month": "1997-01-31",
+     "value": null
+    },
+    {
+     "month": "1997-02-28",
+     "value": null
+    },
+    {
+     "month": "1997-03-31",
+     "value": null
+    },
+    {
+     "month": "1997-04-30",
+     "value": null
+    },
+    {
+     "month": "1997-05-31",
+     "value": null
+    },
+    {
+     "month": "1997-06-30",
+     "value": null
+    },
+    {
+     "month": "1997-07-31",
+     "value": null
+    },
+    {
+     "month": "1997-08-31",
+     "value": null
+    },
+    {
+     "month": "1997-09-30",
+     "value": null
+    },
+    {
+     "month": "1997-10-31",
+     "value": null
+    },
+    {
+     "month": "1997-11-30",
+     "value": null
+    },
+    {
+     "month": "1997-12-31",
+     "value": null
+    },
+    {
+     "month": "1998-01-31",
+     "value": null
+    },
+    {
+     "month": "1998-02-28",
+     "value": null
+    },
+    {
+     "month": "1998-03-31",
+     "value": null
+    },
+    {
+     "month": "1998-04-30",
+     "value": null
+    },
+    {
+     "month": "1998-05-31",
+     "value": null
+    },
+    {
+     "month": "1998-06-30",
+     "value": null
+    },
+    {
+     "month": "1998-07-31",
+     "value": null
+    },
+    {
+     "month": "1998-08-31",
+     "value": null
+    },
+    {
+     "month": "1998-09-30",
+     "value": null
+    },
+    {
+     "month": "1998-10-31",
+     "value": null
+    },
+    {
+     "month": "1998-11-30",
+     "value": null
+    },
+    {
+     "month": "1998-12-31",
+     "value": null
+    },
+    {
+     "month": "1999-01-31",
+     "value": null
+    },
+    {
+     "month": "1999-02-28",
+     "value": null
+    },
+    {
+     "month": "1999-03-31",
+     "value": null
+    },
+    {
+     "month": "1999-04-30",
+     "value": null
+    },
+    {
+     "month": "1999-05-31",
+     "value": null
+    },
+    {
+     "month": "1999-06-30",
+     "value": null
+    },
+    {
+     "month": "1999-07-31",
+     "value": null
+    },
+    {
+     "month": "1999-08-31",
+     "value": null
+    },
+    {
+     "month": "1999-09-30",
+     "value": null
+    },
+    {
+     "month": "1999-10-31",
+     "value": null
+    },
+    {
+     "month": "1999-11-30",
+     "value": null
+    },
+    {
+     "month": "1999-12-31",
+     "value": null
+    },
+    {
+     "month": "2000-01-31",
+     "value": null
+    },
+    {
+     "month": "2000-02-29",
+     "value": null
+    },
+    {
+     "month": "2000-03-31",
+     "value": null
+    },
+    {
+     "month": "2000-04-30",
+     "value": null
+    },
+    {
+     "month": "2000-05-31",
+     "value": null
+    },
+    {
+     "month": "2000-06-30",
+     "value": null
+    },
+    {
+     "month": "2000-07-31",
+     "value": null
+    },
+    {
+     "month": "2000-08-31",
+     "value": null
+    },
+    {
+     "month": "2000-09-30",
+     "value": null
+    },
+    {
+     "month": "2000-10-31",
+     "value": null
+    },
+    {
+     "month": "2000-11-30",
+     "value": null
+    },
+    {
+     "month": "2000-12-31",
+     "value": null
+    },
+    {
+     "month": "2001-01-31",
+     "value": null
+    },
+    {
+     "month": "2001-02-28",
+     "value": null
+    },
+    {
+     "month": "2001-03-31",
+     "value": null
+    },
+    {
+     "month": "2001-04-30",
+     "value": null
+    },
+    {
+     "month": "2001-05-31",
+     "value": null
+    },
+    {
+     "month": "2001-06-30",
+     "value": null
+    },
+    {
+     "month": "2001-07-31",
+     "value": null
+    },
+    {
+     "month": "2001-08-31",
+     "value": null
+    },
+    {
+     "month": "2001-09-30",
+     "value": null
+    },
+    {
+     "month": "2001-10-31",
+     "value": null
+    },
+    {
+     "month": "2001-11-30",
+     "value": null
+    },
+    {
+     "month": "2001-12-31",
+     "value": null
+    },
+    {
+     "month": "2002-01-31",
+     "value": null
+    },
+    {
+     "month": "2002-02-28",
+     "value": null
+    },
+    {
+     "month": "2002-03-31",
+     "value": null
+    },
+    {
+     "month": "2002-04-30",
+     "value": null
+    },
+    {
+     "month": "2002-05-31",
+     "value": null
+    },
+    {
+     "month": "2002-06-30",
+     "value": null
+    },
+    {
+     "month": "2002-07-31",
+     "value": null
+    },
+    {
+     "month": "2002-08-31",
+     "value": null
+    },
+    {
+     "month": "2002-09-30",
+     "value": null
+    },
+    {
+     "month": "2002-10-31",
+     "value": null
+    },
+    {
+     "month": "2002-11-30",
+     "value": null
+    },
+    {
+     "month": "2002-12-31",
+     "value": null
+    },
+    {
+     "month": "2003-01-31",
+     "value": null
+    },
+    {
+     "month": "2003-02-28",
+     "value": null
+    },
+    {
+     "month": "2003-03-31",
+     "value": null
+    },
+    {
+     "month": "2003-04-30",
+     "value": null
+    },
+    {
+     "month": "2003-05-31",
+     "value": null
+    },
+    {
+     "month": "2003-06-30",
+     "value": null
+    },
+    {
+     "month": "2003-07-31",
+     "value": null
+    },
+    {
+     "month": "2003-08-31",
+     "value": null
+    },
+    {
+     "month": "2003-09-30",
+     "value": null
+    },
+    {
+     "month": "2003-10-31",
+     "value": null
+    },
+    {
+     "month": "2003-11-30",
+     "value": null
+    },
+    {
+     "month": "2003-12-31",
+     "value": null
+    },
+    {
+     "month": "2004-01-31",
+     "value": null
+    },
+    {
+     "month": "2004-02-29",
+     "value": null
+    },
+    {
+     "month": "2004-03-31",
+     "value": null
+    },
+    {
+     "month": "2004-04-30",
+     "value": null
+    },
+    {
+     "month": "2004-05-31",
+     "value": null
+    },
+    {
+     "month": "2004-06-30",
+     "value": null
+    },
+    {
+     "month": "2004-07-31",
+     "value": null
+    },
+    {
+     "month": "2004-08-31",
+     "value": null
+    },
+    {
+     "month": "2004-09-30",
+     "value": null
+    },
+    {
+     "month": "2004-10-31",
+     "value": null
+    },
+    {
+     "month": "2004-11-30",
+     "value": null
+    },
+    {
+     "month": "2004-12-31",
+     "value": null
+    },
+    {
+     "month": "2005-01-31",
+     "value": null
+    },
+    {
+     "month": "2005-02-28",
+     "value": null
+    },
+    {
+     "month": "2005-03-31",
+     "value": null
+    },
+    {
+     "month": "2005-04-30",
+     "value": null
+    },
+    {
+     "month": "2005-05-31",
+     "value": null
+    },
+    {
+     "month": "2005-06-30",
+     "value": null
+    },
+    {
+     "month": "2005-07-31",
+     "value": null
+    },
+    {
+     "month": "2005-08-31",
+     "value": null
+    },
+    {
+     "month": "2005-09-30",
+     "value": null
+    },
+    {
+     "month": "2005-10-31",
+     "value": null
+    },
+    {
+     "month": "2005-11-30",
+     "value": null
+    },
+    {
+     "month": "2005-12-31",
+     "value": null
+    },
+    {
+     "month": "2006-01-31",
+     "value": null
+    },
+    {
+     "month": "2006-02-28",
+     "value": null
+    },
+    {
+     "month": "2006-03-31",
+     "value": null
+    },
+    {
+     "month": "2006-04-30",
+     "value": null
+    },
+    {
+     "month": "2006-05-31",
+     "value": null
+    },
+    {
+     "month": "2006-06-30",
+     "value": null
+    },
+    {
+     "month": "2006-07-31",
+     "value": null
+    },
+    {
+     "month": "2006-08-31",
+     "value": null
+    },
+    {
+     "month": "2006-09-30",
+     "value": null
+    },
+    {
+     "month": "2006-10-31",
+     "value": null
+    },
+    {
+     "month": "2006-11-30",
+     "value": null
+    },
+    {
+     "month": "2006-12-31",
+     "value": null
+    },
+    {
+     "month": "2007-01-31",
+     "value": null
+    },
+    {
+     "month": "2007-02-28",
+     "value": null
+    },
+    {
+     "month": "2007-03-31",
+     "value": null
+    },
+    {
+     "month": "2007-04-30",
+     "value": null
+    },
+    {
+     "month": "2007-05-31",
+     "value": null
+    },
+    {
+     "month": "2007-06-30",
+     "value": null
+    },
+    {
+     "month": "2007-07-31",
+     "value": null
+    },
+    {
+     "month": "2007-08-31",
+     "value": null
+    },
+    {
+     "month": "2007-09-30",
+     "value": null
+    },
+    {
+     "month": "2007-10-31",
+     "value": null
+    },
+    {
+     "month": "2007-11-30",
+     "value": null
+    },
+    {
+     "month": "2007-12-31",
+     "value": null
+    },
+    {
+     "month": "2008-01-31",
+     "value": null
+    },
+    {
+     "month": "2008-02-29",
+     "value": null
+    },
+    {
+     "month": "2008-03-31",
+     "value": null
+    },
+    {
+     "month": "2008-04-30",
+     "value": null
+    },
+    {
+     "month": "2008-05-31",
+     "value": null
+    },
+    {
+     "month": "2008-06-30",
+     "value": null
+    },
+    {
+     "month": "2008-07-31",
+     "value": null
+    },
+    {
+     "month": "2008-08-31",
+     "value": null
+    },
+    {
+     "month": "2008-09-30",
+     "value": null
+    },
+    {
+     "month": "2008-10-31",
+     "value": null
+    },
+    {
+     "month": "2008-11-30",
+     "value": null
+    },
+    {
+     "month": "2008-12-31",
+     "value": null
+    },
+    {
+     "month": "2009-01-31",
+     "value": null
+    },
+    {
+     "month": "2009-02-28",
+     "value": null
+    },
+    {
+     "month": "2009-03-31",
+     "value": null
+    },
+    {
+     "month": "2009-04-30",
+     "value": null
+    },
+    {
+     "month": "2009-05-31",
+     "value": null
+    },
+    {
+     "month": "2009-06-30",
+     "value": null
+    },
+    {
+     "month": "2009-07-31",
+     "value": null
+    },
+    {
+     "month": "2009-08-31",
+     "value": null
+    },
+    {
+     "month": "2009-09-30",
+     "value": null
+    },
+    {
+     "month": "2009-10-31",
+     "value": null
+    },
+    {
+     "month": "2009-11-30",
+     "value": null
+    },
+    {
+     "month": "2009-12-31",
+     "value": null
+    },
+    {
+     "month": "2010-01-31",
+     "value": null
+    },
+    {
+     "month": "2010-02-28",
+     "value": null
+    },
+    {
+     "month": "2010-03-31",
+     "value": null
+    },
+    {
+     "month": "2010-04-30",
+     "value": null
+    },
+    {
+     "month": "2010-05-31",
+     "value": null
+    },
+    {
+     "month": "2010-06-30",
+     "value": null
+    },
+    {
+     "month": "2010-07-31",
+     "value": null
+    },
+    {
+     "month": "2010-08-31",
+     "value": null
+    },
+    {
+     "month": "2010-09-30",
+     "value": null
+    },
+    {
+     "month": "2010-10-31",
+     "value": null
+    },
+    {
+     "month": "2010-11-30",
+     "value": null
+    },
+    {
+     "month": "2010-12-31",
+     "value": null
+    },
+    {
+     "month": "2011-01-31",
+     "value": null
+    },
+    {
+     "month": "2011-02-28",
+     "value": null
+    },
+    {
+     "month": "2011-03-31",
+     "value": null
+    },
+    {
+     "month": "2011-04-30",
+     "value": null
+    },
+    {
+     "month": "2011-05-31",
+     "value": null
+    },
+    {
+     "month": "2011-06-30",
+     "value": null
+    },
+    {
+     "month": "2011-07-31",
+     "value": null
+    },
+    {
+     "month": "2011-08-31",
+     "value": null
+    },
+    {
+     "month": "2011-09-30",
+     "value": null
+    },
+    {
+     "month": "2011-10-31",
+     "value": null
+    },
+    {
+     "month": "2011-11-30",
+     "value": null
+    },
+    {
+     "month": "2011-12-31",
+     "value": null
+    },
+    {
+     "month": "2012-01-31",
+     "value": null
+    },
+    {
+     "month": "2012-02-29",
+     "value": null
+    },
+    {
+     "month": "2012-03-31",
+     "value": null
+    },
+    {
+     "month": "2012-04-30",
+     "value": null
+    },
+    {
+     "month": "2012-05-31",
+     "value": null
+    },
+    {
+     "month": "2012-06-30",
+     "value": null
+    },
+    {
+     "month": "2012-07-31",
+     "value": null
+    },
+    {
+     "month": "2012-08-31",
+     "value": null
+    },
+    {
+     "month": "2012-09-30",
+     "value": null
+    },
+    {
+     "month": "2012-10-31",
+     "value": null
+    },
+    {
+     "month": "2012-11-30",
+     "value": null
+    },
+    {
+     "month": "2012-12-31",
+     "value": null
+    },
+    {
+     "month": "2013-01-31",
+     "value": null
+    },
+    {
+     "month": "2013-02-28",
+     "value": null
+    },
+    {
+     "month": "2013-03-31",
+     "value": null
+    },
+    {
+     "month": "2013-04-30",
+     "value": null
+    },
+    {
+     "month": "2013-05-31",
+     "value": null
+    },
+    {
+     "month": "2013-06-30",
+     "value": null
+    },
+    {
+     "month": "2013-07-31",
+     "value": null
+    },
+    {
+     "month": "2013-08-31",
+     "value": null
+    },
+    {
+     "month": "2013-09-30",
+     "value": null
+    },
+    {
+     "month": "2013-10-31",
+     "value": null
+    },
+    {
+     "month": "2013-11-30",
+     "value": null
+    },
+    {
+     "month": "2013-12-31",
+     "value": null
+    },
+    {
+     "month": "2014-01-31",
+     "value": null
+    },
+    {
+     "month": "2014-02-28",
+     "value": null
+    },
+    {
+     "month": "2014-03-31",
+     "value": null
+    },
+    {
+     "month": "2014-04-30",
+     "value": null
+    },
+    {
+     "month": "2014-05-31",
+     "value": null
+    },
+    {
+     "month": "2014-06-30",
+     "value": null
+    },
+    {
+     "month": "2014-07-31",
+     "value": null
+    },
+    {
+     "month": "2014-08-31",
+     "value": null
+    },
+    {
+     "month": "2014-09-30",
+     "value": null
+    },
+    {
+     "month": "2014-10-31",
+     "value": null
+    },
+    {
+     "month": "2014-11-30",
+     "value": null
+    },
+    {
+     "month": "2014-12-31",
+     "value": null
+    },
+    {
+     "month": "2015-01-31",
+     "value": null
+    },
+    {
+     "month": "2015-02-28",
+     "value": null
+    },
+    {
+     "month": "2015-03-31",
+     "value": null
+    },
+    {
+     "month": "2015-04-30",
+     "value": null
+    },
+    {
+     "month": "2015-05-31",
+     "value": null
+    },
+    {
+     "month": "2015-06-30",
+     "value": null
+    },
+    {
+     "month": "2015-07-31",
+     "value": null
+    },
+    {
+     "month": "2015-08-31",
+     "value": null
+    },
+    {
+     "month": "2015-09-30",
+     "value": null
+    },
+    {
+     "month": "2015-10-31",
+     "value": null
+    },
+    {
+     "month": "2015-11-30",
+     "value": null
+    },
+    {
+     "month": "2015-12-31",
+     "value": null
+    },
+    {
+     "month": "2016-01-31",
+     "value": null
+    },
+    {
+     "month": "2016-02-29",
+     "value": null
+    },
+    {
+     "month": "2016-03-31",
+     "value": null
+    },
+    {
+     "month": "2016-04-30",
+     "value": null
+    },
+    {
+     "month": "2016-05-31",
+     "value": null
+    },
+    {
+     "month": "2016-06-30",
+     "value": null
+    },
+    {
+     "month": "2016-07-31",
+     "value": null
+    },
+    {
+     "month": "2016-08-31",
+     "value": null
+    },
+    {
+     "month": "2016-09-30",
+     "value": null
+    },
+    {
+     "month": "2016-10-31",
+     "value": null
+    },
+    {
+     "month": "2016-11-30",
+     "value": null
+    },
+    {
+     "month": "2016-12-31",
+     "value": null
+    },
+    {
+     "month": "2017-01-31",
+     "value": null
+    },
+    {
+     "month": "2017-02-28",
+     "value": null
+    },
+    {
+     "month": "2017-03-31",
+     "value": null
+    },
+    {
+     "month": "2017-04-30",
+     "value": null
+    },
+    {
+     "month": "2017-05-31",
+     "value": null
+    },
+    {
+     "month": "2017-06-30",
+     "value": null
+    },
+    {
+     "month": "2017-07-31",
+     "value": null
+    },
+    {
+     "month": "2017-08-31",
+     "value": null
+    },
+    {
+     "month": "2017-09-30",
+     "value": null
+    },
+    {
+     "month": "2017-10-31",
+     "value": null
+    },
+    {
+     "month": "2017-11-30",
+     "value": null
+    },
+    {
+     "month": "2017-12-31",
+     "value": null
+    },
+    {
+     "month": "2018-01-31",
+     "value": null
+    },
+    {
+     "month": "2018-02-28",
+     "value": null
+    },
+    {
+     "month": "2018-03-31",
+     "value": null
+    },
+    {
+     "month": "2018-04-30",
+     "value": null
+    },
+    {
+     "month": "2018-05-31",
+     "value": null
+    },
+    {
+     "month": "2018-06-30",
+     "value": null
+    },
+    {
+     "month": "2018-07-31",
+     "value": null
+    },
+    {
+     "month": "2018-08-31",
+     "value": null
+    },
+    {
+     "month": "2018-09-30",
+     "value": null
+    },
+    {
+     "month": "2018-10-31",
+     "value": null
+    },
+    {
+     "month": "2018-11-30",
+     "value": null
+    },
+    {
+     "month": "2018-12-31",
+     "value": null
+    },
+    {
+     "month": "2019-01-31",
+     "value": null
+    },
+    {
+     "month": "2019-02-28",
+     "value": null
+    },
+    {
+     "month": "2019-03-31",
+     "value": null
+    },
+    {
+     "month": "2019-04-30",
+     "value": null
+    },
+    {
+     "month": "2019-05-31",
+     "value": null
+    },
+    {
+     "month": "2019-06-30",
+     "value": null
+    },
+    {
+     "month": "2019-07-31",
+     "value": null
+    },
+    {
+     "month": "2019-08-31",
+     "value": null
+    },
+    {
+     "month": "2019-09-30",
+     "value": null
+    },
+    {
+     "month": "2019-10-31",
+     "value": null
+    },
+    {
+     "month": "2019-11-30",
+     "value": null
+    },
+    {
+     "month": "2019-12-31",
+     "value": null
+    },
+    {
+     "month": "2020-01-31",
+     "value": null
+    },
+    {
+     "month": "2020-02-29",
+     "value": null
+    },
+    {
+     "month": "2020-03-31",
+     "value": null
+    },
+    {
+     "month": "2020-04-30",
+     "value": null
+    },
+    {
+     "month": "2020-05-31",
+     "value": null
+    },
+    {
+     "month": "2020-06-30",
+     "value": null
+    },
+    {
+     "month": "2020-07-31",
+     "value": null
+    },
+    {
+     "month": "2020-08-31",
+     "value": null
+    },
+    {
+     "month": "2020-09-30",
+     "value": null
+    },
+    {
+     "month": "2020-10-31",
+     "value": null
+    },
+    {
+     "month": "2020-11-30",
+     "value": null
+    },
+    {
+     "month": "2020-12-31",
+     "value": null
+    },
+    {
+     "month": "2021-01-31",
+     "value": null
+    },
+    {
+     "month": "2021-02-28",
+     "value": null
+    },
+    {
+     "month": "2021-03-31",
+     "value": null
+    },
+    {
+     "month": "2021-04-30",
+     "value": null
+    },
+    {
+     "month": "2021-05-31",
+     "value": null
+    },
+    {
+     "month": "2021-06-30",
+     "value": null
+    },
+    {
+     "month": "2021-07-31",
+     "value": null
+    },
+    {
+     "month": "2021-08-31",
+     "value": null
+    },
+    {
+     "month": "2021-09-30",
+     "value": null
+    },
+    {
+     "month": "2021-10-31",
+     "value": null
+    },
+    {
+     "month": "2021-11-30",
+     "value": null
+    },
+    {
+     "month": "2021-12-31",
+     "value": null
+    },
+    {
+     "month": "2022-01-31",
+     "value": null
+    },
+    {
+     "month": "2022-02-28",
+     "value": null
+    },
+    {
+     "month": "2022-03-31",
+     "value": null
+    },
+    {
+     "month": "2022-04-30",
+     "value": null
+    },
+    {
+     "month": "2022-05-31",
+     "value": null
+    },
+    {
+     "month": "2022-06-30",
+     "value": null
+    },
+    {
+     "month": "2022-07-31",
+     "value": null
+    },
+    {
+     "month": "2022-08-31",
+     "value": null
+    },
+    {
+     "month": "2022-09-30",
+     "value": null
+    },
+    {
+     "month": "2022-10-31",
+     "value": null
+    },
+    {
+     "month": "2022-11-30",
+     "value": null
+    },
+    {
+     "month": "2022-12-31",
+     "value": null
+    },
+    {
+     "month": "2023-01-31",
+     "value": null
+    },
+    {
+     "month": "2023-02-28",
+     "value": null
+    },
+    {
+     "month": "2023-03-31",
+     "value": null
+    },
+    {
+     "month": "2023-04-30",
+     "value": null
+    },
+    {
+     "month": "2023-05-31",
+     "value": null
+    },
+    {
+     "month": "2023-06-30",
+     "value": null
+    },
+    {
+     "month": "2023-07-31",
+     "value": null
+    },
+    {
+     "month": "2023-08-31",
+     "value": null
+    },
+    {
+     "month": "2023-09-30",
+     "value": null
+    },
+    {
+     "month": "2023-10-31",
+     "value": null
+    },
+    {
+     "month": "2023-11-30",
+     "value": null
+    },
+    {
+     "month": "2023-12-31",
+     "value": null
+    },
+    {
+     "month": "2024-01-31",
+     "value": null
+    },
+    {
+     "month": "2024-02-29",
+     "value": null
+    },
+    {
+     "month": "2024-03-31",
+     "value": null
+    },
+    {
+     "month": "2024-04-30",
+     "value": null
+    },
+    {
+     "month": "2024-05-31",
+     "value": null
+    },
+    {
+     "month": "2024-06-30",
+     "value": null
+    },
+    {
+     "month": "2024-07-31",
+     "value": null
+    },
+    {
+     "month": "2024-08-31",
+     "value": null
+    },
+    {
+     "month": "2024-09-30",
+     "value": null
+    },
+    {
+     "month": "2024-10-31",
+     "value": null
+    },
+    {
+     "month": "2024-11-30",
+     "value": null
+    },
+    {
+     "month": "2024-12-31",
+     "value": 31.46
+    },
+    {
+     "month": "2025-01-31",
+     "value": 39.33
+    },
+    {
+     "month": "2025-02-28",
+     "value": 34.25
+    },
+    {
+     "month": "2025-03-31",
+     "value": 31.28
+    },
+    {
+     "month": "2025-04-30",
+     "value": 28.22
+    },
+    {
+     "month": "2025-05-31",
+     "value": 14.86
+    },
+    {
+     "month": "2025-06-30",
+     "value": 13.03
+    },
+    {
+     "month": "2025-07-31",
+     "value": 11.54
+    },
+    {
+     "month": "2025-08-31",
+     "value": 26.59
+    },
+    {
+     "month": "2025-09-30",
+     "value": 20.49
+    },
+    {
+     "month": "2025-10-31",
+     "value": 20.56
+    },
+    {
+     "month": "2025-11-30",
+     "value": 22.95
+    },
+    {
+     "month": "2025-12-31",
+     "value": 15.04
+    },
+    {
+     "month": "2026-01-31",
+     "value": 11.06
+    },
+    {
+     "month": "2026-02-28",
+     "value": 2.25
+    },
+    {
+     "month": "2026-03-31",
+     "value": 3.01
+    },
+    {
+     "month": "2026-04-30",
+     "value": 4.54
+    },
+    {
+     "month": "2026-05-31",
+     "value": 1.72
+    },
+    {
+     "month": "2026-06-30",
+     "value": 17.63
+    },
+    {
+     "month": "2026-07-31",
+     "value": 25.6
+    },
+    {
+     "month": "2026-08-31",
+     "value": 22.83
+    }
+   ]
   },
   "margin": {
    "title": "Margin Pulse",
-   "latest_month": null,
-   "latest_value": null,
-   "history": []
+   "latest_month": "2026-08-31",
+   "latest_value": -22.6,
+   "history": [
+    {
+     "month": "2008-02-29",
+     "value": null
+    },
+    {
+     "month": "2008-03-31",
+     "value": null
+    },
+    {
+     "month": "2008-04-30",
+     "value": null
+    },
+    {
+     "month": "2008-05-31",
+     "value": null
+    },
+    {
+     "month": "2008-06-30",
+     "value": null
+    },
+    {
+     "month": "2008-07-31",
+     "value": null
+    },
+    {
+     "month": "2008-08-31",
+     "value": null
+    },
+    {
+     "month": "2008-09-30",
+     "value": null
+    },
+    {
+     "month": "2008-10-31",
+     "value": null
+    },
+    {
+     "month": "2008-11-30",
+     "value": null
+    },
+    {
+     "month": "2008-12-31",
+     "value": null
+    },
+    {
+     "month": "2009-01-31",
+     "value": null
+    },
+    {
+     "month": "2009-02-28",
+     "value": null
+    },
+    {
+     "month": "2009-03-31",
+     "value": null
+    },
+    {
+     "month": "2009-04-30",
+     "value": null
+    },
+    {
+     "month": "2009-05-31",
+     "value": null
+    },
+    {
+     "month": "2009-06-30",
+     "value": null
+    },
+    {
+     "month": "2009-07-31",
+     "value": null
+    },
+    {
+     "month": "2009-08-31",
+     "value": null
+    },
+    {
+     "month": "2009-09-30",
+     "value": null
+    },
+    {
+     "month": "2009-10-31",
+     "value": null
+    },
+    {
+     "month": "2009-11-30",
+     "value": null
+    },
+    {
+     "month": "2009-12-31",
+     "value": null
+    },
+    {
+     "month": "2010-01-31",
+     "value": null
+    },
+    {
+     "month": "2010-02-28",
+     "value": null
+    },
+    {
+     "month": "2010-03-31",
+     "value": null
+    },
+    {
+     "month": "2010-04-30",
+     "value": null
+    },
+    {
+     "month": "2010-05-31",
+     "value": null
+    },
+    {
+     "month": "2010-06-30",
+     "value": null
+    },
+    {
+     "month": "2010-07-31",
+     "value": null
+    },
+    {
+     "month": "2010-08-31",
+     "value": null
+    },
+    {
+     "month": "2010-09-30",
+     "value": null
+    },
+    {
+     "month": "2010-10-31",
+     "value": null
+    },
+    {
+     "month": "2010-11-30",
+     "value": null
+    },
+    {
+     "month": "2010-12-31",
+     "value": null
+    },
+    {
+     "month": "2011-01-31",
+     "value": null
+    },
+    {
+     "month": "2011-02-28",
+     "value": null
+    },
+    {
+     "month": "2011-03-31",
+     "value": null
+    },
+    {
+     "month": "2011-04-30",
+     "value": null
+    },
+    {
+     "month": "2011-05-31",
+     "value": null
+    },
+    {
+     "month": "2011-06-30",
+     "value": null
+    },
+    {
+     "month": "2011-07-31",
+     "value": null
+    },
+    {
+     "month": "2011-08-31",
+     "value": null
+    },
+    {
+     "month": "2011-09-30",
+     "value": null
+    },
+    {
+     "month": "2011-10-31",
+     "value": null
+    },
+    {
+     "month": "2011-11-30",
+     "value": null
+    },
+    {
+     "month": "2011-12-31",
+     "value": null
+    },
+    {
+     "month": "2012-01-31",
+     "value": null
+    },
+    {
+     "month": "2012-02-29",
+     "value": null
+    },
+    {
+     "month": "2012-03-31",
+     "value": null
+    },
+    {
+     "month": "2012-04-30",
+     "value": null
+    },
+    {
+     "month": "2012-05-31",
+     "value": null
+    },
+    {
+     "month": "2012-06-30",
+     "value": null
+    },
+    {
+     "month": "2012-07-31",
+     "value": null
+    },
+    {
+     "month": "2012-08-31",
+     "value": null
+    },
+    {
+     "month": "2012-09-30",
+     "value": null
+    },
+    {
+     "month": "2012-10-31",
+     "value": null
+    },
+    {
+     "month": "2012-11-30",
+     "value": null
+    },
+    {
+     "month": "2012-12-31",
+     "value": null
+    },
+    {
+     "month": "2013-01-31",
+     "value": null
+    },
+    {
+     "month": "2013-02-28",
+     "value": null
+    },
+    {
+     "month": "2013-03-31",
+     "value": null
+    },
+    {
+     "month": "2013-04-30",
+     "value": null
+    },
+    {
+     "month": "2013-05-31",
+     "value": null
+    },
+    {
+     "month": "2013-06-30",
+     "value": null
+    },
+    {
+     "month": "2013-07-31",
+     "value": null
+    },
+    {
+     "month": "2013-08-31",
+     "value": null
+    },
+    {
+     "month": "2013-09-30",
+     "value": null
+    },
+    {
+     "month": "2013-10-31",
+     "value": null
+    },
+    {
+     "month": "2013-11-30",
+     "value": null
+    },
+    {
+     "month": "2013-12-31",
+     "value": null
+    },
+    {
+     "month": "2014-01-31",
+     "value": null
+    },
+    {
+     "month": "2014-02-28",
+     "value": null
+    },
+    {
+     "month": "2014-03-31",
+     "value": null
+    },
+    {
+     "month": "2014-04-30",
+     "value": null
+    },
+    {
+     "month": "2014-05-31",
+     "value": null
+    },
+    {
+     "month": "2014-06-30",
+     "value": null
+    },
+    {
+     "month": "2014-07-31",
+     "value": null
+    },
+    {
+     "month": "2014-08-31",
+     "value": null
+    },
+    {
+     "month": "2014-09-30",
+     "value": null
+    },
+    {
+     "month": "2014-10-31",
+     "value": null
+    },
+    {
+     "month": "2014-11-30",
+     "value": null
+    },
+    {
+     "month": "2014-12-31",
+     "value": null
+    },
+    {
+     "month": "2015-01-31",
+     "value": null
+    },
+    {
+     "month": "2015-02-28",
+     "value": null
+    },
+    {
+     "month": "2015-03-31",
+     "value": null
+    },
+    {
+     "month": "2015-04-30",
+     "value": null
+    },
+    {
+     "month": "2015-05-31",
+     "value": null
+    },
+    {
+     "month": "2015-06-30",
+     "value": null
+    },
+    {
+     "month": "2015-07-31",
+     "value": null
+    },
+    {
+     "month": "2015-08-31",
+     "value": null
+    },
+    {
+     "month": "2015-09-30",
+     "value": null
+    },
+    {
+     "month": "2015-10-31",
+     "value": null
+    },
+    {
+     "month": "2015-11-30",
+     "value": null
+    },
+    {
+     "month": "2015-12-31",
+     "value": null
+    },
+    {
+     "month": "2016-01-31",
+     "value": null
+    },
+    {
+     "month": "2016-02-29",
+     "value": null
+    },
+    {
+     "month": "2016-03-31",
+     "value": null
+    },
+    {
+     "month": "2016-04-30",
+     "value": null
+    },
+    {
+     "month": "2016-05-31",
+     "value": null
+    },
+    {
+     "month": "2016-06-30",
+     "value": null
+    },
+    {
+     "month": "2016-07-31",
+     "value": null
+    },
+    {
+     "month": "2016-08-31",
+     "value": null
+    },
+    {
+     "month": "2016-09-30",
+     "value": null
+    },
+    {
+     "month": "2016-10-31",
+     "value": null
+    },
+    {
+     "month": "2016-11-30",
+     "value": null
+    },
+    {
+     "month": "2016-12-31",
+     "value": null
+    },
+    {
+     "month": "2017-01-31",
+     "value": null
+    },
+    {
+     "month": "2017-02-28",
+     "value": null
+    },
+    {
+     "month": "2017-03-31",
+     "value": null
+    },
+    {
+     "month": "2017-04-30",
+     "value": null
+    },
+    {
+     "month": "2017-05-31",
+     "value": null
+    },
+    {
+     "month": "2017-06-30",
+     "value": null
+    },
+    {
+     "month": "2017-07-31",
+     "value": null
+    },
+    {
+     "month": "2017-08-31",
+     "value": null
+    },
+    {
+     "month": "2017-09-30",
+     "value": null
+    },
+    {
+     "month": "2017-10-31",
+     "value": null
+    },
+    {
+     "month": "2017-11-30",
+     "value": null
+    },
+    {
+     "month": "2017-12-31",
+     "value": null
+    },
+    {
+     "month": "2018-01-31",
+     "value": null
+    },
+    {
+     "month": "2018-02-28",
+     "value": null
+    },
+    {
+     "month": "2018-03-31",
+     "value": null
+    },
+    {
+     "month": "2018-04-30",
+     "value": null
+    },
+    {
+     "month": "2018-05-31",
+     "value": null
+    },
+    {
+     "month": "2018-06-30",
+     "value": null
+    },
+    {
+     "month": "2018-07-31",
+     "value": null
+    },
+    {
+     "month": "2018-08-31",
+     "value": null
+    },
+    {
+     "month": "2018-09-30",
+     "value": null
+    },
+    {
+     "month": "2018-10-31",
+     "value": null
+    },
+    {
+     "month": "2018-11-30",
+     "value": null
+    },
+    {
+     "month": "2018-12-31",
+     "value": null
+    },
+    {
+     "month": "2019-01-31",
+     "value": null
+    },
+    {
+     "month": "2019-02-28",
+     "value": null
+    },
+    {
+     "month": "2019-03-31",
+     "value": null
+    },
+    {
+     "month": "2019-04-30",
+     "value": null
+    },
+    {
+     "month": "2019-05-31",
+     "value": null
+    },
+    {
+     "month": "2019-06-30",
+     "value": null
+    },
+    {
+     "month": "2019-07-31",
+     "value": null
+    },
+    {
+     "month": "2019-08-31",
+     "value": null
+    },
+    {
+     "month": "2019-09-30",
+     "value": null
+    },
+    {
+     "month": "2019-10-31",
+     "value": null
+    },
+    {
+     "month": "2019-11-30",
+     "value": null
+    },
+    {
+     "month": "2019-12-31",
+     "value": null
+    },
+    {
+     "month": "2020-01-31",
+     "value": null
+    },
+    {
+     "month": "2020-02-29",
+     "value": null
+    },
+    {
+     "month": "2020-03-31",
+     "value": null
+    },
+    {
+     "month": "2020-04-30",
+     "value": null
+    },
+    {
+     "month": "2020-05-31",
+     "value": null
+    },
+    {
+     "month": "2020-06-30",
+     "value": null
+    },
+    {
+     "month": "2020-07-31",
+     "value": null
+    },
+    {
+     "month": "2020-08-31",
+     "value": null
+    },
+    {
+     "month": "2020-09-30",
+     "value": null
+    },
+    {
+     "month": "2020-10-31",
+     "value": null
+    },
+    {
+     "month": "2020-11-30",
+     "value": null
+    },
+    {
+     "month": "2020-12-31",
+     "value": null
+    },
+    {
+     "month": "2021-01-31",
+     "value": null
+    },
+    {
+     "month": "2021-02-28",
+     "value": null
+    },
+    {
+     "month": "2021-03-31",
+     "value": null
+    },
+    {
+     "month": "2021-04-30",
+     "value": null
+    },
+    {
+     "month": "2021-05-31",
+     "value": null
+    },
+    {
+     "month": "2021-06-30",
+     "value": null
+    },
+    {
+     "month": "2021-07-31",
+     "value": null
+    },
+    {
+     "month": "2021-08-31",
+     "value": null
+    },
+    {
+     "month": "2021-09-30",
+     "value": null
+    },
+    {
+     "month": "2021-10-31",
+     "value": null
+    },
+    {
+     "month": "2021-11-30",
+     "value": null
+    },
+    {
+     "month": "2021-12-31",
+     "value": null
+    },
+    {
+     "month": "2022-01-31",
+     "value": null
+    },
+    {
+     "month": "2022-02-28",
+     "value": null
+    },
+    {
+     "month": "2022-03-31",
+     "value": null
+    },
+    {
+     "month": "2022-04-30",
+     "value": null
+    },
+    {
+     "month": "2022-05-31",
+     "value": null
+    },
+    {
+     "month": "2022-06-30",
+     "value": null
+    },
+    {
+     "month": "2022-07-31",
+     "value": null
+    },
+    {
+     "month": "2022-08-31",
+     "value": null
+    },
+    {
+     "month": "2022-09-30",
+     "value": null
+    },
+    {
+     "month": "2022-10-31",
+     "value": null
+    },
+    {
+     "month": "2022-11-30",
+     "value": null
+    },
+    {
+     "month": "2022-12-31",
+     "value": null
+    },
+    {
+     "month": "2023-01-31",
+     "value": null
+    },
+    {
+     "month": "2023-02-28",
+     "value": null
+    },
+    {
+     "month": "2023-03-31",
+     "value": null
+    },
+    {
+     "month": "2023-04-30",
+     "value": null
+    },
+    {
+     "month": "2023-05-31",
+     "value": null
+    },
+    {
+     "month": "2023-06-30",
+     "value": null
+    },
+    {
+     "month": "2023-07-31",
+     "value": null
+    },
+    {
+     "month": "2023-08-31",
+     "value": null
+    },
+    {
+     "month": "2023-09-30",
+     "value": null
+    },
+    {
+     "month": "2023-10-31",
+     "value": null
+    },
+    {
+     "month": "2023-11-30",
+     "value": null
+    },
+    {
+     "month": "2023-12-31",
+     "value": null
+    },
+    {
+     "month": "2024-01-31",
+     "value": null
+    },
+    {
+     "month": "2024-02-29",
+     "value": null
+    },
+    {
+     "month": "2024-03-31",
+     "value": null
+    },
+    {
+     "month": "2024-04-30",
+     "value": null
+    },
+    {
+     "month": "2024-05-31",
+     "value": null
+    },
+    {
+     "month": "2024-06-30",
+     "value": null
+    },
+    {
+     "month": "2024-07-31",
+     "value": null
+    },
+    {
+     "month": "2024-08-31",
+     "value": null
+    },
+    {
+     "month": "2024-09-30",
+     "value": null
+    },
+    {
+     "month": "2024-10-31",
+     "value": null
+    },
+    {
+     "month": "2024-11-30",
+     "value": null
+    },
+    {
+     "month": "2024-12-31",
+     "value": 46.2
+    },
+    {
+     "month": "2025-01-31",
+     "value": 54.31
+    },
+    {
+     "month": "2025-02-28",
+     "value": 42.56
+    },
+    {
+     "month": "2025-03-31",
+     "value": 31.53
+    },
+    {
+     "month": "2025-04-30",
+     "value": 37.68
+    },
+    {
+     "month": "2025-05-31",
+     "value": 20.08
+    },
+    {
+     "month": "2025-06-30",
+     "value": 17.99
+    },
+    {
+     "month": "2025-07-31",
+     "value": 10.59
+    },
+    {
+     "month": "2025-08-31",
+     "value": 20.49
+    },
+    {
+     "month": "2025-09-30",
+     "value": 9.36
+    },
+    {
+     "month": "2025-10-31",
+     "value": 14.8
+    },
+    {
+     "month": "2025-11-30",
+     "value": 23.65
+    },
+    {
+     "month": "2025-12-31",
+     "value": 22.14
+    },
+    {
+     "month": "2026-01-31",
+     "value": 8.36
+    },
+    {
+     "month": "2026-02-28",
+     "value": -21.54
+    },
+    {
+     "month": "2026-03-31",
+     "value": -31.6
+    },
+    {
+     "month": "2026-04-30",
+     "value": -28.86
+    },
+    {
+     "month": "2026-05-31",
+     "value": -32.17
+    },
+    {
+     "month": "2026-06-30",
+     "value": -14.66
+    },
+    {
+     "month": "2026-07-31",
+     "value": -15.86
+    },
+    {
+     "month": "2026-08-31",
+     "value": -22.56
+    }
+   ]
   }
  },
  "attribution": {
@@ -24,31 +5331,53 @@
    {
     "series": "qld_coal.saleable_tonnes_total",
     "label": "QLD coal saleable tonnes",
+    "weight": 0.25,
     "status": "NO DATA"
    },
    {
     "series": "pilbara.iron_ore_throughput_mt",
     "label": "Pilbara Ports iron ore",
-    "status": "NO DATA"
+    "weight": 0.25,
+    "score": -24.37866412263712,
+    "raw_score": -24.37866412263712,
+    "z": -0.6094666030659279,
+    "value": 44.2,
+    "stale_months": 0,
+    "as_of": "2026-07-31",
+    "inverted": false,
+    "weight_used": 0.625,
+    "contribution": -15.2366650766482
    },
    {
     "series": "abs.capex.mining_actual",
     "label": "ABS mining capex (actual)",
+    "weight": 0.125,
     "status": "NO DATA"
    },
    {
     "series": "abs.capex.mining_expected",
     "label": "ABS mining capex (expectations)",
+    "weight": 0.125,
     "status": "NO DATA"
    },
    {
     "series": "rba.commodity_index_aud",
     "label": "RBA commodity price index",
-    "status": "NO DATA"
+    "weight": 0.15,
+    "score": -21.51266984707176,
+    "raw_score": -21.51266984707176,
+    "z": -0.537816746176794,
+    "value": 103.3,
+    "stale_months": 0,
+    "as_of": "2026-07-31",
+    "inverted": false,
+    "weight_used": 0.37499999999999994,
+    "contribution": -8.06725119265191
    },
    {
     "series": "abs.exploration.metres_drilled_total",
     "label": "ABS metres drilled",
+    "weight": 0.1,
     "status": "NO DATA"
    }
   ],
@@ -56,49 +5385,106 @@
    {
     "series": "aisi.capacity_utilisation_pct",
     "label": "AISI raw-steel capacity utilisation",
+    "weight": 0.2,
     "status": "NO DATA"
    },
    {
     "series": "fred.steel_new_orders",
     "label": "US new orders, iron & steel mills",
-    "status": "NO DATA"
+    "weight": 0.2,
+    "score": 100.0,
+    "raw_score": 100.0,
+    "z": 3.275940176750445,
+    "value": 31360.0,
+    "stale_months": 2,
+    "as_of": "2026-06-30",
+    "inverted": false,
+    "weight_used": 0.3333333333333333,
+    "contribution": 33.33333333333333
    },
    {
     "series": "cat.resource_industries_yoy_pct",
     "label": "CAT Resource Industries retail sales YoY",
+    "weight": 0.2,
     "status": "NO DATA"
    },
    {
     "series": "bh.rigcount_na_total",
     "label": "Baker Hughes NA rig count",
-    "status": "NO DATA"
+    "weight": 0.1,
+    "score": 1.8587494111614977,
+    "raw_score": 1.8587494111614977,
+    "z": 0.04646873527903744,
+    "value": 808.0,
+    "stale_months": 0,
+    "as_of": "2026-08-31",
+    "inverted": false,
+    "weight_used": 0.16666666666666666,
+    "contribution": 0.30979156852691625
    },
    {
     "series": "bh.rigcount_intl_total",
     "label": "Baker Hughes intl rig count",
-    "status": "NO DATA"
+    "weight": 0.1,
+    "score": 73.72761931005346,
+    "raw_score": 73.72761931005346,
+    "z": 1.8431904827513361,
+    "value": 1096.0,
+    "stale_months": 1,
+    "as_of": "2026-07-31",
+    "inverted": false,
+    "weight_used": 0.16666666666666666,
+    "contribution": 12.287936551675575
    },
    {
     "series": "rba.audusd",
     "label": "AUD/USD (inverted)",
-    "status": "NO DATA"
+    "weight": 0.2,
+    "score": -69.2955926214819,
+    "raw_score": 69.2955926214819,
+    "z": 1.7323898155370476,
+    "value": 0.706125,
+    "stale_months": 0,
+    "as_of": "2026-08-31",
+    "inverted": true,
+    "weight_used": 0.3333333333333333,
+    "contribution": -23.098530873827297
    }
   ],
   "margin": [
    {
     "series": "tungsten.flag_count",
     "label": "Tungsten policy flags (proxy)",
+    "weight": 0.34,
     "status": "NO DATA"
    },
    {
     "series": "jsa.ivi_trades_tightness",
     "label": "Fitter/welder vacancy tightness",
-    "status": "NO DATA"
+    "weight": 0.33,
+    "score": 24.17118174403143,
+    "raw_score": -24.17118174403143,
+    "z": -0.6042795436007857,
+    "value": 4524.6666700000005,
+    "stale_months": 1,
+    "as_of": "2026-07-31",
+    "inverted": true,
+    "weight_used": 0.5,
+    "contribution": 12.085590872015715
    },
    {
     "series": "rba.audusd",
     "label": "AUD/USD",
-    "status": "NO DATA"
+    "weight": 0.33,
+    "score": -69.2955926214819,
+    "raw_score": 69.2955926214819,
+    "z": 1.7323898155370476,
+    "value": 0.706125,
+    "stale_months": 0,
+    "as_of": "2026-08-31",
+    "inverted": true,
+    "weight_used": 0.5,
+    "contribution": -34.64779631074095
    }
   ]
  },
