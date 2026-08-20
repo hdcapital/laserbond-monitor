@@ -30,11 +30,15 @@ PAGES = [
     "https://rigcount.bakerhughes.com/intl-rig-count",
     "https://rigcount.bakerhughes.com/",
 ]
-NA_LINK = re.compile(r"north.?america.*rotary.*rig", re.I)
-INTL_LINK = re.compile(r"(worldwide|international).*rig", re.I)
+NA_LINK = re.compile(r"north.?americ.*rig.*count|rig.*count.*north.?americ", re.I)
+INTL_LINK = re.compile(r"(worldwide|international).*rig.*count|"
+                       r"rig.*count.*(worldwide|international)", re.I)
 
 
 def discover_links(session) -> dict:
+    """The rig-count site serves workbooks from /static-files/<uuid> links
+    (no .xlsx extension - verified live 2026-08-20), so match on the anchor
+    TEXT and accept any href, preferring static-files ones."""
     links = {"na": None, "intl": None}
     for page in PAGES:
         try:
@@ -42,16 +46,20 @@ def discover_links(session) -> dict:
         except Exception as exc:  # noqa: BLE001
             log.warning("bh: page %s failed: %s", page, exc)
             continue
+        candidates = {"na": [], "intl": []}
         for a in soup.find_all("a", href=True):
             href = a["href"]
             text = f"{a.get_text(' ', strip=True)} {href}"
-            if not re.search(r"\.xls[xbm]?($|\?)", href, re.I):
-                continue
             full = urljoin(page, href)
-            if links["na"] is None and NA_LINK.search(text):
-                links["na"] = full
-            elif links["intl"] is None and INTL_LINK.search(text):
-                links["intl"] = full
+            is_file = ("static-files" in href or
+                       re.search(r"\.xls[xbm]?($|\?)", href, re.I))
+            if NA_LINK.search(text):
+                candidates["na"].append((0 if is_file else 1, full))
+            elif INTL_LINK.search(text):
+                candidates["intl"].append((0 if is_file else 1, full))
+        for kind in ("na", "intl"):
+            if links[kind] is None and candidates[kind]:
+                links[kind] = sorted(candidates[kind])[0][1]
         if links["na"] and links["intl"]:
             break
     log.info("bh links: %s", links)

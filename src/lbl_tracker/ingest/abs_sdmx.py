@@ -10,17 +10,33 @@ from ..http import get, make_session
 
 log = logging.getLogger("lbl_tracker.abs")
 
-BASE = "https://api.data.abs.gov.au"
+# The ABS Data API moved from api.data.abs.gov.au to data.api.abs.gov.au
+# (the old host no longer resolves - verified 2026-08); keep both so a
+# future flip back keeps working.
+BASES = ["https://data.api.abs.gov.au", "https://api.data.abs.gov.au"]
 
 STRUCTURE_JSON = "application/vnd.sdmx.structure+json"
 DATA_JSON = "application/vnd.sdmx.data+json"
 
 
 @lru_cache(maxsize=1)
+def resolve_base() -> str:
+    last = None
+    for base in BASES:
+        try:
+            session = make_session(extra_headers={"Accept": STRUCTURE_JSON})
+            get(f"{base}/rest/dataflow/ABS?detail=allstubs", session=session, timeout=90)
+            return base
+        except Exception as exc:  # noqa: BLE001
+            last = exc
+    raise RuntimeError(f"no ABS API base reachable: {last}")
+
+
+@lru_cache(maxsize=1)
 def list_dataflows() -> pd.DataFrame:
     """All ABS dataflows (id, name) from the /dataflow endpoint."""
     session = make_session(extra_headers={"Accept": STRUCTURE_JSON})
-    resp = get(f"{BASE}/rest/dataflow/ABS?detail=allstubs", session=session)
+    resp = get(f"{resolve_base()}/rest/dataflow/ABS?detail=allstubs", session=session)
     doc = resp.json()
     flows = doc.get("data", {}).get("dataflows", []) or doc.get("dataflows", [])
     rows = [{"id": f.get("id"), "name": f.get("name"), "version": f.get("version")}
@@ -42,7 +58,7 @@ def get_data(flow_id: str, key: str = "all", params: dict | None = None) -> pd.D
     dimension id, values as codelist ids) and *_name columns with labels.
     """
     session = make_session(extra_headers={"Accept": DATA_JSON})
-    url = f"{BASE}/rest/data/ABS,{flow_id}/{key}"
+    url = f"{resolve_base()}/rest/data/ABS,{flow_id}/{key}"
     resp = get(url, session=session, params=params or {})
     doc = resp.json()
     data = doc.get("data", doc)

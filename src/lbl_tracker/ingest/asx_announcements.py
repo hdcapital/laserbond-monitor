@@ -33,10 +33,20 @@ from ..store import (log_gap, now_utc, read_events, stable_id, write_events,
 log = logging.getLogger("lbl_tracker.asx")
 
 SOURCE = "asx_announcements"
+# Verified live 2026-08-20: the legacy www.asx.com.au/asx/1 API is gone
+# (uri-not-found); the Markit Digital research API answers without a token.
+# Item shape: {announcementType, date, documentKey, fileSize, headline,
+# isPriceSensitive, url("")} - the PDF is served by the Markit file gateway
+# keyed on documentKey.
 LIST_ENDPOINTS = [
-    "https://www.asx.com.au/asx/1/company/{ticker}/announcements?count={count}&market_sensitive=false",
     "https://asx.api.markitdigital.com/asx-research/1.0/companies/{ticker}/announcements?itemsPerPage={count}",
+    "https://www.asx.com.au/asx/1/company/{ticker}/announcements?count={count}&market_sensitive=false",
 ]
+# Public access token embedded in www.asx.com.au's announcement pages; if
+# ASX rotates it the PDF probe fails loudly and it needs re-lifting from
+# the site (see SOURCES.md).
+PDF_GATEWAY = ("https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0"
+               "/file/{key}?access_token=83ff96335c2d45a094df02a206a39ff4")
 
 # Only spend extraction calls on announcements that can carry the fields we
 # track. LBL gets everything (Technology events show up under many titles).
@@ -103,18 +113,23 @@ def fetch_list(ticker: str, count: int, session) -> list[dict]:
             items = items.get("items", [])
         out = []
         for item in items:
-            header = item.get("header") or item.get("headerText") or item.get("title") or ""
+            header = (item.get("headline") or item.get("header")
+                      or item.get("headerText") or item.get("title") or "")
+            doc_key = str(item.get("documentKey") or "")
             doc_url = (item.get("url") or item.get("documentUrl")
                        or item.get("announcementUrl") or "")
-            date = (item.get("document_release_date") or item.get("releaseDate")
-                    or item.get("documentDate") or item.get("date") or "")
-            ann_id = str(item.get("id") or item.get("documentKey")
+            if not doc_url and doc_key:
+                doc_url = PDF_GATEWAY.format(key=doc_key)
+            date = (item.get("date") or item.get("document_release_date")
+                    or item.get("releaseDate") or item.get("documentDate") or "")
+            ann_id = str(item.get("id") or doc_key
                          or stable_id(ticker, header, str(date)))
             out.append({
                 "id": ann_id, "ticker": ticker, "headline": str(header).strip(),
                 "date": date, "url": doc_url,
-                "market_sensitive": bool(item.get("market_sensitive")
-                                         or item.get("isMarketSensitive") or False),
+                "market_sensitive": bool(item.get("isPriceSensitive")
+                                         or item.get("market_sensitive") or False),
+                "type": str(item.get("announcementType") or ""),
                 "raw": json.dumps(item)[:4000],
             })
         if out:

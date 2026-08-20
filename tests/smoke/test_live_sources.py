@@ -100,6 +100,10 @@ def test_baker_hughes():
 
 
 def test_cat_edgar():
+    import os
+    if not os.environ.get("SEC_CONTACT_EMAIL", "").strip():
+        pytest.skip("cat_edgar pending SEC_CONTACT_EMAIL - EDGAR 403s requests "
+                    "whose User-Agent lacks a contact address")
     import lbl_tracker.ingest.cat_edgar as cat
     old = cat.MAX_FILINGS
     cat.MAX_FILINGS = 8  # smoke: newest filings only
@@ -134,5 +138,8 @@ def test_asx_announcements():
         assert items, f"{ticker}: announcement list empty"
         assert all(i["headline"] for i in items)
         assert all(i["date"] for i in items)
+    from lbl_tracker.http import get
     pdf = resolve_pdf_url(fetch_list("LBL", 5, session)[0], session)
-    assert pdf and ".pdf" in pdf.lower(), f"LBL: could not resolve announcement PDF ({pdf})"
+    assert pdf, "LBL: could not resolve announcement PDF url"
+    content = get(pdf, session=session).content
+    assert content[:4] == b"%PDF", f"LBL: {pdf} did not return a PDF"

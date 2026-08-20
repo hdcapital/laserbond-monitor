@@ -29,28 +29,44 @@ DATA_PAGE = f"{BASE}/industry-data/"
 NEWS_PATHS = [f"{BASE}/news/", f"{BASE}/newsroom/"]
 RELEASE_TITLE = re.compile(r"raw steel production", re.I)
 
-WEEK_PAT = re.compile(
-    r"week ending(?: on)?\s+([A-Z][a-z]+ \d{1,2},? \d{4})", re.I)
-PROD_PAT = re.compile(
-    r"production was ([\d,]+(?:\.\d+)?)\s*(?:thousand )?net tons", re.I)
-UTIL_PAT = re.compile(
-    r"cap(?:ability|acity) utili[sz]ation rate of ([\d.]+)\s*percent", re.I)
+# Verified against the live release text 2026-08-20. Each weekly release
+# states three genuine datapoints: the current week, the same week a year
+# earlier, and the previous week - all are captured.
+DATE = r"([A-Z][a-z]+ \d{1,2},? \d{4})"
+CUR_PAT = re.compile(
+    rf"week ending(?: on)?\s+{DATE}\s*,?\s*domestic raw steel production was "
+    rf"([\d,]+) net tons while the capability utili[sz]ation rate was "
+    rf"([\d.]+)\s*percent", re.I)
+YEAR_AGO_PAT = re.compile(
+    rf"[Pp]roduction was ([\d,]+) net tons in the week ending\s+{DATE}\s*,?\s*"
+    rf"while the capability utili[sz]ation(?: then)? was ([\d.]+)\s*percent", re.I)
+PREV_WEEK_PAT = re.compile(
+    rf"previous week ending\s+{DATE}\s*,?\s*when production was ([\d,]+) net "
+    rf"tons and the rate of capability utili[sz]ation was ([\d.]+)\s*percent", re.I)
 
 
-def parse_release_text(text: str, url: str) -> dict | None:
+def _mk(date_s: str, tons_s: str, util_s: str, url: str) -> dict:
+    return {
+        "date": pd.to_datetime(date_s.replace(",", " "), format="mixed"),
+        "util": float(util_s),
+        "prod_kt": float(tons_s.replace(",", "")) / 1000.0,
+        "url": url,
+    }
+
+
+def parse_release_text(text: str, url: str) -> list[dict]:
     text = " ".join(text.split())
-    week = WEEK_PAT.search(text)
-    util = UTIL_PAT.search(text)
-    if not (week and util):
-        return None
-    date = pd.to_datetime(week.group(1).replace(",", " "), format="mixed")
-    out = {"date": date, "util": float(util.group(1)), "url": url}
-    prod = PROD_PAT.search(text)
-    if prod:
-        tons = float(prod.group(1).replace(",", ""))
-        # releases quote raw net tons (e.g. 1,743,000); normalise to kt
-        out["prod_kt"] = tons / 1000.0 if tons > 100000 else tons
-    return out
+    hits = []
+    m = CUR_PAT.search(text)
+    if m:
+        hits.append(_mk(m.group(1), m.group(2), m.group(3), url))
+    m = YEAR_AGO_PAT.search(text)
+    if m:
+        hits.append(_mk(m.group(2), m.group(1), m.group(3), url))
+    m = PREV_WEEK_PAT.search(text)
+    if m:
+        hits.append(_mk(m.group(1), m.group(2), m.group(3), url))
+    return hits
 
 
 def collect_release_urls(session) -> list[str]:
@@ -74,18 +90,14 @@ def fetch() -> pd.DataFrame:
     # The industry-data page itself carries the current week's figures.
     try:
         soup = BeautifulSoup(get(DATA_PAGE, session=session).text, "lxml")
-        hit = parse_release_text(soup.get_text(" ", strip=True), DATA_PAGE)
-        if hit:
-            parsed.append(hit)
+        parsed.extend(parse_release_text(soup.get_text(" ", strip=True), DATA_PAGE))
     except Exception as exc:  # noqa: BLE001
         log.warning("aisi: industry-data page failed: %s", exc)
 
     for url in collect_release_urls(session)[:30]:
         try:
             soup = BeautifulSoup(get(url, session=session).text, "lxml")
-            hit = parse_release_text(soup.get_text(" ", strip=True), url)
-            if hit:
-                parsed.append(hit)
+            parsed.extend(parse_release_text(soup.get_text(" ", strip=True), url))
         except Exception as exc:  # noqa: BLE001
             log.warning("aisi: release %s failed: %s", url, exc)
 
@@ -98,10 +110,9 @@ def fetch() -> pd.DataFrame:
         rows.append({"series_id": "aisi.capacity_utilisation_pct", "date": hit["date"],
                      "value": hit["util"], "source_url": hit["url"],
                      "retrieved_at": retrieved})
-        if "prod_kt" in hit:
-            rows.append({"series_id": "aisi.raw_steel_production_kt", "date": hit["date"],
-                         "value": hit["prod_kt"], "source_url": hit["url"],
-                         "retrieved_at": retrieved})
+        rows.append({"series_id": "aisi.raw_steel_production_kt", "date": hit["date"],
+                     "value": hit["prod_kt"], "source_url": hit["url"],
+                     "retrieved_at": retrieved})
     return pd.DataFrame(rows).drop_duplicates(["series_id", "date"], keep="first")
 
 

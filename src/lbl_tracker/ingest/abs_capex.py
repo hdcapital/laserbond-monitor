@@ -20,7 +20,7 @@ SOURCE = "abs_capex"
 # 5625.0 quarterly private new capital expenditure flow.
 FLOW_CANDIDATES = ["CAPEX"]
 FLOW_KEYWORD = "capital expenditure"
-SOURCE_URL = "https://api.data.abs.gov.au/rest/data/ABS,{flow}/all"
+SOURCE_URL = "https://data.api.abs.gov.au/rest/data/ABS,{flow}/all"
 
 
 def resolve_flow() -> str:

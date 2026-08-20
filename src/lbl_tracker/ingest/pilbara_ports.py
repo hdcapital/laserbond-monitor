@@ -23,10 +23,10 @@ log = logging.getLogger("lbl_tracker.pilbara")
 
 SOURCE = "pilbara_ports"
 BASE = "https://www.pilbaraports.com.au"
+# Verified live 2026-08-20: the site is Kentico CMS; /news answers 200 and
+# its canonical URL is the news,-media-and-statistics path.
 LISTING_PATHS = [
-    "/news-and-media/media-statements",
-    "/news-media/media-statements",
-    "/media-statements",
+    "/about-pilbara-ports/news,-media-and-statistics/news",
     "/news",
 ]
 MAX_PAGES = 40

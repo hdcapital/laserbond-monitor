@@ -61,7 +61,7 @@ def probe_qld_coal():
     _p(f"discovered saleable resources: {json.dumps(found, indent=1)[:3000]}")
     if found:
         res = found[0]
-        content = get(res["url"], session=session).content
+        content = qld_coal._download(res["url"], session).content
         _p(f"first resource bytes: {len(content)}")
         if res["format"] == "csv":
             _p(_head(content.decode("utf-8", "replace"), 2500))
@@ -73,22 +73,28 @@ def probe_qld_coal():
 
 
 def probe_pilbara():
+    from bs4 import BeautifulSoup
+
     from .ingest import pilbara_ports
     session = make_session()
     url = pilbara_ports.discover_listing(session)
     _p(f"listing resolved: {url}")
-    html = get(url, session=session).text
-    _p(_head(html, 3000))
+    for probe_url in (url, f"{url}?page=2"):
+        soup = BeautifulSoup(get(probe_url, session=session).text, "lxml")
+        _p(f"-- anchors on {probe_url}:")
+        for a in soup.find_all("a", href=True)[:150]:
+            text = " ".join(a.get_text(" ", strip=True).split())
+            if text:
+                _p(f"   {text[:110]} -> {a['href'][:130]}")
     items = pilbara_ports.list_statements(session)
     _p(f"candidates: {len(items)}")
     for item in items[:15]:
         _p(f"- {item['title']} -> {item['url']}")
     if items:
-        from bs4 import BeautifulSoup
         text = BeautifulSoup(get(items[0]["url"], session=session).text,
                              "lxml").get_text(" ", strip=True)
         _p("first statement text excerpt:")
-        _p(_head(" ".join(text.split()), 3000))
+        _p(_head(" ".join(text.split()), 3500))
 
 
 def probe_rba():
@@ -147,14 +153,18 @@ def probe_fred():
 
 
 def probe_baker_hughes():
+    from bs4 import BeautifulSoup
+
     from .ingest import baker_hughes
     session = make_session()
     for page in baker_hughes.PAGES:
         try:
-            html = get(page, session=session).text
-            import re
-            links = re.findall(r'href="([^"]+\.xls[xbm]?[^"]*)"', html, re.I)
-            _p(f"-- {page}: xlsx links: {links[:20]}")
+            soup = BeautifulSoup(get(page, session=session).text, "lxml")
+            _p(f"-- anchors on {page}:")
+            for a in soup.find_all("a", href=True)[:80]:
+                text = " ".join(a.get_text(" ", strip=True).split())
+                if text:
+                    _p(f"   {text[:100]} -> {a['href'][:120]}")
         except Exception as exc:  # noqa: BLE001
             _p(f"-- {page} FAILED: {exc}")
     links = baker_hughes.discover_links(session)
@@ -196,7 +206,17 @@ def probe_cat_edgar():
 
 def probe_jsa():
     from .ingest import jsa_ivi
-    session = make_session()
+    session = jsa_ivi.jsa_session()
+    try:
+        resp = get(f"{jsa_ivi.DATA_GOV_CKAN}/package_search", session=session,
+                   params={"q": "internet vacancy index", "rows": 20})
+        for pkg in resp.json()["result"]["results"]:
+            _p(f"- data.gov.au package: {pkg.get('name')} | {pkg.get('title')}")
+            for res in pkg.get("resources", [])[:20]:
+                _p(f"    res: [{res.get('format')}] {res.get('name')} -> "
+                   f"{str(res.get('url'))[:130]}")
+    except Exception as exc:  # noqa: BLE001
+        _p(f"data.gov.au search FAILED: {exc}")
     for page in jsa_ivi.PAGES:
         try:
             html = get(page, session=session).text
@@ -241,8 +261,18 @@ def probe_asx():
         items = asx.fetch_list("LBL", 5, session)
         _p(f"parsed items: {json.dumps(items, indent=1, default=str)[:2500]}")
         if items:
+            key = items[0]["id"]
+            for variant in (asx.PDF_GATEWAY.format(key=key),
+                            asx.PDF_GATEWAY.format(key=key).split("?")[0]):
+                try:
+                    resp = get(variant, session=session)
+                    _p(f"pdf gateway {variant[:90]}... -> "
+                       f"{resp.headers.get('Content-Type')} "
+                       f"{len(resp.content)}B magic={resp.content[:5]!r}")
+                except Exception as exc:  # noqa: BLE001
+                    _p(f"pdf gateway {variant[:90]}... FAILED: {exc}")
             pdf = asx.resolve_pdf_url(items[0], session)
-            _p(f"first pdf url: {pdf}")
+            _p(f"resolve_pdf_url: {pdf}")
     except Exception as exc:  # noqa: BLE001
         _p(f"fetch_list failed: {exc}")
 

@@ -31,8 +31,50 @@ PAGES = [
 ]
 LINK_PAT = re.compile(r"(detailed occupation|ivi.?data.*occupation|4.?digit)", re.I)
 
+# jobsandskills.gov.au sits behind a WAF that stalls plain library
+# user-agents (read-timeouts observed in CI); browser-like headers get
+# normal responses.
+BROWSER_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/126.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-AU,en;q=0.8",
+}
+
+
+def jsa_session():
+    return make_session(extra_headers=BROWSER_HEADERS)
+
+
+DATA_GOV_CKAN = "https://data.gov.au/api/3/action"
+
+
+def discover_via_data_gov(session) -> str | None:
+    """JSA republishes the IVI on data.gov.au (CKAN) - far more reliable
+    than the WAF-fronted jobsandskills.gov.au site."""
+    try:
+        resp = get(f"{DATA_GOV_CKAN}/package_search", session=session,
+                   params={"q": "internet vacancy index", "rows": 20})
+        results = resp.json()["result"]["results"]
+    except Exception as exc:  # noqa: BLE001
+        log.warning("jsa: data.gov.au search failed: %s", exc)
+        return None
+    candidates = []
+    for pkg in results:
+        for res in pkg.get("resources", []):
+            name = f"{res.get('name', '')} {res.get('description', '')}"
+            fmt = (res.get("format") or "").lower()
+            if fmt in ("xlsx", "xls") and LINK_PAT.search(name):
+                candidates.append((res.get("last_modified") or "", res.get("url")))
+    if candidates:
+        return sorted(candidates, reverse=True)[0][1]
+    return None
+
 
 def discover_workbook(session) -> str:
+    url = discover_via_data_gov(session)
+    if url:
+        return url
     for page in PAGES:
         try:
             soup = BeautifulSoup(get(page, session=session).text, "lxml")
@@ -134,7 +176,7 @@ def parse_workbook(content: bytes, url: str) -> pd.DataFrame:
 
 
 def fetch() -> pd.DataFrame:
-    session = make_session()
+    session = jsa_session()
     url = discover_workbook(session)
     log.info("jsa_ivi: workbook %s", url)
     return parse_workbook(get(url, session=session).content, url)

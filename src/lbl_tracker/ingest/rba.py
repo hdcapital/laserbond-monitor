@@ -23,12 +23,13 @@ from ..store import log_gap, now_utc, write_observations
 log = logging.getLogger("lbl_tracker.rba")
 
 SOURCE = "rba"
+# Verified live 2026-08-20: F11.1 is the DAILY exchange-rate table, F11 is
+# the MONTHLY one (title rows "A$1=USD", description "AUD/USD Exchange
+# Rate"); I2 descriptions read "Index of commodity prices; All items; A$".
 I2_URL = "https://www.rba.gov.au/statistics/tables/csv/i2-data.csv"
-F11_MONTHLY_URL = "https://www.rba.gov.au/statistics/tables/csv/f11.1-data.csv"
+F11_MONTHLY_URL = "https://www.rba.gov.au/statistics/tables/csv/f11-data.csv"
 FX_DAILY_URLS = [
-    # current vintage daily FX csv; older history lives in xls files listed
-    # on the exchange-rates page - discovered at probe time.
-    "https://www.rba.gov.au/statistics/tables/csv/f11-data.csv",
+    "https://www.rba.gov.au/statistics/tables/csv/f11.1-data.csv",
 ]
 
 
@@ -45,9 +46,11 @@ def parse_rba_csv(text: str) -> tuple[pd.DataFrame, dict]:
         raise ValueError("no 'Series ID' row found in RBA csv")
     id_row = id_rows[0]
     series_ids = raw.iloc[id_row, 1:].tolist()
-    title_row = raw.index[raw[0].str.strip().str.lower().isin(["title", "description"])]
-    titles = raw.iloc[title_row[0], 1:].tolist() if len(title_row) else [""] * len(series_ids)
-    meta = {sid: title for sid, title in zip(series_ids, titles) if sid}
+    label_rows = raw.index[raw[0].str.strip().str.lower().isin(["title", "description"])]
+    meta = {}
+    for offset, sid in enumerate(series_ids, start=1):
+        if sid:
+            meta[sid] = " | ".join(str(raw.iloc[r, offset]) for r in label_rows)
     data = raw.iloc[id_row + 1:].copy()
     data.columns = ["date"] + series_ids
     data = data[data["date"].str.strip() != ""]
@@ -81,24 +84,27 @@ def fetch() -> pd.DataFrame:
     retrieved = now_utc()
     frames = []
 
+    def pick_usd(meta):
+        return (_pick_series(meta, "a$1=usd") or _pick_series(meta, "aud/usd")
+                or ("FXRUSD" if "FXRUSD" in meta else None))
+
     # Commodity price index (I2), AUD terms, all items.
     data, meta = parse_rba_csv(get(I2_URL).text)
-    sid = (_pick_series(meta, "all items", "a$") or _pick_series(meta, "all items", "aud")
-           or _pick_series(meta, "all items"))
+    sid = _pick_series(meta, "all items", "a$") or _pick_series(meta, "all items")
     if sid:
         frames.append(_to_rows(data, sid, "rba.commodity_index_aud", I2_URL, retrieved))
     else:
         log_gap(SOURCE, "rba.commodity_index_aud", f"no all-items AUD column in I2; meta={meta}")
 
-    # Monthly average AUD/USD (long history).
+    # Monthly average AUD/USD (long history, table F11).
     data, meta = parse_rba_csv(get(F11_MONTHLY_URL).text)
-    sid = _pick_series(meta, "us dollar") or ("FXRUSD" if "FXRUSD" in meta else None)
+    sid = pick_usd(meta)
     if sid:
         frames.append(_to_rows(data, sid, "rba.audusd_monthly", F11_MONTHLY_URL, retrieved))
     else:
-        log_gap(SOURCE, "rba.audusd_monthly", f"no USD column in F11.1; meta={meta}")
+        log_gap(SOURCE, "rba.audusd_monthly", f"no USD column in F11; meta={meta}")
 
-    # Daily AUD/USD, current published window.
+    # Daily AUD/USD (table F11.1, current published window).
     daily_done = False
     for url in FX_DAILY_URLS:
         try:
@@ -106,7 +112,7 @@ def fetch() -> pd.DataFrame:
         except Exception as exc:  # noqa: BLE001
             log.warning("daily FX url %s failed: %s", url, exc)
             continue
-        sid = _pick_series(meta, "us dollar") or ("FXRUSD" if "FXRUSD" in meta else None)
+        sid = pick_usd(meta)
         if sid:
             frames.append(_to_rows(data, sid, "rba.audusd", url, retrieved))
             daily_done = True

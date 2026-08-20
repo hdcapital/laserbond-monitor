@@ -37,10 +37,11 @@ jsa:
   states: [NSW, VIC, QLD, SA, WA, TAS, NT, ACT, AUST]
 
 fred:
-  # Value of Manufacturers' New Orders: Iron and Steel Mills and
-  # Ferroalloy Manufacturing (monthly, $M). Verified id in SOURCES.md.
+  # A31SNO: Value of Manufacturers' New Orders: Iron and Steel Mills and
+  # Ferroalloy Manufacturing (monthly, $M, 1992-02 onward). Verified live
+  # 2026-08-20 via fredgraph.csv - see SOURCES.md.
   series:
-    steel_new_orders: AISMNO
+    steel_new_orders: A31SNO
 
 # ---------------------------------------------------------------------------
 # Pulse composites. Each component references a stored series_id.

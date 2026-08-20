@@ -13,7 +13,7 @@ log = logging.getLogger("lbl_tracker.abs_exploration")
 SOURCE = "abs_exploration"
 FLOW_CANDIDATES = ["MERALS_EXP", "MIN_EXP", "MINERAL_EXPLORATION"]
 FLOW_KEYWORD = "mineral exploration"
-SOURCE_URL = "https://api.data.abs.gov.au/rest/data/ABS,{flow}/all"
+SOURCE_URL = "https://data.api.abs.gov.au/rest/data/ABS,{flow}/all"
 
 STATE_SLUGS = {
     "New South Wales": "nsw", "Victoria": "vic", "Queensland": "qld",

@@ -24,8 +24,12 @@ log = logging.getLogger("lbl_tracker.qld_coal")
 
 SOURCE = "qld_coal"
 CKAN = "https://www.data.qld.gov.au/api/3/action"
-SEARCH_QUERIES = ["coal industry review statistical tables"]
-RESOURCE_PATTERN = re.compile(r"saleable", re.I)
+# Verified live 2026-08-20: the "quarterly-coal-reports" dataset carries
+# "Quarterly Coal Production" (mine-level, 2010->current); the coal
+# industry review dataset carries financial-year files. Quarterly is what
+# the pulse uses, so it is matched first.
+SEARCH_QUERIES = ["quarterly coal reports", "coal industry review statistical tables"]
+RESOURCE_PATTERN = re.compile(r"quarterly coal production|saleable", re.I)
 
 
 def _slug(name: str) -> str:
@@ -72,9 +76,23 @@ def _parse_period(text: str) -> pd.Timestamp | None:
     return pd.Period(f"{year}-{mon:02d}", freq="M").end_time.normalize()
 
 
+def _download(url: str, session):
+    """data.qld.gov.au answers 202 while the download service stages a file;
+    poll until the payload is ready."""
+    import time
+    for attempt in range(8):
+        resp = session.get(url, timeout=120)
+        if resp.status_code == 200 and resp.content:
+            return resp
+        if resp.status_code != 202:
+            resp.raise_for_status()
+        time.sleep(min(2 ** attempt, 30))
+    raise RuntimeError(f"qld_coal: {url} still HTTP 202 after retries")
+
+
 def parse_resource(url: str, fmt: str, session=None) -> pd.DataFrame:
     """Parse one saleable-production resource into long (mine, period, tonnes)."""
-    resp = get(url, session=session)
+    resp = _download(url, session)
     if fmt == "csv":
         tables = [pd.read_csv(io.BytesIO(resp.content), header=None, dtype=str)]
     else:
