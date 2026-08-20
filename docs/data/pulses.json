@@ -5531,6 +5531,6 @@
    "recurring"
   ],
   "events": [],
-  "note": "No classified Technology events yet (needs announcement ingest + ANTHROPIC_API_KEY)."
+  "note": "No classified Technology events yet (needs announcement ingest + OPENAI_API_KEY)."
  }
 }
