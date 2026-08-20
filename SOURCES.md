@@ -28,16 +28,16 @@ series is ever stubbed: anything unavailable is NULL/NO DATA and logged to
 | Output | Value | Weight available | Missing components |
 |---|---|---|---|
 | Services Pulse | −27.5 | 75% | QLD coal enters as z-history accrues in-window; all others live |
-| Products Pulse | +22.8 | 60% | AISI (accumulating), CAT (pending SEC email) |
-| Margin Pulse | −22.6 | 66% | tungsten flags (accumulating from 2026-08) |
+| Products Pulse | +22.6 | 60% | AISI (accumulating); CAT contributes 2014–2020 backtest era only (series discontinued by CAT) |
+| Margin Pulse | −22.9 | 66% | tungsten flags (accumulating from 2026-08) |
 | Technology Pipeline | NO DATA | — | needs `OPENAI_API_KEY` to classify announcement PDFs |
 
 ## Verification log
 
-* 2026-08-20 — 7 CI verify rounds against live endpoints from GitHub
+* 2026-08-20 — 13 CI verify rounds against live endpoints from GitHub
   Actions runners (this container's egress policy blocks all data hosts, so
-  verification and ingestion run in CI). Final state: **11/11 reachable
-  smoke tests green**; cat_edgar skipped pending `SEC_CONTACT_EMAIL`.
+  verification and ingestion run in CI). Final state: **12/12 live smoke
+  tests green** (cat_edgar validated against its historical monthly era).
 * Notable endpoint facts discovered live: ABS API host renamed; RBA F11.1
   is daily / F11 monthly; QLD portal answers HTTP 202 (AWS WAF challenge)
   to non-browser clients and its CKAN datastore for the quarterly file is
