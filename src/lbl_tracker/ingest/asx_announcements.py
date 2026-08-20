@@ -107,8 +107,8 @@ def fetch_list(ticker: str, count: int, session) -> list[dict]:
     must paginate."""
     last_err: Exception | None = None
     for template in LIST_ENDPOINTS:
-        out, page = [], 1
-        while len(out) < count:
+        out, seen, page = [], set(), 1
+        while len(out) < count and page <= max(2, count):
             url = template.format(ticker=ticker, count=min(count, PAGE_SIZE), page=page)
             try:
                 payload = get(url, session=session).json()
@@ -120,15 +120,16 @@ def fetch_list(ticker: str, count: int, session) -> list[dict]:
                 items = items.get("items", [])
             if not items:
                 break
-            before = len(out)
-            out.extend(_parse_items(ticker, items))
-            if len(out) == before or len(items) < min(count, PAGE_SIZE):
+            fresh = [i for i in _parse_items(ticker, items) if i["id"] not in seen]
+            if not fresh:  # paging unsupported or exhausted - same page again
                 break
+            seen.update(i["id"] for i in fresh)
+            out.extend(fresh)
             page += 1
             time.sleep(0.2)
         if out:
-            log.info("asx %s: %d announcements via %s", ticker, len(out),
-                     template.split("?")[0])
+            log.info("asx %s: %d announcements (%d pages) via %s", ticker, len(out),
+                     page - 1, template.split("?")[0])
             return out[:count]
     raise SourceFetchError(f"asx {ticker}: all list endpoints failed; last: {last_err}")
 

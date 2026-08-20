@@ -68,7 +68,7 @@ def probe_qld_coal():
     _p(f"discovered resources: {json.dumps(found, indent=1)[:3000]}")
     if found:
         res = found[0]
-        content = qld_coal._download(res["url"], session).content
+        content = qld_coal._download(res["url"], session)
         _p(f"workbook bytes: {len(content)}")
         book = pd.read_excel(io.BytesIO(content), sheet_name=None, header=None,
                              dtype=str)
@@ -78,8 +78,7 @@ def probe_qld_coal():
         long = qld_coal.parse_workbook(content, res["url"])
         _p(f"long rows: {len(long)}")
         if len(long):
-            _p(f"range {long['date'].min()}..{long['date'].max()}; "
-               f"mines={long['mine'].nunique()}")
+            _p(f"range {long['date'].min()}..{long['date'].max()}")
             _p(long.tail(8).to_string())
 
 
@@ -207,11 +206,11 @@ def probe_cat_edgar():
     from .ingest import cat_edgar
     session = make_session(sec=True)
     hits = cat_edgar.search_filings(session)
-    _p(f"FTS hits: {len(hits)}")
+    _p(f"8-K item-7.01 filings: {len(hits)}")
     for hit in hits[:10]:
         _p(f"- {hit}")
     if hits:
-        url = cat_edgar.exhibit_url(hits[0])
+        url = cat_edgar.exhibit_url(hits[0], session)
         _p(f"first exhibit: {url}")
         html = get(url, session=session, sec=True).text
         from bs4 import BeautifulSoup
@@ -294,7 +293,7 @@ def probe_asx():
     session = make_session()
     for ticker in ("LBL", "EHL"):
         for template in asx.LIST_ENDPOINTS:
-            url = template.format(ticker=ticker, count=5)
+            url = template.format(ticker=ticker, count=5, page=1)
             try:
                 resp = get(url, session=session)
                 _p(f"-- {url}")

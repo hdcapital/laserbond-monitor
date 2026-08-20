@@ -1,9 +1,12 @@
 """Caterpillar monthly dealer retail sales statistics from SEC EDGAR 8-Ks.
 
-Caterpillar furnishes monthly "dealer statistics" 8-Ks whose exhibit 99
-carries retail sales YoY changes by region and segment. We locate the
-filings with the EDGAR full-text search API (efts.sec.gov), fetch each
-exhibit and parse the Resource Industries row (3-month rolling YoY, %).
+Caterpillar furnishes monthly dealer-statistics 8-Ks (Item 7.01) whose
+exhibit 99 carries retail sales YoY changes by region and segment. The
+filings are located via the data.sec.gov submissions API (the full-text
+search host efts.sec.gov rejects even declared automated UAs from CI
+runners - verified live 2026-08-20 - so it is only a fallback), each
+exhibit fetched from the filing index and the Resource Industries row
+parsed (3-month rolling YoY, %).
 
 Series stored (monthly, percent YoY, negative = decline):
   cat.resource_industries_yoy_pct           World
@@ -56,40 +59,56 @@ def _pct(cell: str) -> float | None:
     return val
 
 
+SUBMISSIONS_BASE = "https://data.sec.gov/submissions"
+
+
 def search_filings(session) -> list[dict]:
-    """EDGAR full-text search for CAT dealer-statistics 8-Ks."""
-    hits, seen = [], set()
-    for query in QUERIES:
-        frm = 0
-        while frm < MAX_FILINGS * 2:
-            resp = get(FTS_URL, session=session, sec=True, params={
-                "q": query, "forms": "8-K", "ciks": CAT_CIK, "from": frm,
-            })
-            payload = resp.json()
-            batch = payload.get("hits", {}).get("hits", [])
-            if not batch:
-                break
-            for hit in batch:
-                _id = hit.get("_id", "")
-                if _id and _id not in seen:
-                    seen.add(_id)
-                    hits.append({
-                        "id": _id,
-                        "adsh": hit.get("_source", {}).get("adsh", _id.split(":")[0]),
-                        "file_date": hit.get("_source", {}).get("file_date"),
-                    })
-            frm += len(batch)
-            time.sleep(0.15)  # EDGAR politeness
-        if hits:
+    """CAT 8-K filings furnished under Item 7.01 (Reg FD - the monthly
+    dealer statistics), newest first, via the submissions API."""
+    doc = get(f"{SUBMISSIONS_BASE}/CIK{CAT_CIK}.json", session=session,
+              sec=True).json()
+    hits = []
+
+    def collect(block: dict):
+        forms = block.get("form", [])
+        accs = block.get("accessionNumber", [])
+        dates = block.get("filingDate", [])
+        items = block.get("items", [""] * len(forms))
+        for form, acc, date, item in zip(forms, accs, dates, items):
+            if form == "8-K" and "7.01" in str(item):
+                hits.append({"adsh": acc, "file_date": date})
+
+    collect(doc.get("filings", {}).get("recent", {}))
+    for extra in doc.get("filings", {}).get("files", []):
+        if len(hits) >= MAX_FILINGS:
             break
-    log.info("cat_edgar: %d full-text hits", len(hits))
+        try:
+            collect(get(f"{SUBMISSIONS_BASE}/{extra['name']}", session=session,
+                        sec=True).json())
+        except Exception as exc:  # noqa: BLE001
+            log.warning("cat_edgar: archive page %s failed: %s", extra.get("name"), exc)
+        time.sleep(0.15)
+    log.info("cat_edgar: %d 8-K item-7.01 filings", len(hits))
     return hits[:MAX_FILINGS]
 
 
-def exhibit_url(hit: dict) -> str:
+def exhibit_url(hit: dict, session) -> str | None:
+    """Resolve the EX-99 exhibit document inside one filing."""
     adsh_nodash = hit["adsh"].replace("-", "")
-    filename = hit["id"].split(":", 1)[1] if ":" in hit["id"] else ""
-    return f"{ARCHIVES}/{int(CAT_CIK)}/{adsh_nodash}/{filename}"
+    base = f"{ARCHIVES}/{int(CAT_CIK)}/{adsh_nodash}"
+    index = get(f"{base}/index.json", session=session, sec=True).json()
+    files = index.get("directory", {}).get("item", [])
+    for entry in files:
+        name = str(entry.get("name", ""))
+        if re.search(r"ex[-_]?99", name, re.I) and name.lower().endswith(
+                (".htm", ".html")):
+            return f"{base}/{name}"
+    # fallback: any non-index htm document
+    for entry in files:
+        name = str(entry.get("name", ""))
+        if name.lower().endswith((".htm", ".html")) and "index" not in name.lower():
+            return f"{base}/{name}"
+    return None
 
 
 def parse_exhibit(html: str, url: str) -> list[dict]:
@@ -164,17 +183,20 @@ def fetch() -> pd.DataFrame:
     session = make_session(sec=True)
     hits = search_filings(session)
     if not hits:
-        raise RuntimeError("cat_edgar: EDGAR full-text search returned no filings")
+        raise RuntimeError("cat_edgar: no 8-K item-7.01 filings found")
     rows = []
     for hit in hits:
-        url = exhibit_url(hit)
         try:
+            url = exhibit_url(hit, session)
+            if not url:
+                log.info("cat_edgar: no exhibit in %s", hit["adsh"])
+                continue
             parsed = parse_exhibit(get(url, session=session, sec=True).text, url)
             rows.extend(parsed)
             if not parsed:
                 log.info("cat_edgar: no RI table in %s", url)
         except Exception as exc:  # noqa: BLE001
-            log.warning("cat_edgar: %s failed: %s", url, exc)
+            log.warning("cat_edgar: %s failed: %s", hit.get("adsh"), exc)
         time.sleep(0.15)
     if not rows:
         raise RuntimeError("cat_edgar: filings found but no Resource Industries "
