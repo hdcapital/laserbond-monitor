@@ -41,6 +41,13 @@ def probe_abs():
             for col in df.columns:
                 if col.endswith("_name"):
                     _p(f"   {col}: {sorted(map(str, df[col].dropna().unique()))[:25]}")
+            if flow == "MIN_EXP" and "MEASURE_name" in df.columns:
+                metres = df[df["MEASURE_name"] == "Metres drilled"]
+                combos = metres.groupby([c for c in ("REGION_name", "DEPOSIT_TYPE_name",
+                                                     "MINERAL_TYPE_name", "TSEST_name")
+                                         if c in metres.columns]).size()
+                _p("   Metres-drilled combos:")
+                _p(combos.to_string()[:3000])
             _p(df.head(8).to_string())
         except Exception as exc:  # noqa: BLE001
             _p(f"-- {flow} fetch failed: {exc}")
@@ -89,13 +96,17 @@ def probe_pilbara():
     _p(f"news urls: {len(news)}; sample: {news[:15]}")
     items = pilbara_ports.list_statements(session)
     _p(f"articles: {len(items)}")
-    for item in items[:20]:
+    trade = [i for i in items if pilbara_ports.TRADE_TITLE.search(i["title"])]
+    _p(f"trade-like: {len(trade)}")
+    for item in trade[:10]:
         _p(f"- {item['title']!r} -> {item['url']}")
-    for item in items[:3]:
+    for item in trade[:3]:
         text = BeautifulSoup(get(item["url"], session=session).text,
                              "lxml").get_text(" ", strip=True)
         _p(f"article text excerpt ({item['url']}):")
         _p(_head(" ".join(text.split()), 2500))
+        parsed = pilbara_ports.parse_statement(item["url"], item["title"], session)
+        _p(f"parsed rows: {parsed}")
 
 
 def probe_rba():

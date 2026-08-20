@@ -143,14 +143,30 @@ def records_to_long(df: pd.DataFrame, url: str) -> pd.DataFrame:
 # --- fallback: direct file download (202 staging retried) -------------------
 
 def _download(url: str, session):
-    for attempt in range(8):
+    """The portal's download endpoint answers HTTP 202 (empty) to plain
+    library clients indefinitely; a browser TLS fingerprint gets the file
+    (curl_cffi). Plain retries kept as a first, cheaper attempt."""
+    for attempt in range(3):
         resp = session.get(url, timeout=120)
         if resp.status_code == 200 and resp.content:
             return resp
         if resp.status_code != 202:
             resp.raise_for_status()
-        time.sleep(min(2 ** attempt, 30))
-    raise RuntimeError(f"qld_coal: {url} still HTTP 202 after retries")
+        log.info("qld_coal: %s -> 202 (attempt %d) headers=%s", url, attempt,
+                 dict(resp.headers))
+        time.sleep(2 ** attempt)
+    from ..http import SourceFetchError, get_impersonated
+    last = None
+    for attempt in range(4):
+        try:
+            resp = get_impersonated(url)
+            if resp.content:
+                return resp
+        except SourceFetchError as exc:
+            last = exc
+        time.sleep(5 * (attempt + 1))
+    raise RuntimeError(f"qld_coal: {url} still not served after impersonated "
+                       f"retries; last: {last}")
 
 
 def parse_workbook(content: bytes, url: str) -> pd.DataFrame:

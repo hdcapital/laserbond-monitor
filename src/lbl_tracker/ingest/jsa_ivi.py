@@ -77,13 +77,16 @@ def discover_workbook(session) -> str:
     url = discover_via_data_gov(session)
     if url:
         return url
+    # jobsandskills.gov.au's WAF stalls plain library clients (read-timeouts
+    # verified from CI); a browser TLS fingerprint (curl_cffi) gets through.
+    from ..http import get_impersonated
     for page in PAGES:
         try:
-            soup = BeautifulSoup(get(page, session=session).text, "lxml")
+            html = get_impersonated(page, timeout=60).text
         except Exception as exc:  # noqa: BLE001
             log.warning("jsa: page %s failed: %s", page, exc)
             continue
-        for a in soup.find_all("a", href=True):
+        for a in BeautifulSoup(html, "lxml").find_all("a", href=True):
             text = f"{a.get_text(' ', strip=True)} {a['href']}"
             if re.search(r"\.xlsx?($|\?)", a["href"], re.I) and LINK_PAT.search(text):
                 return urljoin(page, a["href"])
@@ -181,7 +184,12 @@ def fetch() -> pd.DataFrame:
     session = jsa_session()
     url = discover_workbook(session)
     log.info("jsa_ivi: workbook %s", url)
-    return parse_workbook(get(url, session=session).content, url)
+    if "jobsandskills.gov.au" in url:
+        from ..http import get_impersonated
+        content = get_impersonated(url, timeout=120).content
+    else:
+        content = get(url, session=session).content
+    return parse_workbook(content, url)
 
 
 def ingest() -> dict:

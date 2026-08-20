@@ -74,14 +74,13 @@ def _read_book(content: bytes) -> dict:
     return pd.read_excel(io.BytesIO(content), sheet_name=None, header=None)
 
 
-def _find_table(raw: pd.DataFrame, date_pat: str, needed: list[str]) -> pd.DataFrame | None:
-    """Locate a header row whose cells include a date-ish label plus all
-    `needed` labels, and return the table below it with those headers."""
-    for i in range(min(len(raw), 15)):
+def _long_table(raw: pd.DataFrame, needed: list[str]) -> pd.DataFrame | None:
+    """Locate the header row of the long data table (verified live: header
+    sits around row 10, e.g. Country/County/.../Year/Month/US_PublishDate/
+    Rig Count Value) and return the rows below with lowercase headers."""
+    for i in range(min(len(raw), 20)):
         cells = [str(v).strip().lower() for v in raw.iloc[i].tolist()]
-        if not any(re.search(date_pat, c) for c in cells if c and c != "nan"):
-            continue
-        if all(any(need in c for c in cells) for need in needed):
+        if all(any(need == c or need in c for c in cells) for need in needed):
             data = raw.iloc[i + 1:].copy()
             data.columns = cells
             return data
@@ -100,97 +99,156 @@ def _sheet_error(kind: str, url: str, book: dict, wanted: list[str]) -> RuntimeE
     for sheet in wanted:
         if sheet in book:
             dump.append(f"--- {sheet} head ---\n"
-                        f"{book[sheet].head(12).iloc[:, :14].to_string()[:1400]}")
+                        f"{book[sheet].head(14).iloc[:, :14].to_string()[:1400]}")
     return RuntimeError(f"bh {kind} workbook not parsed ({url}); "
                         f"sheets={list(book)}\n" + "\n".join(dump))
 
 
+def _excel_serial_dates(series: pd.Series) -> pd.Series:
+    nums = pd.to_numeric(series, errors="coerce")
+    as_serial = pd.to_datetime(nums, unit="D", origin="1899-12-30", errors="coerce")
+    as_plain = pd.to_datetime(series, errors="coerce")
+    return as_serial.where(nums.notna(), as_plain)
+
+
 def parse_na(content: bytes, url: str, retrieved) -> pd.DataFrame:
-    """Weekly US/Canada/North America counts. New-report workbooks carry a
-    'NAM Weekly' long table; older archives carry per-country split sheets."""
+    """Weekly US/Canada/North America totals.
+
+    New-report workbooks (verified live 2026-08-20): sheet 'NAM Weekly' is a
+    long table (Country x County x DrillFor x week) with a US_PublishDate
+    column and 'Rig Count Value'; totals are the sum over the published
+    granular rows, matching the workbook's own summary tab. Older archives
+    carry 'US Oil & Gas Split' / 'Canada Oil & Gas Split' sheets with
+    Excel-serial dates and a Total column."""
     book = _read_book(content)
     rows = []
-    for sheet in ("NAM Weekly", "NAM Monthly"):
-        raw = book.get(sheet)
-        if raw is None:
-            continue
-        table = (_find_table(raw, r"date|week", ["country", "count"])
-                 or _find_table(raw, r"date|week", ["count"])
-                 or _find_table(raw, r"date|week", ["u.s", "canada"]))
-        if table is None:
-            continue
-        dates = pd.to_datetime(_col(table, "date", "week"), errors="coerce")
-        country = _col(table, "country", "location")
-        count = _col(table, "count", "rig", exclude=("chg", "%", "change"))
-        if count is None:
-            continue
-        count = pd.to_numeric(count, errors="coerce")
-        if country is not None:
-            frame = pd.DataFrame({"date": dates, "country": country.astype(str).str.strip(),
-                                  "value": count}).dropna(subset=["date", "value"])
-            for label, series_id in [("United States", "bh.rigcount_us_total"),
-                                     ("Canada", "bh.rigcount_canada_total"),
-                                     ("North America", "bh.rigcount_na_total")]:
-                sel = frame[frame["country"].str.casefold() == label.casefold()]
-                sel = sel.groupby("date")["value"].sum()
-                if len(sel):
+    raw = book.get("NAM Weekly")
+    if raw is not None:
+        table = _long_table(raw, ["country", "year", "month"])
+        if table is not None:
+            dates = pd.to_datetime(_col(table, "publishdate", "publish date", "date"),
+                                   errors="coerce")
+            country = _col(table, "country").astype(str).str.strip().str.upper()
+            value = pd.to_numeric(_col(table, "rig count", "value", "count"),
+                                  errors="coerce")
+            frame = pd.DataFrame({"date": dates, "country": country, "value": value}) \
+                .dropna(subset=["date", "value"])
+            us = frame[frame["country"] == "UNITED STATES"].groupby("date")["value"].sum()
+            canada = frame[frame["country"] == "CANADA"].groupby("date")["value"].sum()
+            for series_id, ser in [("bh.rigcount_us_total", us),
+                                   ("bh.rigcount_canada_total", canada)]:
+                if len(ser):
                     rows.append(pd.DataFrame({
-                        "series_id": series_id, "date": sel.index, "value": sel.values,
+                        "series_id": series_id, "date": ser.index, "value": ser.values,
                         "source_url": url, "retrieved_at": retrieved}))
-        else:
-            us = pd.to_numeric(_col(table, "u.s", "us "), errors="coerce")
-            canada = pd.to_numeric(_col(table, "canada"), errors="coerce")
-            mask = dates.notna()
-            if us is not None and canada is not None:
+            na = us.add(canada, fill_value=None).dropna()
+            if len(na):
                 rows.append(pd.DataFrame({
-                    "series_id": "bh.rigcount_na_total", "date": dates[mask],
-                    "value": (us + canada)[mask], "source_url": url,
-                    "retrieved_at": retrieved}))
-        if rows:
-            break
+                    "series_id": "bh.rigcount_na_total", "date": na.index,
+                    "value": na.values, "source_url": url, "retrieved_at": retrieved}))
+    else:
+        # archive format: Date(serial), Oil, Gas, Misc, Total per country sheet
+        parts = {}
+        for sheet, series_id in [("US Oil & Gas Split", "bh.rigcount_us_total"),
+                                 ("Canada Oil & Gas Split", "bh.rigcount_canada_total")]:
+            raw = book.get(sheet)
+            if raw is None:
+                continue
+            table = _long_table(raw, ["date", "total"])
+            if table is None:
+                continue
+            dates = _excel_serial_dates(_col(table, "date"))
+            total = pd.to_numeric(_col(table, "total"), errors="coerce")
+            ser = pd.Series(total.values, index=dates.values).dropna()
+            ser = ser[pd.notna(ser.index)]
+            parts[series_id] = ser
+            rows.append(pd.DataFrame({
+                "series_id": series_id, "date": ser.index, "value": ser.values,
+                "source_url": url, "retrieved_at": retrieved}))
+        if len(parts) == 2:
+            na = parts["bh.rigcount_us_total"].add(
+                parts["bh.rigcount_canada_total"], fill_value=None).dropna()
+            rows.append(pd.DataFrame({
+                "series_id": "bh.rigcount_na_total", "date": na.index,
+                "value": na.values, "source_url": url, "retrieved_at": retrieved}))
     if not rows:
-        raise _sheet_error("NA", url, book, ["NAM Weekly", "NAM Monthly",
-                                             "US Oil & Gas Split"])
+        raise _sheet_error("NA", url, book, ["NAM Weekly", "US Oil & Gas Split"])
     return pd.concat(rows, ignore_index=True)
 
 
 def parse_intl(content: bytes, url: str, retrieved) -> pd.DataFrame:
-    """Monthly international count from the 'WW Monthly' long table."""
+    """Monthly international total.
+
+    New-report 'WW Monthly' is a long table (Region, Country, DrillFor,
+    Location, [measure], Year, Month, value); international = sum over all
+    non-North-America regions, matching the workbook's own summary. The
+    2007-2024 archive is a per-year matrix with a 'Total Intl.' column."""
     book = _read_book(content)
     rows = []
-    for sheet in ("WW Monthly", "Worldwide_Rigcount"):
-        raw = book.get(sheet)
-        if raw is None:
-            continue
-        table = (_find_table(raw, r"date|month", ["country", "count"])
-                 or _find_table(raw, r"date|month", ["region", "count"])
-                 or _find_table(raw, r"date|month", ["count"]))
-        if table is None:
-            continue
-        dates = pd.to_datetime(_col(table, "date", "month"), errors="coerce")
-        entity = _col(table, "country", "region", "location")
-        count = pd.to_numeric(_col(table, "count", "rig", exclude=("chg", "%", "change")),
-                              errors="coerce")
-        if count is None:
-            continue
-        frame = pd.DataFrame({"date": dates, "value": count})
-        if entity is not None:
-            frame["entity"] = entity.astype(str).str.strip().str.casefold()
-            sel = frame[frame["entity"] == "international"]
-            if sel.empty:
-                continue
-            sel = sel.dropna(subset=["date", "value"]).groupby("date")["value"].sum()
-        else:
-            sel = frame.dropna(subset=["date", "value"]).set_index("date")["value"]
-        if len(sel) < 12:
-            continue
-        rows.append(pd.DataFrame({
-            "series_id": "bh.rigcount_intl_total", "date": sel.index,
-            "value": sel.values, "source_url": url, "retrieved_at": retrieved}))
-        break
+    raw = book.get("WW Monthly")
+    if raw is not None:
+        table = _long_table(raw, ["region", "country", "year", "month"])
+        if table is not None:
+            year = pd.to_numeric(_col(table, "year"), errors="coerce")
+            month = pd.to_numeric(_col(table, "month"), errors="coerce")
+            region = _col(table, "region").astype(str).str.strip().str.casefold()
+            value_col = _col(table, "rig count", "value", "count")
+            if value_col is None:  # archive variant: value is the col after month
+                headers = list(table.columns)
+                month_j = next(j for j, h in enumerate(headers) if "month" in h)
+                value_col = table.iloc[:, month_j + 1]
+            value = pd.to_numeric(value_col, errors="coerce")
+            frame = pd.DataFrame({"year": year, "month": month, "region": region,
+                                  "value": value}).dropna()
+            intl = frame[frame["region"] != "north america"]
+            grouped = intl.groupby(["year", "month"])["value"].sum()
+            dates = [pd.Period(f"{int(y)}-{int(m):02d}", freq="M").end_time.normalize()
+                     for (y, m) in grouped.index]
+            rows.append(pd.DataFrame({
+                "series_id": "bh.rigcount_intl_total", "date": dates,
+                "value": grouped.values, "source_url": url, "retrieved_at": retrieved}))
+    else:
+        raw = book.get("Worldwide_Rigcount")
+        if raw is not None:
+            rows.extend(_parse_ww_matrix(raw, url, retrieved))
     if not rows:
         raise _sheet_error("intl", url, book, ["WW Monthly", "Worldwide_Rigcount"])
     return pd.concat(rows, ignore_index=True)
+
+
+MONTH_ABBR = {m: i for i, m in enumerate(
+    ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct",
+     "Nov", "Dec"], start=1)}
+
+
+def _parse_ww_matrix(raw: pd.DataFrame, url: str, retrieved) -> list[pd.DataFrame]:
+    """Archive layout: stacked per-year blocks - a row [.., 2024, Latin
+    America, ..., Total Intl., Canada, U.S., Total World] then month rows."""
+    out = []
+    records = []
+    for i in range(len(raw)):
+        cells = [str(v).strip() for v in raw.iloc[i].tolist()]
+        if "Total Intl." in cells:
+            year = next((int(float(c)) for c in cells
+                         if re.fullmatch(r"(19|20)\d\d(\.0)?", c)), None)
+            if year is None:
+                continue
+            intl_j = cells.index("Total Intl.")
+            for r in range(i + 1, min(i + 14, len(raw))):
+                month_cell = str(raw.iloc[r, 1]).strip()[:3]
+                if month_cell not in MONTH_ABBR:
+                    break
+                val = pd.to_numeric(raw.iloc[r, intl_j], errors="coerce")
+                if pd.notna(val):
+                    records.append((pd.Period(f"{year}-{MONTH_ABBR[month_cell]:02d}",
+                                              freq="M").end_time.normalize(), float(val)))
+    if records:
+        frame = pd.DataFrame(records, columns=["date", "value"]) \
+            .drop_duplicates("date", keep="first")
+        out.append(pd.DataFrame({
+            "series_id": "bh.rigcount_intl_total", "date": frame["date"],
+            "value": frame["value"], "source_url": url, "retrieved_at": retrieved}))
+    return out
 
 
 def fetch() -> pd.DataFrame:

@@ -36,11 +36,16 @@ MONTHS = {m.lower(): i for i, m in enumerate(
      "August", "September", "October", "November", "December"], start=1)}
 MONTHLY_TITLE = re.compile(r"(monthly|month(?:'s)?)\s+(trade|throughput)|throughput", re.I)
 
+MT = r"([\d.,]+)\s*(?:million tonnes|mt\b)"
 TOTAL_PAT = re.compile(
-    r"total (?:monthly )?(?:port )?throughput of ([\d.,]+)\s*million tonnes", re.I)
+    rf"total (?:monthly )?(?:port )?throughput of {MT}|"
+    rf"(?:monthly )?throughput of {MT} for the month|"
+    rf"delivered {MT} of total throughput", re.I)
 HEDLAND_IRON_PAT = re.compile(
-    r"port hedland[^.]*?iron ore export[s]?[^.]*?([\d.,]+)\s*million tonnes|"
-    r"iron ore export[s]?[^.]*?([\d.,]+)\s*million tonnes[^.]*?port hedland", re.I)
+    rf"of which {MT} was iron ore|"
+    rf"iron ore exports? (?:of|totalling|totaling|reached|was|were)\s*{MT}|"
+    rf"{MT} (?:of|was|in) iron ore exports?|"
+    rf"port hedland[^.]*?iron ore exports?[^.]*?{MT}", re.I)
 MONTH_YEAR_PAT = re.compile(
     r"(January|February|March|April|May|June|July|August|September|October|"
     r"November|December)\s+(\d{4})", re.I)
@@ -61,7 +66,11 @@ def discover_listing(session) -> str:
     raise RuntimeError(f"pilbara_ports: no listing path worked; last: {last_error}")
 
 
-NEWS_HREF = re.compile(r"/news/[^/?#]+/?$", re.I)
+# Article URLs verified live 2026-08-20:
+#   .../news/<year>/<month>/<slug>, monthly items slugged
+#   "<month>-<year>-shipping-figures" (179 in the sitemap, 2020->current)
+NEWS_HREF = re.compile(r"/news/\d{4}/[a-z]+/[^/?#]+/?$", re.I)
+TRADE_TITLE = re.compile(r"shipping|trade|throughput|tonnes|export", re.I)
 
 
 def sitemap_urls(session) -> list[str]:
@@ -117,11 +126,12 @@ def parse_statement(url: str, title: str, session) -> list[dict]:
     rows = []
     total = TOTAL_PAT.search(text)
     if total:
+        value = next(g for g in total.groups() if g)
         rows.append({"series_id": "pilbara.total_throughput_mt", "date": period,
-                     "value": _num(total.group(1)), "source_url": url})
+                     "value": _num(value), "source_url": url})
     iron = HEDLAND_IRON_PAT.search(text)
     if iron:
-        value = iron.group(1) or iron.group(2)
+        value = next(g for g in iron.groups() if g)
         rows.append({"series_id": "pilbara.iron_ore_throughput_mt", "date": period,
                      "value": _num(value), "source_url": url})
     if not rows and re.search(r"trade|throughput|tonnes", title, re.I):
@@ -135,8 +145,7 @@ def fetch() -> pd.DataFrame:
     statements = list_statements(session)
     if not statements:
         raise RuntimeError("pilbara_ports: no news articles found on listing")
-    trade_like = [s for s in statements
-                  if re.search(r"trade|throughput|tonnes|export", s["title"], re.I)]
+    trade_like = [s for s in statements if TRADE_TITLE.search(s["title"])]
     to_parse = trade_like or statements  # anchor text can be empty on this CMS
     rows = []
     for item in to_parse:

@@ -5,7 +5,7 @@ import logging
 
 import pandas as pd
 
-from ..store import now_utc, write_observations
+from ..store import log_gap, now_utc, write_observations
 from . import abs_sdmx
 
 log = logging.getLogger("lbl_tracker.abs_exploration")
@@ -76,16 +76,13 @@ def fetch() -> pd.DataFrame:
     # MINERAL_TYPE_name: per-mineral + 'Total' (exact match needed - the
     #   'Selected base metals total' label also contains "total")
     # REGION_name: Australia + the 7 states/territories (no ACT)
-    metres = df
-    for col, exact in [("MEASURE_name", "Metres drilled"),
-                       ("DEPOSIT_TYPE_name", "Total deposits"),
-                       ("MINERAL_TYPE_name", "Total")]:
-        if col in metres.columns:
-            pick = metres[metres[col] == exact]
-            if pick.empty:
-                raise RuntimeError(f"ABS {flow}: no rows with {col} == {exact!r}; "
-                                   f"have {sorted(metres[col].dropna().unique())}")
-            metres = pick
+    if "MEASURE_name" in df.columns:
+        metres = df[df["MEASURE_name"] == "Metres drilled"]
+    else:
+        metres = df
+    if metres.empty:
+        raise RuntimeError(f"ABS {flow}: no 'Metres drilled' rows; measures="
+                           f"{sorted(df.get('MEASURE_name', pd.Series()).dropna().unique())}")
 
     region_col = "REGION_name" if "REGION_name" in metres.columns else None
     if region_col is None:
@@ -106,12 +103,19 @@ def fetch() -> pd.DataFrame:
         if slug is None:
             continue
         sel = metres[metres[region_col] == region_name]
-        # adjustment availability differs by region, so prefer per region
+        # split availability differs by region (the flow is sparse), so
+        # collapse deposit/mineral/adjustment per region, preferring totals
+        sel = _prefer(sel, "DEPOSIT_TYPE_name", ["Total deposits"])
+        sel = _prefer(sel, "MINERAL_TYPE_name", ["^Total$", "Total"])
         sel = _prefer(sel, "TSEST_name", ["Seasonally Adjusted", "Original", "Trend"])
         dupes = sel["TIME_PERIOD"].duplicated()
         if dupes.any():
-            raise RuntimeError(f"ABS {flow}: region {region_name!r} ambiguous after "
-                               f"filters; dims sample:\n{sel[dupes].head(4)}")
+            combos = sel[["DEPOSIT_TYPE_name", "MINERAL_TYPE_name", "TSEST_name"]] \
+                .drop_duplicates().to_dict("records") \
+                if "DEPOSIT_TYPE_name" in sel.columns else "?"
+            log_gap(SOURCE, f"abs.exploration.{region_name}",
+                    f"ambiguous after filters (combos={combos}); region skipped")
+            continue
         series_id = ("abs.exploration.metres_drilled_total" if slug == "total"
                      else f"abs.exploration.metres_drilled_{slug}")
         rows.append(pd.DataFrame({

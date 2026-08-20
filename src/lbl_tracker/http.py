@@ -47,3 +47,18 @@ def get(url: str, *, session: requests.Session | None = None, sec: bool = False,
     if resp.status_code != 200:
         raise SourceFetchError(f"GET {url} -> HTTP {resp.status_code}: {resp.text[:300]}")
     return resp
+
+
+def get_impersonated(url: str, timeout: int = 90, **kwargs):
+    """Fetch with a browser TLS fingerprint (curl_cffi) - for endpoints
+    whose WAF stalls or rejects plain library clients. Returns a
+    requests-like response; raises SourceFetchError on non-200."""
+    from curl_cffi import requests as curl_requests
+    started = time.monotonic()
+    resp = curl_requests.get(url, impersonate="chrome", timeout=timeout, **kwargs)
+    log.info("GET(impersonated) %s -> %s (%.1fs, %d bytes)", url, resp.status_code,
+             time.monotonic() - started, len(resp.content or b""))
+    if resp.status_code != 200:
+        raise SourceFetchError(f"GET(impersonated) {url} -> HTTP {resp.status_code}: "
+                               f"{resp.text[:300]}")
+    return resp
