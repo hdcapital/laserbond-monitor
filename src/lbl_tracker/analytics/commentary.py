@@ -74,12 +74,41 @@ def _trend(history: list) -> dict:
 
 
 def _pulse_facts(name: str, pulse: dict, attribution: list) -> dict:
+    from ..dashboard.build import DISCONTINUED
+    from ..store import read_series
     spec = cfg("pulses", name, default={})
     inputs = []
     for comp in attribution:
         if comp.get("status") == "NO DATA":
+            sid = comp.get("series")
+            if sid in DISCONTINUED:
+                status = "source discontinued upstream; excluded from the score"
+            else:
+                try:
+                    s = read_series(sid).dropna(subset=["value"])
+                except Exception:  # noqa: BLE001
+                    s = None
+                comp_spec = next((c for c in spec.get("components", [])
+                                  if c.get("series") == sid), {})
+                if s is not None and len(s):
+                    import pandas as pd
+                    last = s["date"].max()
+                    months_old = (pd.Timestamp.utcnow().tz_localize(None)
+                                  - last).days / 30.44
+                    cap = comp_spec.get("max_stale_months")
+                    if cap is not None and months_old > cap:
+                        status = (f"latest data ({last.date()}) is older than the "
+                                  f"{cap}-month staleness cap; excluded from the "
+                                  f"score until the source updates")
+                    else:
+                        status = (f"has current data (latest {last.date()}) but "
+                                  f"not yet enough history for a 5-year z-score; "
+                                  f"excluded from the score until history "
+                                  f"accumulates")
+                else:
+                    status = "no data retrieved yet; excluded from the score"
             inputs.append({"input": comp.get("label"), "weight": comp.get("weight"),
-                           "status": "no data yet"})
+                           "status": status})
         else:
             inputs.append({
                 "input": comp.get("label"),
