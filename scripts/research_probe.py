@@ -1,21 +1,20 @@
-"""One-off research probe round 5 (runs in CI where the network is open).
+"""One-off research probe round 6 (runs in CI where the network is open).
 
-  1. Boerse Frankfurt: instrument search for Weir/FLSmidth -> correct
-     isin/mic, then price_history sample.
-  2. FLSmidth financial-downloads: list actual report PDF links.
-  3. Weir investors section + sitemap: find the results/reports page.
-  4. ABS MERCH_EXP: state codelist + a real data sample for SITC 32
-     (coal) by state, monthly.
+  1. ABS MERCH_EXP 32.TOT.1.M (NSW coal export values, monthly 1995->) -
+     print the FULL csv so the correlation gate can run locally.
+     Also pull QLD (state 3) for comparison.
+  2. FLSmidth financial-downloads - PDF links WITH surrounding context so
+     quarterly reports can be identified for order-intake extraction.
+  3. Weir investors pages - identify the IR tools provider (euroland/q4/
+     investis) and any results-PDF archive.
 
 Prints machine-parseable blocks to stdout; nothing is written to the store.
 Delete this script once the research round is done.
 """
 from __future__ import annotations
 
-import hashlib
 import re
 import sys
-import time
 
 import requests
 
@@ -29,82 +28,60 @@ def block(name: str, text: str) -> None:
     print(f"===END {name}===")
 
 
-def bf_headers(url: str) -> dict:
-    client_date = time.strftime("%Y-%m-%dT%H:%M:%S.000Z", time.gmtime())
-    salt = "w4icATTGtnjrZMmS"
-    return {**UA, "Client-Date": client_date,
-            "X-Client-TraceId": hashlib.md5((client_date + url + salt).encode()).hexdigest(),
-            "X-Security": hashlib.md5(client_date.encode()).hexdigest(),
-            "Accept": "application/json"}
-
-
-def bf_get(name: str, url: str, grab: int = 2500) -> None:
-    try:
-        r = requests.get(url, headers=bf_headers(url), timeout=60)
-        block(name, f"HTTP {r.status_code}\n{r.text[:grab]}")
-    except Exception as exc:  # noqa: BLE001
-        block(f"{name} ERROR", repr(exc))
-
-
-def discover(name: str, url: str, pat: str, grab: int = 80) -> None:
-    try:
-        from curl_cffi import requests as creq
-        r = creq.get(url, impersonate="chrome", timeout=40)
-        links = re.findall(r'href="([^"]+)"[^>]*>([^<]{0,140})', r.text)
-        hits = [f"{h} | {t.strip()}" for h, t in links if re.search(pat, h + t, re.I)]
-        block(f"DISCOVER {name}", f"HTTP {r.status_code} len={len(r.text)}\n"
-              + "\n".join(hits[:grab]))
-    except Exception as exc:  # noqa: BLE001
-        block(f"DISCOVER {name} ERROR", repr(exc))
-
-
-def abs_state_codes_and_sample() -> None:
-    try:
-        r = requests.get("https://data.api.abs.gov.au/rest/codelist/ABS/"
-                         "CL_MERCH_STATE", headers={**UA, "Accept": "application/xml"},
-                         timeout=60)
-        codes = re.findall(r'<structure:Code id="([^"]+)">\s*(?:<common:Annotations>.*?'
-                           r'</common:Annotations>\s*)?<common:Name[^>]*>([^<]+)',
-                           r.text, re.S)
-        block("ABS CL_MERCH_STATE", f"HTTP {r.status_code}\n"
-              + "\n".join(f"{c} | {n}" for c, n in codes[:20]))
-        nsw = next((c for c, n in codes if "New South Wales" in n), None)
-    except Exception as exc:  # noqa: BLE001
-        block("ABS CL_MERCH_STATE ERROR", repr(exc))
-        nsw = None
-    key = f"32.TOT.{nsw or '1'}.M"
-    url = (f"https://data.api.abs.gov.au/rest/data/ABS,MERCH_EXP,1.0.0/{key}"
-           f"?startPeriod=1990-01&dimensionAtObservation=AllDimensions&format=csv")
+def abs_full(state: str, label: str) -> None:
+    url = (f"https://data.api.abs.gov.au/rest/data/ABS,MERCH_EXP,1.0.0/"
+           f"32.TOT.{state}.M?startPeriod=1990-01"
+           f"&dimensionAtObservation=AllDimensions&format=csv")
     try:
         r = requests.get(url, headers={**UA, "Accept": "text/csv"}, timeout=120)
-        lines = r.text.strip().splitlines()
-        block(f"ABS MERCH_EXP DATA {key}",
-              f"HTTP {r.status_code} rows={len(lines)}\n"
-              + "\n".join(lines[:6] + ["..."] + lines[-4:]))
+        block(f"ABS FULL {label}", f"HTTP {r.status_code}\n{r.text.strip()}")
     except Exception as exc:  # noqa: BLE001
-        block("ABS MERCH_EXP DATA ERROR", repr(exc))
+        block(f"ABS FULL {label} ERROR", repr(exc))
+
+
+def fls_links_with_context() -> None:
+    try:
+        from curl_cffi import requests as creq
+        r = creq.get("https://www.flsmidth.com/en/investors/financial-downloads",
+                     impersonate="chrome", timeout=60)
+        html = r.text
+        out = []
+        for m in re.finditer(r'href="(https?://[^"]+\.pdf)"', html):
+            start = max(0, m.start() - 400)
+            ctx = re.sub(r"<[^>]+>", " ", html[start:m.start()])
+            ctx = re.sub(r"\s+", " ", ctx).strip()[-140:]
+            out.append(f"{m.group(1)} ||| {ctx}")
+        block("FLS PDF LINKS", f"HTTP {r.status_code} n={len(out)}\n"
+              + "\n".join(out[:80]))
+    except Exception as exc:  # noqa: BLE001
+        block("FLS PDF LINKS ERROR", repr(exc))
+
+
+def weir_provider() -> None:
+    try:
+        from curl_cffi import requests as creq
+        for name, url in [
+            ("investors", "https://www.global.weir/investors/"),
+            ("results", "https://www.global.weir/investors/results-and-presentations/"),
+            ("reports", "https://www.global.weir/investors/annual-report/"),
+        ]:
+            r = creq.get(url, impersonate="chrome", timeout=60)
+            html = r.text
+            srcs = re.findall(r'(?:src|href)="([^"]*(?:euroland|q4cdn|q4inc|'
+                              r'investis|sharegraph|halo|cision|globenewswire|'
+                              r'precisionir|api)[^"]*)"', html, re.I)
+            pdfs = re.findall(r'href="([^"]+\.pdf)"', html)[:25]
+            block(f"WEIR {name}", f"HTTP {r.status_code} len={len(html)}\n"
+                  f"PROVIDERS: {srcs[:15]}\nPDFS: " + "\n".join(pdfs))
+    except Exception as exc:  # noqa: BLE001
+        block("WEIR PROVIDER ERROR", repr(exc))
 
 
 def main() -> int:
-    for term in ("Weir", "FLSmidth"):
-        u = (f"https://api.boerse-frankfurt.de/v1/global_search/limitedsearch"
-             f"?searchTerms={term}")
-        bf_get(f"BF SEARCH {term}", u)
-    # direct price_history attempts on XETR
-    for name, isin in (("WEIR", "GB0009465807"), ("FLS", "DK0010234467")):
-        for mic in ("XETR", "XFRA"):
-            u = (f"https://api.boerse-frankfurt.de/v1/data/price_history"
-                 f"?limit=10&offset=0&isin={isin}&mic={mic}"
-                 f"&minDate=2026-06-01&maxDate=2026-08-20")
-            bf_get(f"BF HIST {name} {mic}", u, 1200)
-    discover("fls-downloads",
-             "https://www.flsmidth.com/en/investors/financial-downloads",
-             r"\.pdf|report|quarter|interim|annual", 60)
-    discover("weir-investors", "https://www.global.weir/investors/",
-             r"result|report|rns|presentation", 60)
-    discover("weir-sitemap", "https://www.global.weir/sitemap.xml",
-             r"invest|result|report", 60)
-    abs_state_codes_and_sample()
+    abs_full("1", "NSW-COAL")
+    abs_full("3", "QLD-COAL")
+    fls_links_with_context()
+    weir_provider()
     return 0
 
 
