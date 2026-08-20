@@ -87,14 +87,23 @@ def datastore_records(resource_id: str, session) -> pd.DataFrame:
 
 
 def _parse_period(text: str) -> pd.Timestamp | None:
-    m = QUARTER_PAT.search(str(text))
-    if not m:
+    """Quarter labels ('Mar-24', 'June quarter 2024') or quarter-end dates
+    ('2024-03-31 00:00:00' from Excel datetimes) -> quarter-end month end."""
+    text = str(text)
+    m = QUARTER_PAT.search(text)
+    if m:
+        mon = {"mar": 3, "jun": 6, "sep": 9, "dec": 12}[m.group(1).lower()[:3]]
+        year = int(m.group(2))
+        if year < 100:
+            year += 2000 if year < 70 else 1900
+        return pd.Period(f"{year}-{mon:02d}", freq="M").end_time.normalize()
+    try:
+        ts = pd.to_datetime(text)
+    except (ValueError, TypeError):
         return None
-    mon = {"mar": 3, "jun": 6, "sep": 9, "dec": 12}[m.group(1).lower()[:3]]
-    year = int(m.group(2))
-    if year < 100:
-        year += 2000 if year < 70 else 1900
-    return pd.Period(f"{year}-{mon:02d}", freq="M").end_time.normalize()
+    if pd.isna(ts) or ts.month not in (3, 6, 9, 12) or not 1990 <= ts.year <= 2100:
+        return None
+    return pd.Period(f"{ts.year}-{ts.month:02d}", freq="M").end_time.normalize()
 
 
 def records_to_long(df: pd.DataFrame, url: str) -> pd.DataFrame:

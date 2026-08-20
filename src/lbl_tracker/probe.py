@@ -68,16 +68,19 @@ def probe_qld_coal():
     _p(f"discovered resources: {json.dumps(found, indent=1)[:3000]}")
     if found:
         res = found[0]
-        raw = get(f"{qld_coal.CKAN}/datastore_search", session=session,
-                  params={"resource_id": res["id"], "limit": 3})
-        _p(f"datastore_search raw: {_head(raw.text, 1200)}")
-        records = qld_coal.datastore_records(res["id"], session)
-        _p(f"datastore records: {len(records)} columns={list(records.columns)}")
-        _p(records.head(10).to_string()[:2500])
-        long = qld_coal.records_to_long(records, res["url"])
-        _p(f"long rows: {len(long)}; range {long['date'].min()}..{long['date'].max()}; "
-           f"mines={long['mine'].nunique()}")
-        _p(long.tail(8).to_string())
+        content = qld_coal._download(res["url"], session).content
+        _p(f"workbook bytes: {len(content)}")
+        book = pd.read_excel(io.BytesIO(content), sheet_name=None, header=None,
+                             dtype=str)
+        for sheet, raw in list(book.items())[:5]:
+            _p(f"-- sheet {sheet!r} shape={raw.shape}")
+            _p(raw.head(14).iloc[:, :12].to_string()[:2800])
+        long = qld_coal.parse_workbook(content, res["url"])
+        _p(f"long rows: {len(long)}")
+        if len(long):
+            _p(f"range {long['date'].min()}..{long['date'].max()}; "
+               f"mines={long['mine'].nunique()}")
+            _p(long.tail(8).to_string())
 
 
 def probe_pilbara():
@@ -266,14 +269,17 @@ def probe_jsa():
     try:
         url = jsa_ivi.discover_workbook(session)
         _p(f"resolved workbook: {url}")
-        content = get(url, session=session).content
+        content = get_impersonated(url, timeout=120).content
+        _p(f"workbook bytes: {len(content)}")
         book = pd.read_excel(io.BytesIO(content), sheet_name=None, header=None)
         _p(f"sheets: {list(book)}")
-        for sheet, raw in list(book.items())[:3]:
+        for sheet, raw in list(book.items())[:4]:
             _p(f"-- sheet {sheet!r} shape={raw.shape}")
-            _p(raw.head(8).iloc[:, :12].to_string()[:2000])
+            _p(raw.head(10).iloc[:, :10].to_string()[:2400])
+        df = jsa_ivi.parse_workbook(content, url)
+        _p(f"parsed rows: {len(df)}; series: {sorted(df['series_id'].unique())[:12]}")
     except Exception as exc:  # noqa: BLE001
-        _p(f"workbook discovery failed: {exc}")
+        _p(f"workbook discovery/parse failed: {exc}")
 
 
 def probe_tungsten():

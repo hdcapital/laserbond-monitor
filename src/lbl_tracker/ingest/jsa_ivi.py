@@ -29,7 +29,11 @@ PAGES = [
     "https://www.jobsandskills.gov.au/data/internet-vacancy-index",
     "https://www.jobsandskills.gov.au/work/internet-vacancy-index",
 ]
-LINK_PAT = re.compile(r"(detailed occupation|ivi.?data.*occupation|4.?digit)", re.I)
+# Verified live 2026-08-20: the IVI page links monthly files like
+# /sites/default/files/2026-08/internet_vacancies_anzsco4_occupations_
+# states_and_territories_-_july_2026.xlsx (anchor text is just "Download").
+LINK_PAT = re.compile(r"anzsco4[_ ]?occupations?[_ ]?states|detailed occupation|"
+                      r"ivi.?data.*occupation|4.?digit", re.I)
 
 # jobsandskills.gov.au sits behind a WAF that stalls plain library
 # user-agents (read-timeouts observed in CI); browser-like headers get
