@@ -63,3 +63,16 @@
 {"ts": "2026-08-20T07:22:45.371600+00:00", "source": "tungsten_news", "status": "ok", "rows": 162, "error": ""}
 {"ts": "2026-08-20T07:22:47.028135+00:00", "source": "asx_announcements", "status": "ok", "rows": 20, "error": ""}
 {"ts": "2026-08-20T07:22:47.029053+00:00", "source": "importgenius", "status": "ok", "rows": 0, "error": ""}
+{"ts": "2026-08-20T07:35:05.034248+00:00", "source": "qld_coal", "status": "ok", "rows": 360, "error": ""}
+{"ts": "2026-08-20T07:35:46.189088+00:00", "source": "pilbara_ports", "status": "ok", "rows": 159, "error": ""}
+{"ts": "2026-08-20T07:35:47.918146+00:00", "source": "abs_capex", "status": "ok", "rows": 311, "error": ""}
+{"ts": "2026-08-20T07:35:48.506650+00:00", "source": "abs_exploration", "status": "ok", "rows": 1305, "error": ""}
+{"ts": "2026-08-20T07:35:49.893967+00:00", "source": "rba", "status": "ok", "rows": 1643, "error": ""}
+{"ts": "2026-08-20T07:35:50.648652+00:00", "source": "aisi", "status": "ok", "rows": 6, "error": ""}
+{"ts": "2026-08-20T07:35:50.923416+00:00", "source": "fred_steel", "status": "ok", "rows": 413, "error": ""}
+{"ts": "2026-08-20T07:36:23.532757+00:00", "source": "baker_hughes", "status": "ok", "rows": 7600, "error": ""}
+{"ts": "2026-08-20T07:36:51.729850+00:00", "source": "cat_edgar", "status": "ok", "rows": 250, "error": ""}
+{"ts": "2026-08-20T07:36:59.236611+00:00", "source": "jsa_ivi", "status": "ok", "rows": 4655, "error": ""}
+{"ts": "2026-08-20T07:37:09.163060+00:00", "source": "tungsten_news", "status": "ok", "rows": 162, "error": ""}
+{"ts": "2026-08-20T07:37:11.705155+00:00", "source": "asx_announcements", "status": "ok", "rows": 20, "error": ""}
+{"ts": "2026-08-20T07:37:11.705890+00:00", "source": "importgenius", "status": "ok", "rows": 0, "error": ""}
