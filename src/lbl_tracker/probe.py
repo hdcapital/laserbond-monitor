@@ -219,6 +219,31 @@ def probe_cat_edgar():
     if hits:
         _p(f"date range: {hits[-1]['file_date']} .. {hits[0]['file_date']}")
         _p(f"recent dates: {[h['file_date'] for h in hits[:12]]}")
+    # dump monthly-era exhibits (CAT discontinued monthly dealer-stats
+    # filings ~2017; recent 7.01s are quarterly earnings releases)
+    monthly_era = [h for h in hits if str(h["file_date"]) < "2017-03-01"][:3]
+    _p(f"monthly-era sample: {[h['file_date'] for h in monthly_era]}")
+    for hit in monthly_era:
+        try:
+            url = cat_edgar.exhibit_url(hit, session)
+            _p(f"== {hit['file_date']} exhibit: {url}")
+            if not url:
+                continue
+            html = get(url, session=session, sec=True).text
+            text = " ".join(BeautifulSoup(html, "lxml").get_text(" ", strip=True).split())
+            _p(_head(text, 3500))
+            try:
+                tables = pd.read_html(io.StringIO(html))
+                _p(f"tables: {len(tables)}")
+                for i, table in enumerate(tables[:4]):
+                    _p(f"-- table {i} shape={table.shape}")
+                    _p(table.head(12).iloc[:, :10].to_string()[:2200])
+            except ValueError as exc:
+                _p(f"read_html: {exc}")
+            _p(f"parse_exhibit -> {cat_edgar.parse_exhibit(html, url)}")
+        except Exception as exc:  # noqa: BLE001
+            _p(f"== {hit.get('file_date')}: FAILED {exc}")
+        _time.sleep(0.2)
     # walk newest -> older until an exhibit mentions Resource Industries
     shown = 0
     for hit in hits[:40]:
