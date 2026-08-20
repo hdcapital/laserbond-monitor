@@ -6,16 +6,16 @@
   "facts_hash": "1e5e4bc057cc5671"
  },
  "products": {
-  "text": "Products Pulse tracks weighted z-scores of its inputs against their own trailing five-year norms, scaled from -100 to +100. At 22.6 in August 2026, it is above its five-year norm; it has eased from 25.6 a month earlier but remains well above its May and February readings. US new orders for iron and steel mills are the biggest positive contributor (+33.3), while inverted AUD/USD is the biggest negative (-23.3); two inputs have no data yet.",
+  "text": "Products Pulse tracks weighted z-scores of its inputs against their own trailing five-year norms, scaled from -100 to +100. At 22.6 in August 2026, it is above its five-year norm, down from 25.6 a month ago but up from 1.7 three months ago. US new orders for iron and steel mills are the largest positive contributor (+33.3), while inverted AUD/USD is the largest negative contributor (-23.3); two inputs are excluded due to insufficient history or discontinued source data.",
   "model": "gpt-5.6-terra",
-  "generated_at": "2026-08-20 21:52 UTC",
-  "facts_hash": "df9687ad04dc1ebf"
+  "generated_at": "2026-08-20 21:56 UTC",
+  "facts_hash": "fd062f0acaae9cac"
  },
  "margin": {
-  "text": "Margin Pulse tracks weighted z-scores of fitter/welder vacancy tightness, AUD/USD and tungsten policy flags against their own trailing five-year norms, scaled from -100 to +100. At -22.9 in August 2026, it is below its five-year norm; it improved from -32.2 three months earlier but slipped from -15.9 last month. AUD/USD is the largest negative contributor (-35.0), while fitter/welder vacancy tightness is the largest positive (+12.1); tungsten policy flags have no data yet.",
+  "text": "Margin Pulse tracks weighted z-scores of fitter/welder vacancy tightness and AUD/USD against their own trailing five-year norms, scaled from -100 to +100. At -22.9 in August 2026, it is below its five-year norm; it has weakened from -15.9 a month earlier but improved from -32.2 three months earlier. Fitter/welder vacancy tightness is the largest positive contributor (+12.1), while AUD/USD is the largest negative contributor (-35.0); tungsten policy flags are excluded pending sufficient history.",
   "model": "gpt-5.6-terra",
-  "generated_at": "2026-08-20 21:52 UTC",
-  "facts_hash": "6e0f4dd04d7f9b4b"
+  "generated_at": "2026-08-20 21:56 UTC",
+  "facts_hash": "2094a67969cd8065"
  },
  "technology": {
   "text": "The pipeline holds 2 leads, 3 agreements and 2 commissioned cells, with $2.4 million in stated contracted value and no stated recognised value. Over the past six months, it added 2 leads, 3 agreements and 2 commissioned cells, including the $2.4 million Komatsu licensing agreement and its first modular laser cell completing commissioning.",
