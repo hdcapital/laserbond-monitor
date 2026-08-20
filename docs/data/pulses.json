@@ -5521,7 +5521,7 @@
   ]
  },
  "technology": {
-  "available": false,
+  "available": true,
   "stages": [
    "lead",
    "trial",
@@ -5530,7 +5530,118 @@
    "commissioned",
    "recurring"
   ],
-  "events": [],
-  "note": "No classified Technology events yet (needs announcement ingest + OPENAI_API_KEY)."
+  "stage_counts": {
+   "lead": 2,
+   "trial": 0,
+   "agreement": 3,
+   "cell_ordered": 0,
+   "commissioned": 2,
+   "recurring": 0
+  },
+  "stage_counts_6m_ago": {
+   "lead": 0,
+   "trial": 0,
+   "agreement": 0,
+   "cell_ordered": 0,
+   "commissioned": 0,
+   "recurring": 0
+  },
+  "stage_deltas_6m": {
+   "lead": 2,
+   "trial": 0,
+   "agreement": 3,
+   "cell_ordered": 0,
+   "commissioned": 2,
+   "recurring": 0
+  },
+  "contracted_value_aud_where_stated": 2400000.0,
+  "recognised_aud_where_stated": 0.0,
+  "contracted_unrecognised_aud_where_stated": 2400000.0,
+  "events": [
+   {
+    "id": "7a8f2472d99e3348",
+    "announcement_id": "2924-03123571-2A1690739",
+    "date": "2026-08-20",
+    "stage": "agreement",
+    "counterparty": "Komatsu",
+    "value_aud": NaN,
+    "recognised_aud": null,
+    "description": "\u201cKomatsu licensing deal confirms blue-chip commercial credibility,\u201d with the investment-case slide stating that \u201cKomatsu [is] signed.\u201d",
+    "source_pdf_url": "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03123571-2A1690739",
+    "retrieved_at": "2026-08-20 20:54:33.282789+00:00"
+   },
+   {
+    "id": "a3417973c1e4a2cb",
+    "announcement_id": "2924-03123571-2A1690739",
+    "date": "2026-08-20",
+    "stage": "lead",
+    "counterparty": NaN,
+    "value_aud": NaN,
+    "recognised_aud": null,
+    "description": "\u201cFurther global laser cell opportunities, with discussions underway for additional cells in new markets.\u201d",
+    "source_pdf_url": "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03123571-2A1690739",
+    "retrieved_at": "2026-08-20 20:54:33.282789+00:00"
+   },
+   {
+    "id": "59295450948bd00a",
+    "announcement_id": "2924-03123430-2A1690671",
+    "date": "2026-08-19",
+    "stage": "agreement",
+    "counterparty": "Komatsu",
+    "value_aud": NaN,
+    "recognised_aud": null,
+    "description": "A modular laser cell for Komatsu was completed on time and on budget and passed factory acceptance in June 2026, with site operation to commence in Q1 FY27.",
+    "source_pdf_url": "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03123430-2A1690671",
+    "retrieved_at": "2026-08-20 20:54:33.282789+00:00"
+   },
+   {
+    "id": "46be6a274dd87ec1",
+    "announcement_id": "2924-03123422-2A1690661",
+    "date": "2026-08-19",
+    "stage": "commissioned",
+    "counterparty": "Komatsu",
+    "value_aud": NaN,
+    "recognised_aud": null,
+    "description": "The Komatsu licensing agreement reached a key milestone with the first modular laser cell passing factory acceptance in June 2026 and commissioning completed, with site operation to begin in Australia in Q1 FY27.",
+    "source_pdf_url": "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03123422-2A1690661",
+    "retrieved_at": "2026-08-20 20:54:33.282789+00:00"
+   },
+   {
+    "id": "412161a69ff18037",
+    "announcement_id": "2924-03123422-2A1690661",
+    "date": "2026-08-19",
+    "stage": "lead",
+    "counterparty": NaN,
+    "value_aud": NaN,
+    "recognised_aud": null,
+    "description": "Further laser cell projects progressed through development, with additional contracts expected in FY27 and discussions underway on cells in other regions.",
+    "source_pdf_url": "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03123422-2A1690661",
+    "retrieved_at": "2026-08-20 20:54:33.282789+00:00"
+   },
+   {
+    "id": "75a248ca4eda39fc",
+    "announcement_id": "2924-03123383-2A1690639",
+    "date": "2026-08-19",
+    "stage": "agreement",
+    "counterparty": "Komatsu",
+    "value_aud": 2400000.0,
+    "recognised_aud": null,
+    "description": "\u201cThe Komatsu licensing agreement, valued at $2.4 million, provides independent validation of this technology from a blue-chip global customer.\u201d",
+    "source_pdf_url": "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03123383-2A1690639",
+    "retrieved_at": "2026-08-20 20:54:33.282789+00:00"
+   },
+   {
+    "id": "557099b2666105a7",
+    "announcement_id": "2924-03123383-2A1690639",
+    "date": "2026-08-19",
+    "stage": "commissioned",
+    "counterparty": "Komatsu",
+    "value_aud": NaN,
+    "recognised_aud": null,
+    "description": "\u201cCommissioning of the cell has since been completed, with site operation to commence in Australia during Q1 FY27.\u201d",
+    "source_pdf_url": "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03123383-2A1690639",
+    "retrieved_at": "2026-08-20 20:54:33.282789+00:00"
+   }
+  ]
  }
 }
