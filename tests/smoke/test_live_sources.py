@@ -106,27 +106,29 @@ def test_baker_hughes():
 
 
 def test_cat_edgar():
+    """CAT discontinued the monthly dealer-statistics 8-Ks in Feb 2017, so
+    freshness cannot be asserted; instead assert the historical monthly era
+    still parses (the drift that matters is EDGAR access + layout)."""
     import os
     if not os.environ.get("SEC_CONTACT_EMAIL", "").strip():
         pytest.skip("cat_edgar pending SEC_CONTACT_EMAIL - EDGAR 403s requests "
                     "whose User-Agent lacks a contact address")
     import lbl_tracker.ingest.cat_edgar as cat
-    from lbl_tracker.http import SourceFetchError
-    old = cat.MAX_FILINGS
-    cat.MAX_FILINGS = 8  # smoke: newest filings only
-    try:
-        df = cat.fetch()
-    except SourceFetchError as exc:
-        if "Undeclared" in str(exc):
-            pytest.skip("SEC serves 'Undeclared Automated Tool' to this runner's "
-                        "IP range regardless of User-Agent (known block of "
-                        "GitHub-hosted runners) - run from a self-hosted runner "
-                        "or locally to enable this source")
-        raise
-    finally:
-        cat.MAX_FILINGS = old
-    assert_obs_schema(df)
-    assert_fresh(df, "cat.resource_industries_yoy_pct", 75)
+    from lbl_tracker.http import get, make_session
+    session = make_session(sec=True)
+    hits = cat.search_filings(session)
+    assert len(hits) > 100, f"item-7.01 filing list too short ({len(hits)})"
+    era = [h for h in hits if "2016-01-01" <= str(h["file_date"]) <= "2017-02-28"][:3]
+    assert era, "no monthly-era (2016/17) filings found"
+    rows = []
+    for hit in era:
+        url = cat.exhibit_url(hit, session)
+        assert url, f"no exhibit for {hit}"
+        rows += cat.parse_exhibit(get(url, session=session, sec=True).text, url)
+    world = [r for r in rows if r["series_id"] == "cat.resource_industries_yoy_pct"]
+    assert len(world) >= 3, f"no world Resource Industries figures parsed: {rows[:4]}"
+    assert all(-100 <= r["value"] <= 100 for r in rows)
+    assert max(r["date"] for r in rows) < pd.Timestamp("2017-06-01")
 
 
 def test_jsa_ivi():
