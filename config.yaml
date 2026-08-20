@@ -1,0 +1,90 @@
+# lbl-tracker configuration
+# Pulse weights, tickers and keywords are meant to be edited here.
+# Signs: a component with invert: true contributes with flipped sign
+# (rising series pushes the pulse DOWN).
+
+contact:
+  # Identifying User-Agent for polite scraping. SEC EDGAR requires a
+  # contact address in the User-Agent; set SEC_CONTACT_EMAIL in the
+  # environment to override the placeholder.
+  user_agent: "lbl-tracker/0.1 (https://github.com/hdcapital/laserbond-monitor)"
+
+store:
+  parquet_dir: data/parquet
+  logs_dir: data/logs
+  duckdb_path: data/lbl.duckdb   # rebuilt from parquet, not committed
+
+anthropic:
+  model: claude-sonnet-5
+  max_tokens: 2048
+
+announcements:
+  tickers: [LBL, EHL, MSV, MAD]
+  lookback_count: 20            # per poll; backfill uses a larger page size
+  backfill_years: 6
+
+tungsten:
+  keywords:
+    - "tungsten export control"
+    - "ammonium paratungstate"
+    - "China tungsten"
+
+jsa:
+  # ANZSCO 4-digit occupations tracked from the Internet Vacancy Index
+  occupations:
+    "3232": "Metal Fitters and Machinists"
+    "3223": "Structural Steel and Welding Trades Workers"
+  states: [NSW, VIC, QLD, SA, WA, TAS, NT, ACT, AUST]
+
+fred:
+  # Value of Manufacturers' New Orders: Iron and Steel Mills and
+  # Ferroalloy Manufacturing (monthly, $M). Verified id in SOURCES.md.
+  series:
+    steel_new_orders: AISMNO
+
+# ---------------------------------------------------------------------------
+# Pulse composites. Each component references a stored series_id.
+# z-scores use a 5-year (60 month) rolling window, require >= 24 months of
+# history, are clipped at +/-2.5 sigma and scaled so the pulse lies in
+# [-100, +100]. Weights are renormalised over components that actually have
+# a current (non-stale) z-score; a component's staleness cap is
+# max_stale_months. See src/lbl_tracker/analytics/pulses.py.
+# ---------------------------------------------------------------------------
+pulses:
+  services:
+    title: "Services Pulse"
+    components:
+      - {series: qld_coal.saleable_tonnes_total, weight: 0.25, invert: false, max_stale_months: 5, label: "QLD coal saleable tonnes"}
+      - {series: pilbara.iron_ore_throughput_mt, weight: 0.25, invert: false, max_stale_months: 3, label: "Pilbara Ports iron ore"}
+      - {series: abs.capex.mining_actual, weight: 0.125, invert: false, max_stale_months: 5, label: "ABS mining capex (actual)"}
+      - {series: abs.capex.mining_expected, weight: 0.125, invert: false, max_stale_months: 5, label: "ABS mining capex (expectations)"}
+      - {series: rba.commodity_index_aud, weight: 0.15, invert: false, max_stale_months: 3, label: "RBA commodity price index"}
+      - {series: abs.exploration.metres_drilled_total, weight: 0.10, invert: false, max_stale_months: 5, label: "ABS metres drilled"}
+  products:
+    title: "Products Pulse"
+    components:
+      - {series: aisi.capacity_utilisation_pct, weight: 0.20, invert: false, max_stale_months: 2, label: "AISI raw-steel capacity utilisation"}
+      - {series: fred.steel_new_orders, weight: 0.20, invert: false, max_stale_months: 3, label: "US new orders, iron & steel mills"}
+      - {series: cat.resource_industries_yoy_pct, weight: 0.20, invert: false, max_stale_months: 3, label: "CAT Resource Industries retail sales YoY"}
+      - {series: bh.rigcount_na_total, weight: 0.10, invert: false, max_stale_months: 2, label: "Baker Hughes NA rig count"}
+      - {series: bh.rigcount_intl_total, weight: 0.10, invert: false, max_stale_months: 3, label: "Baker Hughes intl rig count"}
+      - {series: rba.audusd, weight: 0.20, invert: true, max_stale_months: 2, label: "AUD/USD (inverted)"}
+  margin:
+    title: "Margin Pulse"
+    # All three components are cost/margin headwinds when rising, so all
+    # are inverted: higher pulse = margin tailwind.
+    components:
+      - {series: tungsten.flag_count, weight: 0.34, invert: true, max_stale_months: 2, label: "Tungsten policy flags (proxy)"}
+      - {series: jsa.ivi_trades_tightness, weight: 0.33, invert: true, max_stale_months: 3, label: "Fitter/welder vacancy tightness"}
+      - {series: rba.audusd, weight: 0.33, invert: true, max_stale_months: 2, label: "AUD/USD"}
+  # Technology Pipeline is intentionally NOT a scored composite; it is an
+  # event table rendered as facts (see analytics/pulses.py: technology_pipeline).
+
+zscore:
+  window_months: 60
+  min_history_months: 24
+  clip_sigma: 2.5
+
+backtest:
+  lags_months: [0, 3, 6, 9, 12]
+  manual_history: data/manual/lbl_segment_history.csv

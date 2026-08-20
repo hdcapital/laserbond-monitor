@@ -1,0 +1,118 @@
+{
+ "pulses": {
+  "services": {
+   "title": "Services Pulse",
+   "latest_month": null,
+   "latest_value": null,
+   "history": []
+  },
+  "products": {
+   "title": "Products Pulse",
+   "latest_month": null,
+   "latest_value": null,
+   "history": []
+  },
+  "margin": {
+   "title": "Margin Pulse",
+   "latest_month": null,
+   "latest_value": null,
+   "history": []
+  }
+ },
+ "attribution": {
+  "services": [
+   {
+    "series": "qld_coal.saleable_tonnes_total",
+    "label": "QLD coal saleable tonnes",
+    "status": "NO DATA"
+   },
+   {
+    "series": "pilbara.iron_ore_throughput_mt",
+    "label": "Pilbara Ports iron ore",
+    "status": "NO DATA"
+   },
+   {
+    "series": "abs.capex.mining_actual",
+    "label": "ABS mining capex (actual)",
+    "status": "NO DATA"
+   },
+   {
+    "series": "abs.capex.mining_expected",
+    "label": "ABS mining capex (expectations)",
+    "status": "NO DATA"
+   },
+   {
+    "series": "rba.commodity_index_aud",
+    "label": "RBA commodity price index",
+    "status": "NO DATA"
+   },
+   {
+    "series": "abs.exploration.metres_drilled_total",
+    "label": "ABS metres drilled",
+    "status": "NO DATA"
+   }
+  ],
+  "products": [
+   {
+    "series": "aisi.capacity_utilisation_pct",
+    "label": "AISI raw-steel capacity utilisation",
+    "status": "NO DATA"
+   },
+   {
+    "series": "fred.steel_new_orders",
+    "label": "US new orders, iron & steel mills",
+    "status": "NO DATA"
+   },
+   {
+    "series": "cat.resource_industries_yoy_pct",
+    "label": "CAT Resource Industries retail sales YoY",
+    "status": "NO DATA"
+   },
+   {
+    "series": "bh.rigcount_na_total",
+    "label": "Baker Hughes NA rig count",
+    "status": "NO DATA"
+   },
+   {
+    "series": "bh.rigcount_intl_total",
+    "label": "Baker Hughes intl rig count",
+    "status": "NO DATA"
+   },
+   {
+    "series": "rba.audusd",
+    "label": "AUD/USD (inverted)",
+    "status": "NO DATA"
+   }
+  ],
+  "margin": [
+   {
+    "series": "tungsten.flag_count",
+    "label": "Tungsten policy flags (proxy)",
+    "status": "NO DATA"
+   },
+   {
+    "series": "jsa.ivi_trades_tightness",
+    "label": "Fitter/welder vacancy tightness",
+    "status": "NO DATA"
+   },
+   {
+    "series": "rba.audusd",
+    "label": "AUD/USD",
+    "status": "NO DATA"
+   }
+  ]
+ },
+ "technology": {
+  "available": false,
+  "stages": [
+   "lead",
+   "trial",
+   "agreement",
+   "cell_ordered",
+   "commissioned",
+   "recurring"
+  ],
+  "events": [],
+  "note": "No classified Technology events yet (needs announcement ingest + ANTHROPIC_API_KEY)."
+ }
+}

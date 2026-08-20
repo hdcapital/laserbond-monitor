@@ -1,0 +1,91 @@
+name: ingest-weekly
+
+on:
+  schedule:
+    # Mondays 20:30 UTC = Tuesday 06:30 AEST (runs on the default branch)
+    - cron: "30 20 * * 1"
+  workflow_dispatch:
+    inputs:
+      backfill:
+        description: "deep announcement backfill"
+        type: boolean
+        default: false
+      sources:
+        description: "space-separated ingester subset (empty = all)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: store-commit
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+
+      - name: Ingest all sources
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SEC_CONTACT_EMAIL: ${{ secrets.SEC_CONTACT_EMAIL }}
+          IMPORTGENIUS_API_KEY: ${{ secrets.IMPORTGENIUS_API_KEY }}
+        run: |
+          python -m lbl_tracker.cli ingest ${{ inputs.sources }} \
+            ${{ inputs.backfill == true && '--backfill' || '' }} | tee ingest-result.json
+
+      - name: Compute pulses, backtest, dashboard
+        run: |
+          python -m lbl_tracker.cli pulses
+          python -m lbl_tracker.cli backtest || true
+          python -m lbl_tracker.cli dashboard
+
+      - name: Commit store + dashboard
+        run: |
+          git config user.name "lbl-tracker[bot]"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/ docs/
+          if git diff --cached --quiet; then
+            echo "no data changes"
+          else
+            git commit -m "ingest: weekly update $(date -u +%F)"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+
+      - name: Fail loudly if any source errored
+        run: |
+          python - <<'EOF'
+          import json, sys
+          results = json.load(open("ingest-result.json"))
+          failed = [r["source"] for r in results if r.get("status") == "error"]
+          if failed:
+              print(f"::error::sources failed this run: {failed}")
+              sys.exit(1)
+          print("all sources ok")
+          EOF
+
+  smoke:
+    needs: ingest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - name: Live smoke tests (source drift gate)
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          SEC_CONTACT_EMAIL: ${{ secrets.SEC_CONTACT_EMAIL }}
+        run: pytest -m live tests/smoke -q -rA --timeout 900

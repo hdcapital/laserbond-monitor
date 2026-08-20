@@ -1,0 +1,58 @@
+name: verify
+
+on:
+  push:
+    branches: ["claude/**", "main"]
+  workflow_dispatch:
+    inputs:
+      probes:
+        description: "space-separated probe names (empty = all)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - name: Unit tests
+        run: pytest tests/unit -q
+
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - name: Probe live sources (diagnostics)
+        run: python -m lbl_tracker.probe ${{ inputs.probes }}
+
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - name: Live smoke tests (fails loudly on source drift)
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          SEC_CONTACT_EMAIL: ${{ secrets.SEC_CONTACT_EMAIL }}
+        run: pytest -m live tests/smoke -q -rA --timeout 900

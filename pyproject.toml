@@ -1,0 +1,36 @@
+[project]
+name = "lbl-tracker"
+version = "0.1.0"
+description = "External-data nowcast for LaserBond (ASX:LBL)"
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.31",
+    "pandas>=2.1",
+    "pyarrow>=14.0",
+    "duckdb>=0.10",
+    "openpyxl>=3.1",
+    "xlrd>=2.0",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.0",
+    "PyYAML>=6.0",
+    "python-dateutil>=2.8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-timeout>=2.2"]
+
+[project.scripts]
+lbl-tracker = "lbl_tracker.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+markers = [
+    "live: hits live external endpoints (network required)",
+]
+testpaths = ["tests"]
