@@ -81,7 +81,7 @@ def parse_exhibit(html: str, url: str) -> list[dict]:
         return []
     out, seen = [], set()
     for table in tables:
-        flat = table.astype(str)
+        flat = table.fillna("").astype(str)  # pandas>=3: astype(str) keeps NaN
         for ridx in range(len(flat)):
             header = flat.iloc[ridx, 0].strip()
             if not re.fullmatch(r"(?i)resources?\s+industries", header):
