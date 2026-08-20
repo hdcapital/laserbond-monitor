@@ -1,0 +1,25 @@
+name: research-probe
+
+# Temporary research workflow: fetches CANDIDATE data series on a runner
+# (open network) so they can be validated against LBL actuals before any
+# ingester is built. Delete together with scripts/research_probe.py once
+# the research round is finished.
+on:
+  push:
+    branches: ["claude/**"]
+    paths: ["scripts/research_probe.py"]
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - name: Run research probe
+        run: python scripts/research_probe.py
