@@ -65,7 +65,11 @@ def test_qld_coal():
     df = fetch()
     assert_obs_schema(df)
     assert_fresh(df, "qld_coal.saleable_tonnes_total", 400)
-    assert df["series_id"].str.startswith("qld_coal.mine.").sum() > 0, "no mine-level rows"
+    assert df["series_id"].str.startswith("qld_coal.type.").sum() > 0, \
+        "no mine-type/coal-type rows"
+    assert pd.to_datetime(df["date"]).max() <= pd.Timestamp.now() + pd.Timedelta(days=95)
+    total = df[df["series_id"] == "qld_coal.saleable_tonnes_total"]["value"]
+    assert total.between(2e7, 9e7).all(), "quarterly total outside sane range (tonnes)"
 
 
 def test_pilbara_ports():

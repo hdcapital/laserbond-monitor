@@ -46,15 +46,26 @@ def monthly_series(obs: pd.DataFrame, series_id: str) -> pd.Series:
 
 
 def zscore(series: pd.Series) -> pd.DataFrame:
-    """Rolling z per observed month. Columns: value, z, score."""
+    """Rolling z per observed month. Columns: value, z, score.
+
+    min_history_months is a TIME requirement: for sparser-than-monthly
+    series (quarterly), the minimum observation count inside the window is
+    scaled by the series' median spacing, so a quarterly series needs
+    ~8 quarters rather than an impossible 24 monthly points."""
     window = int(cfg("zscore", "window_months", default=60))
     min_hist = int(cfg("zscore", "min_history_months", default=24))
     clip = float(cfg("zscore", "clip_sigma", default=2.5))
     if series.empty:
         return pd.DataFrame(columns=["value", "z", "score"],
                             index=pd.DatetimeIndex([]))
+    if len(series) > 3:
+        spacing = max(1.0, float(series.index.to_series().diff()
+                                 .dt.days.dropna().median()) / 30.44)
+    else:
+        spacing = 1.0
+    min_periods = max(6, int(round(min_hist / spacing)))
     roll = series.rolling(window=pd.Timedelta(days=int(window * 30.44)),
-                          min_periods=min_hist)
+                          min_periods=min_periods)
     mean, std = roll.mean(), roll.std()
     z = (series - mean) / std.replace(0.0, np.nan)
     score = z.clip(-clip, clip) / clip * 100.0

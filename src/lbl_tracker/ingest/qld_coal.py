@@ -1,15 +1,18 @@
-"""Queensland coal production - quarterly saleable tonnes, mine level.
+"""Queensland coal production - quarterly saleable tonnes.
 
 Source: Queensland Open Data portal (CKAN, www.data.qld.gov.au), dataset
-"quarterly-coal-reports", resource "Quarterly Coal Production" (mine-level,
-2010 -> current; verified live 2026-08-20). The portal's file-download
-endpoint answers HTTP 202 (staging) indefinitely for non-browser clients,
-so rows are pulled through the CKAN datastore API instead, with the file
-download kept as a fallback.
+"quarterly-coal-reports", resource "Quarterly Coal Production". Verified
+live 2026-08-20: the workbook's 'Saleable Coal Production' sheet is a long
+table (Year, Quarter, Mine Type, Coal type, Total Net Output (tonnes)),
+2010 -> current, i.e. quarterly saleable production by MINE TYPE x COAL
+TYPE. (Mine-level figures are only published annually, by financial year,
+in the Coal Industry Review dataset - quarterly mine-level data does not
+exist.) The portal fronts file downloads with an AWS WAF JavaScript
+challenge, so the workbook is fetched with headless Chrome (Playwright).
 
-Series stored:
-  qld_coal.saleable_tonnes_total      quarterly, sum over mines (as published)
-  qld_coal.mine.<slug>                quarterly, per mine
+Series stored (quarterly, tonnes):
+  qld_coal.saleable_tonnes_total          sum over the published type splits
+  qld_coal.type.<mine_type>.<coal_type>   e.g. qld_coal.type.open_cut.coking
 """
 from __future__ import annotations
 
@@ -30,7 +33,9 @@ CKAN = "https://www.data.qld.gov.au/api/3/action"
 SEARCH_QUERIES = ["quarterly coal reports"]
 RESOURCE_PATTERN = re.compile(r"quarterly coal production", re.I)
 
-QUARTER_PAT = re.compile(r"(mar|jun|sep|dec)[a-z]*[\s\-.]*(\d{2,4})", re.I)
+# calendar quarters (data note: "Data through to 31 March 2026" matched
+# the latest "2026 Q1" rows)
+QUARTER_END_MONTH = {"Q1": 3, "Q2": 6, "Q3": 9, "Q4": 12}
 
 
 def _slug(name: str) -> str:
@@ -53,127 +58,20 @@ def discover_resources(session=None) -> list[dict]:
                         "name": res.get("name"),
                         "id": res["id"],
                         "url": res.get("url"),
-                        "format": (res.get("format") or "").lower(),
-                        "datastore_active": bool(res.get("datastore_active")),
                     })
     log.info("qld_coal: discovered %d quarterly-production resources", len(found))
     return found
 
 
-DUMP_URL = "https://www.data.qld.gov.au/datastore/dump/{rid}"
-
-
-def datastore_records(resource_id: str, session) -> pd.DataFrame:
-    """Full-table CSV dump of a datastore resource, with the paged
-    datastore_search JSON API as fallback."""
-    try:
-        resp = get(DUMP_URL.format(rid=resource_id), session=session, timeout=180)
-        df = pd.read_csv(io.BytesIO(resp.content))
-        if len(df):
-            return df
-    except Exception as exc:  # noqa: BLE001
-        log.warning("qld_coal: datastore dump failed (%s); trying datastore_search", exc)
-    rows, offset = [], 0
-    while True:
-        resp = get(f"{CKAN}/datastore_search", session=session, params={
-            "resource_id": resource_id, "limit": 10000, "offset": offset})
-        result = resp.json()["result"]
-        batch = result.get("records", [])
-        rows.extend(batch)
-        offset += len(batch)
-        if not batch or offset >= result.get("total", 0):
-            break
-    return pd.DataFrame(rows)
-
-
-def _parse_period(text: str) -> pd.Timestamp | None:
-    """Quarter labels ('Mar-24', 'June quarter 2024') or quarter-end dates
-    ('2024-03-31 00:00:00' from Excel datetimes) -> quarter-end month end."""
-    text = str(text)
-    m = QUARTER_PAT.search(text)
-    if m:
-        mon = {"mar": 3, "jun": 6, "sep": 9, "dec": 12}[m.group(1).lower()[:3]]
-        year = int(m.group(2))
-        if year < 100:
-            year += 2000 if year < 70 else 1900
-        return pd.Period(f"{year}-{mon:02d}", freq="M").end_time.normalize()
-    try:
-        ts = pd.to_datetime(text)
-    except (ValueError, TypeError):
-        return None
-    if pd.isna(ts) or ts.month not in (3, 6, 9, 12) or not 1990 <= ts.year <= 2100:
-        return None
-    return pd.Period(f"{ts.year}-{ts.month:02d}", freq="M").end_time.normalize()
-
-
-def records_to_long(df: pd.DataFrame, url: str) -> pd.DataFrame:
-    """Datastore records -> long (mine, date, value). Field names are
-    detected, not assumed: a mine column, a period column (values like
-    'Mar-24' / 'March quarter 2024'), and a saleable/production tonnes
-    column."""
-    if df.empty:
-        raise ValueError("datastore returned no records")
-    cols = {str(c).lower(): c for c in df.columns}
-
-    def find(*keys, exclude=()):
-        for low, orig in cols.items():
-            if any(k in low for k in keys) and not any(x in low for x in exclude):
-                return orig
-        return None
-
-    mine_col = find("mine", exclude=("mineral",)) or find("operation", "site")
-    period_col = None
-    for low, orig in cols.items():
-        sample = df[orig].astype(str).head(50)
-        if sample.map(_parse_period).notna().mean() > 0.8:
-            period_col = orig
-            break
-    value_col = find("saleable") or find("production", exclude=("type",)) \
-        or find("tonn", exclude=("type",))
-    if not (mine_col and period_col and value_col):
-        raise ValueError(f"could not identify columns: mine={mine_col} "
-                         f"period={period_col} value={value_col}; "
-                         f"available={list(df.columns)}")
-
-    out = pd.DataFrame({
-        "mine": df[mine_col].astype(str).str.strip(),
-        "date": df[period_col].map(_parse_period),
-        "value": pd.to_numeric(df[value_col].astype(str).str.replace(",", ""),
-                               errors="coerce"),
-        "url": url,
-    })
-    out = out[out["date"].notna() & (out["mine"] != "")]
-    out = out[~out["mine"].str.fullmatch(r"(?i)total|grand total|nan")]
-    if out.empty:
-        raise ValueError("no parseable datastore rows")
-    return out
-
-
-# --- fallback: direct file download (202 staging retried) -------------------
-
 def _download(url: str, session):
-    """The portal's download endpoint answers HTTP 202 (empty) to plain
-    library clients indefinitely; a browser TLS fingerprint gets the file
-    (curl_cffi). Plain retries kept as a first, cheaper attempt."""
-    for attempt in range(3):
+    """Plain fetch first (cheap); the portal usually answers HTTP 202 with
+    an AWS WAF JS challenge, in which case headless Chrome retrieves it."""
+    for attempt in range(2):
         resp = session.get(url, timeout=120)
         if resp.status_code == 200 and resp.content:
-            return resp
-        if resp.status_code != 202:
-            resp.raise_for_status()
-        log.info("qld_coal: %s -> 202 (attempt %d) headers=%s", url, attempt,
-                 dict(resp.headers))
-        time.sleep(2 ** attempt)
-    # The 202 body is an AWS WAF JavaScript challenge, so only a real
-    # browser gets the file; drive the runner's Chrome via Playwright.
-    content = _browser_download(url)
-
-    class _Resp:  # minimal response shim for the parse path
-        pass
-    resp = _Resp()
-    resp.content = content
-    resp.status_code = 200
-    return resp
+            return resp.content
+        time.sleep(2)
+    return _browser_download(url)
 
 
 def _browser_download(url: str) -> bytes:
@@ -204,8 +102,7 @@ def _browser_download(url: str) -> bytes:
                     page.goto(url, timeout=120000)
                 except Exception:  # noqa: BLE001 - goto "fails" when it becomes a download
                     pass
-            download = dl_info.value
-            content = Path(download.path()).read_bytes()
+            content = Path(dl_info.value.path()).read_bytes()
             log.info("qld_coal: browser download %s -> %d bytes", url, len(content))
             return content
         finally:
@@ -213,29 +110,56 @@ def _browser_download(url: str) -> bytes:
 
 
 def parse_workbook(content: bytes, url: str) -> pd.DataFrame:
-    book = pd.read_excel(io.BytesIO(content), sheet_name=None, header=None, dtype=str)
-    frames = []
-    for _, raw in book.items():
-        raw = raw.dropna(how="all").reset_index(drop=True)
-        for i in range(min(len(raw), 15)):
-            header = raw.iloc[i].tolist()
-            period_cols = {j: _parse_period(h) for j, h in enumerate(header)}
-            period_cols = {j: p for j, p in period_cols.items() if p is not None}
-            if len(period_cols) < 4:
-                continue
-            for r in range(i + 1, len(raw)):
-                mine = str(raw.iloc[r, 0]).strip()
-                if not mine or mine.lower() in ("nan", "total", "grand total"):
-                    continue
-                for j, period in period_cols.items():
-                    val = str(raw.iloc[r, j]).replace(",", "").strip()
-                    try:
-                        frames.append({"mine": mine, "date": period,
-                                       "value": float(val), "url": url})
-                    except ValueError:
-                        continue
+    """'Saleable Coal Production' long table -> (mine_type, coal_type,
+    date, tonnes). Header verified live: row with Year / Quarter /
+    Mine Type / Coal type / Total Net Output (tonnes)."""
+    book = pd.read_excel(io.BytesIO(content), sheet_name=None, header=None, dtype=object)
+    raw = None
+    for name, sheet in book.items():
+        if "saleable" in str(name).lower():
+            raw = sheet
             break
-    return pd.DataFrame(frames)
+    if raw is None:
+        raise ValueError(f"no 'Saleable' sheet; sheets={list(book)}")
+    header_idx = None
+    for i in range(min(len(raw), 15)):
+        cells = [str(v).strip().lower() for v in raw.iloc[i].tolist()]
+        if "year" in cells and "quarter" in cells:
+            header_idx = i
+            break
+    if header_idx is None:
+        raise ValueError(f"no Year/Quarter header in Saleable sheet; head:\n"
+                         f"{raw.head(10).to_string()[:1200]}")
+    header = [str(v).strip().lower() for v in raw.iloc[header_idx].tolist()]
+    data = raw.iloc[header_idx + 1:].copy()
+    data.columns = header
+
+    def col(key):
+        for j, h in enumerate(header):
+            if key in h:
+                return data.iloc[:, j]
+        raise ValueError(f"column {key!r} missing in {header}")
+
+    year = pd.to_numeric(col("year"), errors="coerce")
+    quarter = col("quarter").astype(str).str.strip().str.upper()
+    mine_type = col("mine type").astype(str).str.strip()
+    coal_type = col("coal type").astype(str).str.strip()
+    tonnes = pd.to_numeric(col("output"), errors="coerce")
+
+    frame = pd.DataFrame({"year": year, "quarter": quarter, "mine_type": mine_type,
+                          "coal_type": coal_type, "value": tonnes})
+    frame = frame[frame["quarter"].isin(QUARTER_END_MONTH) & frame["year"].notna()
+                  & frame["value"].notna()]
+    if frame.empty:
+        raise ValueError("Saleable sheet parsed to zero rows")
+    frame["date"] = [
+        pd.Period(f"{int(y)}-{QUARTER_END_MONTH[q]:02d}", freq="M").end_time.normalize()
+        for y, q in zip(frame["year"], frame["quarter"])]
+    bad = frame["date"] > pd.Timestamp.now() + pd.Timedelta(days=95)
+    if bad.any():
+        raise ValueError(f"future-dated rows parsed - layout drift?\n{frame[bad].head()}")
+    frame["url"] = url
+    return frame
 
 
 def fetch() -> pd.DataFrame:
@@ -243,35 +167,20 @@ def fetch() -> pd.DataFrame:
     resources = discover_resources(session)
     if not resources:
         raise RuntimeError("qld_coal: no quarterly-production resource found via CKAN")
-    long = None
-    errors = []
-    for res in resources:
-        try:
-            records = datastore_records(res["id"], session)
-            long = records_to_long(records, res["url"])
-            break
-        except Exception as exc:  # noqa: BLE001
-            errors.append(f"datastore {res['name']}: {exc}")
-        try:
-            long = parse_workbook(_download(res["url"], session).content, res["url"])
-            if len(long):
-                break
-        except Exception as exc:  # noqa: BLE001
-            errors.append(f"download {res['name']}: {exc}")
-    if long is None or long.empty:
-        raise RuntimeError(f"qld_coal: nothing parsed; attempts: {errors}")
-    long = long.drop_duplicates(["mine", "date"], keep="last")
+    res = resources[0]
+    frame = parse_workbook(_download(res["url"], session), res["url"])
 
     retrieved = now_utc()
-    per_mine = pd.DataFrame({
-        "series_id": "qld_coal.mine." + long["mine"].map(_slug),
-        "date": long["date"],
-        "value": long["value"],
-        "source_url": long["url"],
+    per_type = pd.DataFrame({
+        "series_id": ("qld_coal.type." + frame["mine_type"].map(_slug) + "."
+                      + frame["coal_type"].map(_slug)),
+        "date": frame["date"],
+        "value": frame["value"],
+        "source_url": frame["url"],
         "retrieved_at": retrieved,
     })
-    total = long.groupby("date").agg(value=("value", "sum"),
-                                     url=("url", "first")).reset_index()
+    total = frame.groupby("date").agg(value=("value", "sum"),
+                                      url=("url", "first")).reset_index()
     total_rows = pd.DataFrame({
         "series_id": "qld_coal.saleable_tonnes_total",
         "date": total["date"],
@@ -279,7 +188,7 @@ def fetch() -> pd.DataFrame:
         "source_url": total["url"],
         "retrieved_at": retrieved,
     })
-    return pd.concat([total_rows, per_mine], ignore_index=True)
+    return pd.concat([total_rows, per_type], ignore_index=True)
 
 
 def ingest() -> dict:

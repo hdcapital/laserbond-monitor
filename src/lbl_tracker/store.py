@@ -54,6 +54,14 @@ def normalize_observations(df: pd.DataFrame) -> pd.DataFrame:
     out["value"] = pd.to_numeric(out["value"], errors="coerce")
     out["source_url"] = out["source_url"].astype(str)
     out["retrieved_at"] = pd.to_datetime(out["retrieved_at"], utc=True)
+    # a parser drifting into fabricated-looking output must fail loudly:
+    # nothing we ingest is dated more than ~13 months ahead (ABS short-term
+    # capex expectations are the furthest forward-dated real data)
+    horizon = pd.Timestamp.now() + pd.Timedelta(days=400)
+    bad = out["date"] > horizon
+    if bad.any():
+        raise ValueError(f"observation dates beyond {horizon.date()} - parser "
+                         f"drift?\n{out[bad].head()}")
     return out
 
 

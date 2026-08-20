@@ -82,11 +82,16 @@ def ingest() -> dict:
     flags = fetch_flags()
     stats = write_events("tungsten_flags", flags, key="id")
 
-    # Monthly flag-count series over the full accumulated event store.
+    # Monthly flag-count series over the accumulated event store, counted
+    # only from the month monitoring began: the RSS window is shallow, so
+    # months before first ingest would be systematically undercounted -
+    # that would be a fabricated-looking history, so it is never emitted.
     all_flags = read_events("tungsten_flags")
+    start_month = pd.to_datetime(all_flags["retrieved_at"]).min().to_period("M")
     monthly = (all_flags.assign(month=pd.to_datetime(all_flags["published"])
                                 .dt.to_period("M"))
                .groupby("month").size())
+    monthly = monthly[monthly.index >= start_month]
     retrieved = now_utc()
     obs = pd.DataFrame({
         "series_id": "tungsten.flag_count",

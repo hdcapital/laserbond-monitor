@@ -18,7 +18,7 @@ from ..store import read_events, read_observations
 log = logging.getLogger("lbl_tracker.dashboard")
 
 # Series charted individually; high-cardinality families are summarised.
-FAMILY_PREFIXES = ("qld_coal.mine.", "jsa.ivi.", "cat.resource_industries_yoy_pct.",
+FAMILY_PREFIXES = ("qld_coal.type.", "jsa.ivi.", "cat.resource_industries_yoy_pct.",
                    "abs.exploration.metres_drilled_", "abs.exploration.expenditure_")
 FAMILY_KEEP = {"abs.exploration.metres_drilled_total", "abs.exploration.expenditure_wa"}
 

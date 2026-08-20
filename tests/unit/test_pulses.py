@@ -45,6 +45,16 @@ def test_zscore_needs_min_history(env):
     assert out["score"].notna().sum() == 0  # < 24 months -> no invented baseline
 
 
+def test_zscore_quarterly_scales_min_history(env):
+    # 12 quarters = 36 months of history: a quarterly series must score
+    # even though it can never hold 24 monthly points in the window
+    dates = pd.date_range("2020-03-31", periods=12, freq="QE")
+    series = pd.Series(np.linspace(1, 12, 12) + np.tile([0, 1, -1, 0.5], 3),
+                       index=dates)
+    out = env.zscore(series)
+    assert out["score"].notna().sum() > 0
+
+
 def test_zscore_scales_and_clips(env):
     dates = pd.date_range("2018-01-31", periods=80, freq="ME")
     values = np.concatenate([np.ones(79), [100.0]])  # huge final spike
