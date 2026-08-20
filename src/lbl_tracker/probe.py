@@ -225,20 +225,26 @@ def probe_cat_edgar():
 
 
 def probe_jsa():
+    from bs4 import BeautifulSoup
+
+    from .http import get_impersonated
     from .ingest import jsa_ivi
     session = jsa_ivi.jsa_session()
-    # legacy LMIP portal (data.gov.au's IVI record points there)
-    for url in ("http://lmip.gov.au/default.aspx?LMIP/VacancyReport",
-                "https://lmip.gov.au/default.aspx?LMIP/GainInsights/VacancyReport",
-                "https://labourmarketinsights.gov.au/"):
+    # the WAF-fronted site answers to a browser TLS fingerprint - dump the
+    # IVI page's anchors to find where the workbooks actually live
+    for page in jsa_ivi.PAGES:
         try:
-            resp = get(url, session=session, timeout=30)
-            _p(f"-- {url} -> {resp.url} ({len(resp.content)}B)")
-            import re as _re
-            links = _re.findall(r'href="([^"]+\.xlsx?[^"]*)"', resp.text, _re.I)
-            _p(f"   xlsx links: {links[:20]}")
+            html = get_impersonated(page, timeout=60).text
+            soup = BeautifulSoup(html, "lxml")
+            _p(f"-- impersonated anchors on {page}:")
+            for a in soup.find_all("a", href=True):
+                text = " ".join(a.get_text(" ", strip=True).split())
+                href = a["href"]
+                if text or "file" in href.lower() or "download" in href.lower():
+                    _p(f"   {text[:100]!r} -> {href[:140]}")
         except Exception as exc:  # noqa: BLE001
-            _p(f"-- {url} FAILED: {exc}")
+            _p(f"-- {page} FAILED: {exc}")
+        break  # both PAGES resolve to the same document
     try:
         resp = get(f"{jsa_ivi.DATA_GOV_CKAN}/package_search", session=session,
                    params={"q": "internet vacancy index", "rows": 20})

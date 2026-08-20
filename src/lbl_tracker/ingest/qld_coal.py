@@ -155,18 +155,52 @@ def _download(url: str, session):
         log.info("qld_coal: %s -> 202 (attempt %d) headers=%s", url, attempt,
                  dict(resp.headers))
         time.sleep(2 ** attempt)
-    from ..http import SourceFetchError, get_impersonated
-    last = None
-    for attempt in range(4):
+    # The 202 body is an AWS WAF JavaScript challenge, so only a real
+    # browser gets the file; drive the runner's Chrome via Playwright.
+    content = _browser_download(url)
+
+    class _Resp:  # minimal response shim for the parse path
+        pass
+    resp = _Resp()
+    resp.content = content
+    resp.status_code = 200
+    return resp
+
+
+def _browser_download(url: str) -> bytes:
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError as exc:
+        raise RuntimeError(
+            "qld_coal: the portal fronts downloads with an AWS WAF JS "
+            "challenge; install the 'browser' extra (pip install -e "
+            "'.[browser]') to fetch via headless Chrome") from exc
+    from pathlib import Path
+    with sync_playwright() as p:
+        browser = None
+        for launch in ({"channel": "chrome"}, {"channel": "chromium"}, {}):
+            try:
+                browser = p.chromium.launch(headless=True, **launch)
+                break
+            except Exception:  # noqa: BLE001
+                continue
+        if browser is None:
+            raise RuntimeError("qld_coal: no Chrome/Chromium available for the "
+                               "WAF-challenged download")
         try:
-            resp = get_impersonated(url)
-            if resp.content:
-                return resp
-        except SourceFetchError as exc:
-            last = exc
-        time.sleep(5 * (attempt + 1))
-    raise RuntimeError(f"qld_coal: {url} still not served after impersonated "
-                       f"retries; last: {last}")
+            context = browser.new_context(accept_downloads=True)
+            page = context.new_page()
+            with page.expect_download(timeout=120000) as dl_info:
+                try:
+                    page.goto(url, timeout=120000)
+                except Exception:  # noqa: BLE001 - goto "fails" when it becomes a download
+                    pass
+            download = dl_info.value
+            content = Path(download.path()).read_bytes()
+            log.info("qld_coal: browser download %s -> %d bytes", url, len(content))
+            return content
+        finally:
+            browser.close()
 
 
 def parse_workbook(content: bytes, url: str) -> pd.DataFrame:

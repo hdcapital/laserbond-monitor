@@ -55,7 +55,9 @@ def test_abs_exploration():
     df = fetch()
     assert_obs_schema(df)
     assert_fresh(df, "abs.exploration.metres_drilled_total", 200)
-    assert_fresh(df, "abs.exploration.metres_drilled_wa", 200)
+    # ABS no longer publishes metres drilled by state in the MIN_EXP flow
+    # (verified 2026-08); state coverage comes from exploration expenditure.
+    assert_fresh(df, "abs.exploration.expenditure_wa", 200)
 
 
 def test_qld_coal():

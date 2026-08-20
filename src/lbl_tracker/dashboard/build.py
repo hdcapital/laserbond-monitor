@@ -19,8 +19,8 @@ log = logging.getLogger("lbl_tracker.dashboard")
 
 # Series charted individually; high-cardinality families are summarised.
 FAMILY_PREFIXES = ("qld_coal.mine.", "jsa.ivi.", "cat.resource_industries_yoy_pct.",
-                   "abs.exploration.metres_drilled_")
-FAMILY_KEEP = {"abs.exploration.metres_drilled_total", "abs.exploration.metres_drilled_wa"}
+                   "abs.exploration.metres_drilled_", "abs.exploration.expenditure_")
+FAMILY_KEEP = {"abs.exploration.metres_drilled_total", "abs.exploration.expenditure_wa"}
 
 SERIES_META = {
     "qld_coal.saleable_tonnes_total": ("QLD coal saleable production, total", "tonnes/quarter"),
@@ -29,7 +29,7 @@ SERIES_META = {
     "abs.capex.mining_actual": ("ABS private new capex - mining, actual", "A$m/quarter"),
     "abs.capex.mining_expected": ("ABS private new capex - mining, expectations", "A$m/quarter"),
     "abs.exploration.metres_drilled_total": ("ABS mineral exploration metres drilled, Australia", "'000 m/quarter"),
-    "abs.exploration.metres_drilled_wa": ("ABS mineral exploration metres drilled, WA", "'000 m/quarter"),
+    "abs.exploration.expenditure_wa": ("ABS mineral exploration expenditure, WA", "A$m/quarter"),
     "rba.commodity_index_aud": ("RBA index of commodity prices (AUD)", "index"),
     "rba.audusd": ("AUD/USD daily", "USD"),
     "rba.audusd_monthly": ("AUD/USD monthly average", "USD"),

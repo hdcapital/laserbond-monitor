@@ -20,6 +20,8 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "pytest-timeout>=2.2"]
+# headless-Chrome fallback for sources fronted by JS challenges (QLD portal)
+browser = ["playwright>=1.40"]
 
 [project.scripts]
 lbl-tracker = "lbl_tracker.cli:main"

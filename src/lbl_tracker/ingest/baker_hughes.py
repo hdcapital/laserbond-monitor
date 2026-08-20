@@ -129,7 +129,8 @@ def parse_na(content: bytes, url: str, retrieved) -> pd.DataFrame:
             dates = pd.to_datetime(_col(table, "publishdate", "publish date", "date"),
                                    errors="coerce")
             country = _col(table, "country").astype(str).str.strip().str.upper()
-            value = pd.to_numeric(_col(table, "rig count", "value", "count"),
+            value = pd.to_numeric(_col(table, "rig count", "value",
+                                        exclude=("country",)),
                                   errors="coerce")
             frame = pd.DataFrame({"date": dates, "country": country, "value": value}) \
                 .dropna(subset=["date", "value"])
@@ -192,7 +193,7 @@ def parse_intl(content: bytes, url: str, retrieved) -> pd.DataFrame:
             year = pd.to_numeric(_col(table, "year"), errors="coerce")
             month = pd.to_numeric(_col(table, "month"), errors="coerce")
             region = _col(table, "region").astype(str).str.strip().str.casefold()
-            value_col = _col(table, "rig count", "value", "count")
+            value_col = _col(table, "rig count", "value", exclude=("country",))
             if value_col is None:  # archive variant: value is the col after month
                 headers = list(table.columns)
                 month_j = next(j for j, h in enumerate(headers) if "month" in h)

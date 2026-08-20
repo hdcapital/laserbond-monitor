@@ -76,10 +76,15 @@ def fetch() -> pd.DataFrame:
     # MINERAL_TYPE_name: per-mineral + 'Total' (exact match needed - the
     #   'Selected base metals total' label also contains "total")
     # REGION_name: Australia + the 7 states/territories (no ACT)
+    # Verified against the live flow 2026-08-20: 'Metres drilled' is only
+    # published for REGION == Australia (with an existing/new deposit
+    # split); the state dimension is only published for the 'Expenditure'
+    # measure. Both are stored: metres nationally, expenditure by state.
     if "MEASURE_name" in df.columns:
         metres = df[df["MEASURE_name"] == "Metres drilled"]
+        spend = df[df["MEASURE_name"] == "Expenditure"]
     else:
-        metres = df
+        metres, spend = df, df.iloc[0:0]
     if metres.empty:
         raise RuntimeError(f"ABS {flow}: no 'Metres drilled' rows; measures="
                            f"{sorted(df.get('MEASURE_name', pd.Series()).dropna().unique())}")
@@ -125,8 +130,29 @@ def fetch() -> pd.DataFrame:
             "source_url": url,
             "retrieved_at": retrieved,
         }))
+    # Exploration expenditure by state (the flow's only state-level measure).
+    if len(spend) and region_col in spend.columns:
+        for region_name in spend[region_col].dropna().unique():
+            slug = _region_slug(region_name)
+            if slug is None:
+                continue
+            sel = spend[spend[region_col] == region_name]
+            sel = _prefer(sel, "DEPOSIT_TYPE_name", ["Total deposits"])
+            sel = _prefer(sel, "MINERAL_TYPE_name", ["^Total$", "Total"])
+            sel = _prefer(sel, "TSEST_name", ["Seasonally Adjusted", "Original", "Trend"])
+            if sel["TIME_PERIOD"].duplicated().any():
+                log_gap(SOURCE, f"abs.exploration.expenditure_{slug}",
+                        "ambiguous after filters; region skipped")
+                continue
+            rows.append(pd.DataFrame({
+                "series_id": f"abs.exploration.expenditure_{slug}",
+                "date": sel["TIME_PERIOD"].map(abs_sdmx.parse_time_period),
+                "value": sel["value"].values,
+                "source_url": url,
+                "retrieved_at": retrieved,
+            }))
     if not rows:
-        raise RuntimeError(f"ABS {flow}: no state series extracted; regions="
+        raise RuntimeError(f"ABS {flow}: no series extracted; regions="
                            f"{sorted(map(str, metres[region_col].dropna().unique()))}")
     return pd.concat(rows, ignore_index=True)
 
