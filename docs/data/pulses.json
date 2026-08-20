@@ -2034,7 +2034,7 @@
   "products": {
    "title": "Products Pulse",
    "latest_month": "2026-08-31",
-   "latest_value": 22.8,
+   "latest_value": 22.6,
    "history": [
     {
      "month": "1976-12-31",
@@ -4422,14 +4422,14 @@
     },
     {
      "month": "2026-08-31",
-     "value": 22.83
+     "value": 22.62
     }
    ]
   },
   "margin": {
    "title": "Margin Pulse",
    "latest_month": "2026-08-31",
-   "latest_value": -22.6,
+   "latest_value": -22.9,
    "history": [
     {
      "month": "2008-02-29",
@@ -5321,7 +5321,7 @@
     },
     {
      "month": "2026-08-31",
-     "value": -22.56
+     "value": -22.88
     }
    ]
   }
@@ -5472,15 +5472,15 @@
     "series": "rba.audusd",
     "label": "AUD/USD (inverted)",
     "weight": 0.2,
-    "score": -69.2955926214819,
-    "raw_score": 69.2955926214819,
-    "z": 1.7323898155370476,
-    "value": 0.706125,
+    "score": -69.93604717077703,
+    "raw_score": 69.93604717077703,
+    "z": 1.7484011792694256,
+    "value": 0.7065461538461538,
     "stale_months": 0,
     "as_of": "2026-08-31",
     "inverted": true,
     "weight_used": 0.3333333333333333,
-    "contribution": -23.098530873827297
+    "contribution": -23.312015723592342
    }
   ],
   "margin": [
@@ -5508,15 +5508,15 @@
     "series": "rba.audusd",
     "label": "AUD/USD",
     "weight": 0.33,
-    "score": -69.2955926214819,
-    "raw_score": 69.2955926214819,
-    "z": 1.7323898155370476,
-    "value": 0.706125,
+    "score": -69.93604717077703,
+    "raw_score": 69.93604717077703,
+    "z": 1.7484011792694256,
+    "value": 0.7065461538461538,
     "stale_months": 0,
     "as_of": "2026-08-31",
     "inverted": true,
     "weight_used": 0.5,
-    "contribution": -34.64779631074095
+    "contribution": -34.968023585388515
    }
   ]
  },
