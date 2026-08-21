@@ -387,8 +387,28 @@ def probe_asx():
         _p(f"fetch_list failed: {exc}")
 
 
+def probe_nsw_coal():
+    from .ingest import nsw_coal_exports
+    df = nsw_coal_exports.fetch()
+    _p(f"nsw_coal_exports: {len(df)} rows "
+       f"{df['date'].min().date()}..{df['date'].max().date()} "
+       f"last value {df['value'].iloc[-1]:.0f} A$k")
+
+
+def probe_oem_orders():
+    from .ingest import oem_orders
+    fls = oem_orders.fls_documents()
+    _p(f"FLS: {len(fls)} report PDFs; latest: "
+       + "; ".join(f"{d['period_end'].date()} {d['url'][-28:]}" for d in fls[:4]))
+    weir = oem_orders.weir_documents()
+    _p(f"Weir: {len(weir)} results articles; sample: "
+       + "; ".join(d["url"].rsplit("/", 1)[-1][:40] for d in weir[:6]))
+
+
 PROBES = {
     "abs": probe_abs,
+    "nsw_coal": probe_nsw_coal,
+    "oem_orders": probe_oem_orders,
     "qld_coal": probe_qld_coal,
     "pilbara": probe_pilbara,
     "rba": probe_rba,

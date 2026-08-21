@@ -159,3 +159,23 @@ def test_asx_announcements():
     assert pdf, "LBL: could not resolve announcement PDF url"
     content = get(pdf, session=session).content
     assert content[:4] == b"%PDF", f"LBL: {pdf} did not return a PDF"
+
+
+def test_nsw_coal_exports():
+    from lbl_tracker.ingest.nsw_coal_exports import fetch
+    df = fetch()
+    assert_obs_schema(df)
+    # ABS trade data publishes ~5 weeks in arrears
+    assert_fresh(df, "abs.merch_exp.nsw_coal_value", 100)
+    vals = df["value"].dropna()
+    assert len(vals) > 300, "expected 30+ years of monthly history"
+    assert vals.between(5e4, 2e7).all(), "A$ thousand unit drift?"
+
+
+def test_oem_orders_discovery():
+    from lbl_tracker.ingest.oem_orders import fls_documents, weir_documents
+    fls = fls_documents()
+    assert len(fls) > 10, "FLSmidth report list shrank - page layout drift?"
+    assert all(d["url"].endswith(".pdf") for d in fls)
+    weir = weir_documents()
+    assert len(weir) > 5, "Weir sitemap results articles missing - drift?"
