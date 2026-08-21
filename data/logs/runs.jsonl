@@ -222,3 +222,5 @@
 {"ts": "2026-08-21T07:25:41.304371+00:00", "source": "tungsten_news", "status": "ok", "rows": 161, "error": ""}
 {"ts": "2026-08-21T13:27:13.664692+00:00", "source": "asx_announcements", "status": "ok", "rows": 20, "error": ""}
 {"ts": "2026-08-21T13:27:23.945363+00:00", "source": "tungsten_news", "status": "ok", "rows": 161, "error": ""}
+{"ts": "2026-08-21T19:07:45.527098+00:00", "source": "asx_announcements", "status": "ok", "rows": 20, "error": ""}
+{"ts": "2026-08-21T19:07:55.761860+00:00", "source": "tungsten_news", "status": "ok", "rows": 160, "error": ""}
