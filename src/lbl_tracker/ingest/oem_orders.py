@@ -245,17 +245,20 @@ def ingest(backfill: bool = True) -> dict:
                 period = pd.Timestamp(fact.get("period_end"))
                 if pd.isna(period):
                     raise ValueError(f"bad period_end {fact.get('period_end')!r}")
-                growth = _num(fact.get("minerals_orders_yoy_pct"))
-                if growth is not None and abs(growth) > 80:
-                    raise ValueError(f"Weir orders growth implausible: {growth}")
-                if not _grounded(growth, text, pct=True):
-                    raise ValueError(
-                        f"Weir orders growth {growth} not present in source "
-                        f"text - refusing ungrounded extraction")
-                obs_rows.append({"series_id": "weir.minerals_orders_growth_pct",
-                                 "date": period, "value": growth,
-                                 "source_url": d["url"],
-                                 "retrieved_at": now_utc()})
+                for field, sid in [
+                    ("minerals_orders_yoy_pct", "weir.minerals_orders_growth_pct"),
+                    ("group_orders_yoy_pct", "weir.group_orders_growth_pct"),
+                ]:
+                    growth = _num(fact.get(field))
+                    if growth is not None and abs(growth) > 80:
+                        raise ValueError(f"Weir {field} implausible: {growth}")
+                    if not _grounded(growth, text, pct=True):
+                        raise ValueError(
+                            f"Weir {field} {growth} not present in source "
+                            f"text - refusing ungrounded extraction")
+                    obs_rows.append({"series_id": sid, "date": period,
+                                     "value": growth, "source_url": d["url"],
+                                     "retrieved_at": now_utc()})
             doc_rows.append({**d, "status": "ok", "fact": str(fact)})
         except Exception as exc:  # noqa: BLE001 - one bad doc must not kill the run
             errors += 1

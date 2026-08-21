@@ -34,6 +34,7 @@ SERIES_META = {
     "fls.order_intake_dkkm": ("FLSmidth order intake (mining)", "DKKm/quarter"),
     "fls.order_intake_growth_pct": ("FLSmidth organic order-intake growth", "% YoY"),
     "weir.minerals_orders_growth_pct": ("Weir Minerals orders growth", "% YoY"),
+    "weir.group_orders_growth_pct": ("Weir Group orders growth", "% YoY"),
     "rba.commodity_index_aud": ("RBA index of commodity prices (AUD)", "index"),
     "rba.audusd": ("AUD/USD daily", "USD"),
     "rba.audusd_monthly": ("AUD/USD monthly average", "USD"),
