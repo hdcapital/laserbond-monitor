@@ -1,38 +1,33 @@
-"""One-off research probe round 9: why did the 2026 Weir articles yield
-null order-growth figures? Print their tag-stripped text so the
-extraction window/prompt can be fixed. Delete when research is done."""
+"""One-off research probe round 10: where does the Weir article body live?
+The rendered pages are stubs to non-JS clients; the content may sit in a
+JSON hydration blob inside <script> (which tag-stripping removed) or be
+fetched from a CMS API. Dump raw-HTML evidence. Delete when done."""
 from __future__ import annotations
 
 import re
 import sys
 
-URLS = [
-    "https://www.global.weir/newsroom/global-news/2026/"
-    "weir-reports-its-interim-results-for-the-six-months-ended-30-june-2026/",
-    "https://www.global.weir/newsroom/global-news/2026/weir-q1-2026-ims/",
-    "https://www.global.weir/newsroom/global-news/2025/weir-half-year-results-2025/",
-]
+URL = ("https://www.global.weir/newsroom/global-news/2025/"
+       "weir-half-year-results-2025/")
 
 
 def main() -> int:
     from curl_cffi import requests as creq
-    for u in URLS:
-        try:
-            r = creq.get(u, impersonate="chrome", timeout=60)
-            text = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", r.text,
-                          flags=re.S | re.I)
-            text = re.sub(r"<[^>]+>", " ", text)
-            text = re.sub(r"\s+", " ", text)
-            print(f"\n===BEGIN {u[-50:]}===")
-            print(f"HTTP {r.status_code} textlen={len(text)}")
-            hits = re.findall(r"[^.]{0,150}[Oo]rders?[^.]{0,150}\.", text)
-            print("ORDER SENTENCES:")
-            print("\n---\n".join(hits[:10]) or "(none)")
-            print("FIRST 3000:")
-            print(text[:3000])
-            print(f"===END {u[-50:]}===")
-        except Exception as exc:  # noqa: BLE001
-            print(f"ERROR {u}: {exc!r}")
+    r = creq.get(URL, impersonate="chrome", timeout=60)
+    html = r.text
+    print(f"HTTP {r.status_code} rawlen={len(html)}")
+    print("count 'order':", len(re.findall(r"order", html, re.I)))
+    print("count 'Minerals':", len(re.findall(r"Minerals", html)))
+    # contexts where 'orders' appears in the RAW html
+    for m in list(re.finditer(r"[Oo]rders", html))[:8]:
+        print("CTX:", html[max(0, m.start() - 160):m.start() + 160]
+              .replace("\n", " ")[:340])
+    # script/json/api hints
+    for pat in (r'src="([^"]+\.js[^"]*)"', r'"(https?://[^"]*api[^"]*)"',
+                r'href="([^"]+\.pdf[^"]*)"'):
+        hits = sorted(set(re.findall(pat, html)))[:12]
+        print(f"\nPATTERN {pat}:")
+        print("\n".join(hits))
     return 0
 
 

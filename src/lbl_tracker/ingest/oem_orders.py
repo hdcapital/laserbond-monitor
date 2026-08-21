@@ -142,6 +142,22 @@ def _num(v):
     return f
 
 
+MIN_TEXT_CHARS = 800  # a real report/article; JS-rendered stubs are ~50 chars
+
+
+def _grounded(value, text: str) -> bool:
+    """A number the model 'extracted' must literally appear in the source
+    text - otherwise it came from model memory, which is fabrication.
+    Accepts 4026 / 4,026 / 4026.0 / '8' for 8.0 style variants."""
+    if value is None:
+        return True
+    v = abs(float(value))
+    forms = {f"{v:g}", f"{v:.1f}", f"{v:.0f}", f"{int(v):,}"}
+    if v == int(v):
+        forms.add(str(int(v)))
+    return any(f in text for f in forms)
+
+
 def ingest(backfill: bool = True) -> dict:
     processed = read_events("oem_orders_docs")
     done = set(processed["id"]) if len(processed) else set()
@@ -176,21 +192,34 @@ def ingest(backfill: bool = True) -> dict:
                 growth = _num(fact.get("organic_growth_pct"))
                 if level is not None and not (100 <= level <= 60000):
                     raise ValueError(f"FLS order intake implausible: {level}")
+                for val, name in [(level, "order intake"), (growth, "growth")]:
+                    if not _grounded(val, text):
+                        raise ValueError(
+                            f"FLS {name} {val} not present in source text - "
+                            f"refusing ungrounded extraction")
                 for sid, val in [("fls.order_intake_dkkm", level),
                                  ("fls.order_intake_growth_pct", growth)]:
                     obs_rows.append({"series_id": sid, "date": period,
                                      "value": val, "source_url": d["url"],
                                      "retrieved_at": now_utc()})
             else:
-                html = get_impersonated(d["url"]).text
-                fact = llm_client.extract_json_from_text(_weir_text(html),
-                                                         WEIR_PROMPT)
+                text = _weir_text(get_impersonated(d["url"]).text)
+                if len(text) < MIN_TEXT_CHARS:
+                    # JS-rendered stub: a model given only a title would
+                    # answer from memory, which is fabrication - never call it
+                    doc_rows.append({**d, "status": "stub page - no text"})
+                    continue
+                fact = llm_client.extract_json_from_text(text, WEIR_PROMPT)
                 period = pd.Timestamp(fact.get("period_end"))
                 if pd.isna(period):
                     raise ValueError(f"bad period_end {fact.get('period_end')!r}")
                 growth = _num(fact.get("minerals_orders_yoy_pct"))
                 if growth is not None and abs(growth) > 80:
                     raise ValueError(f"Weir orders growth implausible: {growth}")
+                if not _grounded(growth, text):
+                    raise ValueError(
+                        f"Weir orders growth {growth} not present in source "
+                        f"text - refusing ungrounded extraction")
                 obs_rows.append({"series_id": "weir.minerals_orders_growth_pct",
                                  "date": period, "value": growth,
                                  "source_url": d["url"],
