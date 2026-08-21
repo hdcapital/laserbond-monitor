@@ -395,9 +395,20 @@ def probe_nsw_coal():
        f"last value {df['value'].iloc[-1]:.0f} A$k")
 
 
+def probe_oem_orders():
+    from .ingest import oem_orders
+    fls = oem_orders.fls_documents()
+    _p(f"FLS: {len(fls)} report PDFs; latest: "
+       + "; ".join(f"{d['period_end'].date()} {d['url'][-28:]}" for d in fls[:4]))
+    weir = oem_orders.weir_documents()
+    _p(f"Weir: {len(weir)} results articles; sample: "
+       + "; ".join(d["url"].rsplit("/", 1)[-1][:40] for d in weir[:6]))
+
+
 PROBES = {
     "abs": probe_abs,
     "nsw_coal": probe_nsw_coal,
+    "oem_orders": probe_oem_orders,
     "qld_coal": probe_qld_coal,
     "pilbara": probe_pilbara,
     "rba": probe_rba,

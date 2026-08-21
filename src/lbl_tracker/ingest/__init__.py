@@ -15,6 +15,7 @@ INGESTERS = [
     "abs_capex",
     "abs_exploration",
     "nsw_coal_exports",
+    "oem_orders",
     "rba",
     "aisi",
     "fred_steel",

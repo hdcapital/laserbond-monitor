@@ -170,3 +170,12 @@ def test_nsw_coal_exports():
     vals = df["value"].dropna()
     assert len(vals) > 300, "expected 30+ years of monthly history"
     assert vals.between(5e4, 2e7).all(), "A$ thousand unit drift?"
+
+
+def test_oem_orders_discovery():
+    from lbl_tracker.ingest.oem_orders import fls_documents, weir_documents
+    fls = fls_documents()
+    assert len(fls) > 10, "FLSmidth report list shrank - page layout drift?"
+    assert all(d["url"].endswith(".pdf") for d in fls)
+    weir = weir_documents()
+    assert len(weir) > 5, "Weir sitemap results articles missing - drift?"
