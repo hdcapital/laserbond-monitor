@@ -6,10 +6,10 @@
   "facts_hash": "5c6a554bc1acb9f4"
  },
  "products": {
-  "text": "Products Pulse combines weighted z-scores of its inputs against their own trailing five-year norms, scaled from -100 to +100. At 29.9 in August 2026, it is above its five-year norm, down from 32.5 a month earlier but up from 9.3 three months ago; US new orders for iron and steel mills is the largest positive contributor (+28.6), while inverted AUD/USD is the largest negative (-20.0).",
+  "text": "Products Pulse tracks weighted z-scores of its listed inputs against their own trailing five-year norms, scaled from -100 to +100. At 37.6 in August 2026, it is above its five-year norm, though it eased from 39.3 a month earlier after rising from 10.8 three months ago. US new orders for iron and steel mills is the largest positive contributor (+30.8), while inverted AUD/USD is the largest negative contributor (-16.1); several inputs are currently excluded due to stale, insufficient, or discontinued data.",
   "model": "gpt-5.6-terra",
-  "generated_at": "2026-08-21 01:06 UTC",
-  "facts_hash": "e7b9f2c18f9836ad"
+  "generated_at": "2026-08-21 01:54 UTC",
+  "facts_hash": "6067530931f9a0c3"
  },
  "margin": {
   "text": "Margin Pulse tracks weighted z-scores of fitter/welder vacancy tightness and AUD/USD against their own trailing five-year norms, scaled from -100 to +100. At -17.0 in August 2026, it is below its five-year norm; it has worsened from -10.8 a month earlier but improved from -23.7 three months earlier. AUD/USD is the largest negative contributor (-30.6), while fitter/welder vacancy tightness is the largest positive contributor (+13.6); tungsten policy flags are excluded pending sufficient history.",
