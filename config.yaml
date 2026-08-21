@@ -77,23 +77,26 @@ pulses:
       - {series: abs.exploration.metres_drilled_total, weight: 0.05, invert: false, max_stale_months: 5, label: "ABS metres drilled"}
   products:
     title: "Products Pulse"
-    # Validation caveat (2026-08-21): NO external input significantly
-    # predicts Products revenue on LBL's actual history - the segment is
-    # ~2 customers' order flow (Weir, FLSmidth). Read this pulse as a
-    # demand-environment gauge, not a forecaster. Weir orders growth was
-    # briefly weighted here but PURGED the same day: the source articles
-    # are JS-rendered stubs to non-browser clients, so the extracted
-    # "history" could not be document-grounded (see SOURCES.md row n).
-    # It returns only if re-extracted from real document text AND it
-    # re-passes the gate. FLSmidth order intake is stored but unweighted
-    # (archive stops 2018 - cannot be validated on the recent sample).
+    # Validation (2026-08-21, vs actual LBL segment history): the segment
+    # is ~2 customers' order flow (Weir, FLSmidth). Weir orders growth -
+    # document-grounded extraction from Weir's own statements (Minerals
+    # figure, group fallback; every number verified present in the source
+    # text) - is the only leading input found: r=+0.59 / rho=+0.74 at a
+    # 6-month lead (n=10, p=0.07). At 0.15 it lifts the composite's fit
+    # to r=+0.71 (p=0.023) from +0.41. An earlier same-day attempt was
+    # purged for lacking grounding (see SOURCES.md row n) - this weight
+    # is based on the re-extracted, grounded history only. FLSmidth order
+    # intake is stored but unweighted (archive gap 2019-2025 prevents
+    # validation on the recent sample). Still read this pulse with more
+    # caution than Services.
     components:
-      - {series: aisi.capacity_utilisation_pct, weight: 0.20, invert: false, max_stale_months: 2, label: "AISI raw-steel capacity utilisation"}
+      - {series: weir.orders_growth_pct, weight: 0.15, invert: false, max_stale_months: 6, label: "Weir orders growth"}
+      - {series: aisi.capacity_utilisation_pct, weight: 0.15, invert: false, max_stale_months: 2, label: "AISI raw-steel capacity utilisation"}
       - {series: fred.steel_new_orders, weight: 0.20, invert: false, max_stale_months: 3, label: "US new orders, iron & steel mills"}
-      - {series: cat.resource_industries_yoy_pct, weight: 0.10, invert: false, max_stale_months: 3, label: "CAT Resource Industries retail sales YoY"}
+      - {series: cat.resource_industries_yoy_pct, weight: 0.05, invert: false, max_stale_months: 3, label: "CAT Resource Industries retail sales YoY"}
       - {series: bh.rigcount_na_total, weight: 0.10, invert: false, max_stale_months: 2, label: "Baker Hughes NA rig count"}
       - {series: bh.rigcount_intl_total, weight: 0.20, invert: false, max_stale_months: 3, label: "Baker Hughes intl rig count"}
-      - {series: rba.audusd, weight: 0.20, invert: true, max_stale_months: 2, label: "AUD/USD (inverted)"}
+      - {series: rba.audusd, weight: 0.15, invert: true, max_stale_months: 2, label: "AUD/USD (inverted)"}
   margin:
     title: "Margin Pulse"
     # All three components are cost/margin headwinds when rising, so all

@@ -189,6 +189,27 @@ def _grounded(value, text: str, pct: bool = False) -> bool:
     return any(f in text for f in forms)
 
 
+def _rebuild_combined_weir() -> None:
+    """weir.orders_growth_pct = Minerals-division growth where stated,
+    else the group figure. Pure recombination of grounded observations -
+    each point keeps the source URL of the figure it came from."""
+    from ..store import read_series
+    m = read_series("weir.minerals_orders_growth_pct").dropna(subset=["value"])
+    g = read_series("weir.group_orders_growth_pct").dropna(subset=["value"])
+    if m.empty and g.empty:
+        return
+    m, g = m.set_index("date"), g.set_index("date")
+    dates = sorted(set(m.index) | set(g.index))
+    rows = []
+    for dt in dates:
+        src = m if dt in m.index else g
+        rows.append({"series_id": "weir.orders_growth_pct", "date": dt,
+                     "value": float(src.loc[dt, "value"]),
+                     "source_url": str(src.loc[dt, "source_url"]),
+                     "retrieved_at": now_utc()})
+    write_observations("oem_orders_combined", pd.DataFrame(rows))
+
+
 def ingest(backfill: bool = True) -> dict:
     processed = read_events("oem_orders_docs")
     done = set(processed["id"]) if len(processed) else set()
@@ -272,6 +293,7 @@ def ingest(backfill: bool = True) -> dict:
         frame["date"] = pd.to_datetime(frame["date"])
         res = write_observations(SOURCE, frame)
         stats["rows"] = res["rows_written"]
+        _rebuild_combined_weir()
     if doc_rows:
         for dr in doc_rows:
             dr.pop("period_end", None)
