@@ -12,6 +12,7 @@ dependencies = [
     "xlrd>=2.0",
     "pyxlsb>=1.0",
     "curl_cffi>=0.7",
+    "pypdf>=4.0",
     "beautifulsoup4>=4.12",
     "lxml>=5.0",
     "PyYAML>=6.0",

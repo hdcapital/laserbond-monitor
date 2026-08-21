@@ -166,8 +166,9 @@ def ingest(backfill: bool = True) -> dict:
                 if not text.strip():
                     doc_rows.append({**d, "status": "no order-intake text"})
                     continue
-                fact = llm_client.extract_json_from_text(text, FLS_PROMPT,
-                                                         max_tokens=400)
+                # no low max_tokens cap: reasoning models spend completion
+                # tokens on reasoning first and would return empty content
+                fact = llm_client.extract_json_from_text(text, FLS_PROMPT)
                 period = pd.Timestamp(fact.get("period_end"))
                 if pd.isna(period):
                     raise ValueError(f"bad period_end {fact.get('period_end')!r}")
@@ -183,8 +184,7 @@ def ingest(backfill: bool = True) -> dict:
             else:
                 html = get_impersonated(d["url"]).text
                 fact = llm_client.extract_json_from_text(_weir_text(html),
-                                                         WEIR_PROMPT,
-                                                         max_tokens=300)
+                                                         WEIR_PROMPT)
                 period = pd.Timestamp(fact.get("period_end"))
                 if pd.isna(period):
                     raise ValueError(f"bad period_end {fact.get('period_end')!r}")
