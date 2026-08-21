@@ -128,10 +128,34 @@ def _fls_text(pdf_bytes: bytes) -> str:
 
 
 def _weir_text(html: str) -> str:
-    text = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", html, flags=re.S | re.I)
-    text = re.sub(r"<[^>]+>", " ", text)
+    """global.weir article bodies live in a JSON-escaped HTML blob inside a
+    <script> tag (the visible DOM is a ~50-char stub). Decode the \\uXXXX
+    escapes FIRST, then strip tags, then keep windows around order/results
+    mentions so surrounding JS noise doesn't drown the content."""
+    decoded = re.sub(
+        r"\\u([0-9a-fA-F]{4})",
+        lambda m: chr(int(m.group(1), 16)),
+        html)
+    for esc, ch in (("\\n", " "), ("\\r", " "), ("\\t", " "), ('\\"', '"')):
+        decoded = decoded.replace(esc, ch)
+    text = re.sub(r"<[^>]+>", " ", decoded)
     text = re.sub(r"\s+", " ", text)
-    return text[:16000]
+    marks = [m.start() for m in
+             re.finditer(r"\b[Oo]rders?\b|[Oo]rder intake|Minerals|constant currency",
+                         text)]
+    if not marks:
+        return text[:16000]
+    windows, lo_prev, hi_prev = [], -1, -1
+    for i in marks:
+        lo, hi = max(0, i - 2500), min(len(text), i + 2500)
+        if lo <= hi_prev:
+            hi_prev = max(hi_prev, hi)
+        else:
+            if hi_prev > 0:
+                windows.append(text[lo_prev:hi_prev])
+            lo_prev, hi_prev = lo, hi
+    windows.append(text[lo_prev:hi_prev])
+    return " [...] ".join(windows)[:20000]
 
 
 def _num(v):
@@ -145,16 +169,23 @@ def _num(v):
 MIN_TEXT_CHARS = 800  # a real report/article; JS-rendered stubs are ~50 chars
 
 
-def _grounded(value, text: str) -> bool:
+def _grounded(value, text: str, pct: bool = False) -> bool:
     """A number the model 'extracted' must literally appear in the source
     text - otherwise it came from model memory, which is fabrication.
-    Accepts 4026 / 4,026 / 4026.0 / '8' for 8.0 style variants."""
+    For percentages, require the % (or 'per cent') form so a stray digit
+    elsewhere in the page cannot vouch for a made-up growth rate."""
     if value is None:
         return True
     v = abs(float(value))
-    forms = {f"{v:g}", f"{v:.1f}", f"{v:.0f}", f"{int(v):,}"}
-    if v == int(v):
-        forms.add(str(int(v)))
+    if pct:
+        nums = {f"{v:g}", f"{v:.1f}"}
+        if v == int(v):
+            nums.add(str(int(v)))
+        forms = {n + s for n in nums for s in ("%", " %", " per cent", " percent")}
+    else:
+        forms = {f"{v:g}", f"{v:.1f}", f"{v:.0f}", f"{int(v):,}"}
+        if v == int(v):
+            forms.add(str(int(v)))
     return any(f in text for f in forms)
 
 
@@ -192,8 +223,9 @@ def ingest(backfill: bool = True) -> dict:
                 growth = _num(fact.get("organic_growth_pct"))
                 if level is not None and not (100 <= level <= 60000):
                     raise ValueError(f"FLS order intake implausible: {level}")
-                for val, name in [(level, "order intake"), (growth, "growth")]:
-                    if not _grounded(val, text):
+                for val, name, pct in [(level, "order intake", False),
+                                       (growth, "growth", True)]:
+                    if not _grounded(val, text, pct=pct):
                         raise ValueError(
                             f"FLS {name} {val} not present in source text - "
                             f"refusing ungrounded extraction")
@@ -216,7 +248,7 @@ def ingest(backfill: bool = True) -> dict:
                 growth = _num(fact.get("minerals_orders_yoy_pct"))
                 if growth is not None and abs(growth) > 80:
                     raise ValueError(f"Weir orders growth implausible: {growth}")
-                if not _grounded(growth, text):
+                if not _grounded(growth, text, pct=True):
                     raise ValueError(
                         f"Weir orders growth {growth} not present in source "
                         f"text - refusing ungrounded extraction")
