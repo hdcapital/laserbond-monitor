@@ -1,21 +1,21 @@
 {
  "services": {
-  "text": "Services Pulse tracks weighted z-scores of QLD coal saleable tonnes, Pilbara Ports iron ore, mining capex, commodity prices and metres drilled against their own trailing 5-year norms, scaled from -100 to +100. At -27.5 on 31 July 2026, it is below its 5-year norm, having fallen from -12.2 a month earlier and 28.9 six months earlier. QLD coal saleable tonnes is the biggest negative contributor (-22.1), while ABS metres drilled is the biggest positive (+4.1).",
+  "text": "Services Pulse tracks weighted z-scores of its inputs against their own trailing 5-year norms, scaled from -100 to +100. It was -23.3 at 31 July 2026, below its 5-year norm, down from -17.8 a month earlier and 15.3 six months earlier. QLD coal saleable tonnes is the largest negative contributor (-13.3), while ABS mining capex (actual) is the largest positive contributor (+2.3).",
   "model": "gpt-5.6-terra",
-  "generated_at": "2026-08-20 21:52 UTC",
-  "facts_hash": "1e5e4bc057cc5671"
+  "generated_at": "2026-08-21 01:06 UTC",
+  "facts_hash": "5c6a554bc1acb9f4"
  },
  "products": {
-  "text": "Products Pulse tracks weighted z-scores of its inputs against their own trailing five-year norms, scaled from -100 to +100. At 22.6 in August 2026, it is above its five-year norm, down from 25.6 a month ago but up from 1.7 three months ago. US new orders for iron and steel mills are the largest positive contributor (+33.3), while inverted AUD/USD is the largest negative contributor (-23.3); two inputs are excluded due to insufficient history or discontinued source data.",
+  "text": "Products Pulse combines weighted z-scores of its inputs against their own trailing five-year norms, scaled from -100 to +100. At 29.9 in August 2026, it is above its five-year norm, down from 32.5 a month earlier but up from 9.3 three months ago; US new orders for iron and steel mills is the largest positive contributor (+28.6), while inverted AUD/USD is the largest negative (-20.0).",
   "model": "gpt-5.6-terra",
-  "generated_at": "2026-08-20 21:56 UTC",
-  "facts_hash": "fd062f0acaae9cac"
+  "generated_at": "2026-08-21 01:06 UTC",
+  "facts_hash": "e7b9f2c18f9836ad"
  },
  "margin": {
-  "text": "Margin Pulse tracks weighted z-scores of fitter/welder vacancy tightness and AUD/USD against their own trailing five-year norms, scaled from -100 to +100. At -22.9 in August 2026, it is below its five-year norm; it has weakened from -15.9 a month earlier but improved from -32.2 three months earlier. Fitter/welder vacancy tightness is the largest positive contributor (+12.1), while AUD/USD is the largest negative contributor (-35.0); tungsten policy flags are excluded pending sufficient history.",
+  "text": "Margin Pulse tracks weighted z-scores of fitter/welder vacancy tightness and AUD/USD against their own trailing five-year norms, scaled from -100 to +100. At -17.0 in August 2026, it is below its five-year norm; it has worsened from -10.8 a month earlier but improved from -23.7 three months earlier. AUD/USD is the largest negative contributor (-30.6), while fitter/welder vacancy tightness is the largest positive contributor (+13.6); tungsten policy flags are excluded pending sufficient history.",
   "model": "gpt-5.6-terra",
-  "generated_at": "2026-08-20 21:56 UTC",
-  "facts_hash": "2094a67969cd8065"
+  "generated_at": "2026-08-21 01:06 UTC",
+  "facts_hash": "314dc62cf4a9f05a"
  },
  "technology": {
   "text": "The pipeline holds 2 leads, 3 agreements and 2 commissioned cells, with $2.4 million in stated contracted value and no stated recognised value. Over the past six months, it added 2 leads, 3 agreements and 2 commissioned cells, including the $2.4 million Komatsu licensing agreement and its first modular laser cell completing commissioning.",

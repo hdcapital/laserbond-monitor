@@ -9,3 +9,144 @@
 {"ts": "2026-08-20T07:22:47.026962+00:00", "source": "asx_announcements", "series_id": "extractions", "detail": "13 announcements pending classification: OPENAI_API_KEY not set"}
 {"ts": "2026-08-20T07:37:11.703734+00:00", "source": "asx_announcements", "series_id": "extractions", "detail": "13 announcements pending classification: OPENAI_API_KEY not set"}
 {"ts": "2026-08-20T07:42:18.486205+00:00", "source": "asx_announcements", "series_id": "extractions", "detail": "13 announcements pending classification: OPENAI_API_KEY not set"}
+{"ts": "2026-08-21T00:59:44.895451+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2243339/885591.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:45.354883+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2233020/878272.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:45.644148+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2231789/877486.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:45.898034+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2224487/872247.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:46.170360+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2231780/877478.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:46.464413+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2231775/877476.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:46.758959+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2189484/847099.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:47.062836+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2177996/840420.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:47.316075+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2177962/840413.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:47.587003+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2177960/840411.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:47.886280+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2155788/828418.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:48.130342+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2148542/824334.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:48.413488+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2149229/824777.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:48.794056+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2140898/819938.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:49.064682+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2126338/811848.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:49.368037+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2115345/804923.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:49.630909+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2102565/797561.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:49.906099+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2093589/791396.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:50.261809+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2093567/791384.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:50.570309+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2077245/781421.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:50.967849+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2070266/777806.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:51.314282+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2069699/777810.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:51.568344+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2055593/769797.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:51.934863+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2046782/764963.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:52.186406+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2046776/764962.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:52.409425+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2034637/757732.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:52.668989+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2034636/757731.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:52.999750+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2013558/749240.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:53.220593+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2022006/751246.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:53.455170+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2022003/751245.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:53.710478+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1985492/728178.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:54.068198+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/2021989/751237.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:54.316624+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1966399/718119.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:54.607324+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1950700/709299.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:54.852709+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1950478/709158.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:55.066999+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1947361/707092.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:55.351672+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1929132/692923.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:55.624311+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1920099/687763.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:55.802516+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1909021/680408.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:56.119781+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1900081/675229.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:56.500970+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1894013/671321.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:56.686703+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1900070/675220.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:56.913518+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1879213/662539.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:57.150844+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1869772/657497.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:57.400376+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1857640/650465.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:57.617019+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1848548/645104.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:57.914704+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1793212/617385.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:58.135526+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1792831/617123.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:58.543944+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1785238/612041.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:58.803628+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1753398/591438.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:59.034961+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1740895/584730.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:59.355068+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1730685/578421.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:59.602872+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1724550/574895.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T00:59:59.838161+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1702815/562740.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:00.146095+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1685260/552053.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:00.394984+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1684195/551407.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:00.746353+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1668872/542095.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:00.980361+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1657276/536020.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:01.258340+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1643863/529507.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:01.539805+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1634011/524520.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:01.829549+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1615554/515015.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:02.091261+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1612204/513087.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:02.341147+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1603236/506730.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:02.611509+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1575927/490987.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:02.861101+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1562753/484287.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:03.251074+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1548356/475806.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:03.471801+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1539301/470388.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:03.732130+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1524819/460554.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:03.965413+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1514902/451065.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:04.211289+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1505401/440280.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:04.506750+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1468581/406082.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:04.746142+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1463641/402350.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:05.100412+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1455434/395349.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:05.293368+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1438864/383355.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:05.562727+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1438862/383354.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:05.757874+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1416636/367256.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:05.965895+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1416637/367257.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:06.167140+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1388393/346622.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:06.536212+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1388392/346609.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:06.751258+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1355575/329092.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:06.936877+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1355580/329093.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:07.172515+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1336073/317802.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:07.383094+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1336089/317806.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:07.651390+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1318242/307750.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:07.912974+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1318251/307757.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:08.149272+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1293457/293021.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:08.442063+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1293452/293017.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:08.730611+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1271317/281891.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:08.924056+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1271325/281896.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:09.120002+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1245162/268753.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:09.303744+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1245158/268747.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:09.537863+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1221820/257257.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:09.787879+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1221810/257254.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:10.058787+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1195989/242832.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:10.406141+00:00", "source": "oem_orders", "series_id": "fls.orders", "detail": "http://hugin.info/2106/R/1195985/242833.pdf: No module named 'pypdf'"}
+{"ts": "2026-08-21T01:00:16.781833+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2014/interim-management-statement/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:00:22.546216+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2014/interim-results-2014/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:00:28.111458+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2015/full-year-results-2014/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:00:33.348267+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2015/interim-management-statement/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:00:38.639306+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2015/interim-management-statement2/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:00:43.212050+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2015/interim-results-2015/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:00:48.108553+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2016/interim-management-statement-q3-2016/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:00:53.657764+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2016/interim-results-2016/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:00:58.759654+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2016/weir-publishes-2015-full-year-results/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:01:03.494128+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2017/weir-publishes-2016-full-year-results/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:01:08.458081+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2017/weir-publishes-2017-half-year-results/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:01:14.085380+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2024/Full-Year-Results-2023/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:01:18.768414+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2024/q1-2024-ims/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:01:23.290878+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2024/the-weir-group-plc-interim-results-for-the-six-months-ended-30-june-2024/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:01:28.724784+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2024/weir-q3-2024-ims/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:01:33.634438+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2025/q3-2025-ims/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:01:38.680468+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2025/the-weir-group-plc-trading-update-for-the-first-quarter-ended-31-march-2025/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:01:43.601150+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2025/weir-2024-full-year-results/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:01:49.070163+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2025/weir-half-year-results-2025/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:01:53.976012+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2026/micromines-2026-half-year-release-improves-how-mining-teams-and-workflows-connect-to-support-better-decision-making/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:01:59.333142+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2026/weir-full-year-results-2025/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:02:04.204677+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2026/weir-q1-2026-ims/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:02:08.738591+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2026/weir-reports-its-interim-results-for-the-six-months-ended-30-june-2026/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:02:13.700740+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/The-Weir-Group-PLC-reports-its-Full-Year-results-for-the-year-ended-31-December-2022/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:02:18.998097+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/full-year-results-2013/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:02:23.617503+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/q1-2021-trading-update/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:02:28.068450+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/q1-2023-trading-update/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:02:32.768151+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/q3-trading-update-and-cybersecurity-incident/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:02:37.959801+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/the-weir-group-plc-interim-management-statement-for-q3-ending-30-september-2018/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:02:43.391196+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/the-weir-group-plc-interim-management-statement-for-the-first-quarter-ending-31-march-2020/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:02:48.347720+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/the-weir-group-plc-interim-results-for-the-six-months-ended-30-june-2021/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:02:53.701648+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/the-weir-group-plc-interim-results-for-the-six-months-ended-30-june-2022/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:02:58.442239+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/the-weir-group-plc-interim-results-for-the-six-months-ended-30-june-2023/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:03:04.013165+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/the-weir-group-plc-q1-2022-interim-management-statement/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:03:10.384706+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/the-weir-group-plc-q3-2022-interim-management-statement/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:03:15.387747+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/the-weir-group-plc-reports-its-financial-results-for-the-full-year-ended-31-december-2019/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:03:20.030987+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/the-weir-group-plc-reports-its-full-year-results-for-the-year-ended-31-december-2021/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:03:24.578834+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/the-weir-group-plc-reports-its-interim-results-for-the-six-months-ended-30-june-2019/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:03:29.927154+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/the-weir-group-plc-reports-its-interim-results-for-the-six-months-ended-30-june-2020/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:03:35.483083+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/the-weir-group-plc-trading-update-for-the-third-quarter-ending-30-september-2020/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:03:39.785956+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/weir-announces-full-year-results-for-2017/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:03:44.933676+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/weir-group-2020-full-year-results/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:03:50.365370+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/weir-group-q3-2023-ims/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:03:55.569397+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/weir-group-reports-its-financial-results-for-the-full-year-ended-31-december-2018/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:04:00.562150+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/weir-minerals-total-asset-management-plan-increases-productivity-and-results-in-significant-savings-for-tronox/: no JSON object in model reply: "}
+{"ts": "2026-08-21T01:04:05.157699+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/weir-publishes-2018-half-year-results/: no JSON object in model reply: "}
