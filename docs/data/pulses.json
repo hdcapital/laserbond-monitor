@@ -2034,7 +2034,7 @@
   "products": {
    "title": "Products Pulse",
    "latest_month": "2026-08-31",
-   "latest_value": 30.6,
+   "latest_value": 30.2,
    "history": [
     {
      "month": "1976-12-31",
@@ -4150,243 +4150,243 @@
     },
     {
      "month": "2020-12-31",
-     "value": -36.8
+     "value": -40.98
     },
     {
      "month": "2021-01-31",
-     "value": -23.56
+     "value": -27.74
     },
     {
      "month": "2021-02-28",
-     "value": -17.55
+     "value": -21.73
     },
     {
      "month": "2021-03-31",
-     "value": -12.05
+     "value": -11.19
     },
     {
      "month": "2021-04-30",
-     "value": -7.93
+     "value": -7.01
     },
     {
      "month": "2021-05-31",
-     "value": 7.17
+     "value": 8.09
     },
     {
      "month": "2021-06-30",
-     "value": 15.41
+     "value": 15.57
     },
     {
      "month": "2021-07-31",
-     "value": 19.03
+     "value": 19.19
     },
     {
      "month": "2021-08-31",
-     "value": 22.21
+     "value": 22.36
     },
     {
      "month": "2021-09-30",
-     "value": 32.02
+     "value": 30.85
     },
     {
      "month": "2021-10-31",
-     "value": 34.22
+     "value": 33.05
     },
     {
      "month": "2021-11-30",
-     "value": 33.85
+     "value": 32.67
     },
     {
      "month": "2021-12-31",
-     "value": 29.03
+     "value": 29.18
     },
     {
      "month": "2022-01-31",
-     "value": 27.1
+     "value": 27.25
     },
     {
      "month": "2022-02-28",
-     "value": 22.98
+     "value": 23.13
     },
     {
      "month": "2022-03-31",
-     "value": 18.13
+     "value": 19.14
     },
     {
      "month": "2022-04-30",
-     "value": 15.44
+     "value": 16.44
     },
     {
      "month": "2022-05-31",
-     "value": 17.52
+     "value": 18.53
     },
     {
      "month": "2022-06-30",
-     "value": 17.12
+     "value": 18.12
     },
     {
      "month": "2022-07-31",
-     "value": 15.51
+     "value": 16.51
     },
     {
      "month": "2022-08-31",
-     "value": 15.07
+     "value": 16.08
     },
     {
      "month": "2022-09-30",
-     "value": 24.23
+     "value": 24.55
     },
     {
      "month": "2022-10-31",
-     "value": 27.09
+     "value": 27.4
     },
     {
      "month": "2022-11-30",
-     "value": 24.84
+     "value": 25.15
     },
     {
      "month": "2022-12-31",
-     "value": 17.61
+     "value": 18.9
     },
     {
      "month": "2023-01-31",
-     "value": 18.27
+     "value": 19.56
     },
     {
      "month": "2023-02-28",
-     "value": 18.14
+     "value": 19.43
     },
     {
      "month": "2023-03-31",
-     "value": 19.26
+     "value": 21.15
     },
     {
      "month": "2023-04-30",
-     "value": 12.46
+     "value": 14.35
     },
     {
      "month": "2023-05-31",
-     "value": 0.08
+     "value": 1.97
     },
     {
      "month": "2023-06-30",
-     "value": 9.28
+     "value": 11.77
     },
     {
      "month": "2023-07-31",
-     "value": 7.75
+     "value": 10.24
     },
     {
      "month": "2023-08-31",
-     "value": 6.71
+     "value": 9.19
     },
     {
      "month": "2023-09-30",
-     "value": 2.19
+     "value": 4.54
     },
     {
      "month": "2023-10-31",
-     "value": 3.31
+     "value": 5.66
     },
     {
      "month": "2023-11-30",
-     "value": 4.98
+     "value": 7.34
     },
     {
      "month": "2023-12-31",
-     "value": 6.64
+     "value": 8.51
     },
     {
      "month": "2024-01-31",
-     "value": 6.64
+     "value": 8.51
     },
     {
      "month": "2024-02-29",
-     "value": 6.71
+     "value": 8.58
     },
     {
      "month": "2024-03-31",
-     "value": 6.97
+     "value": 8.66
     },
     {
      "month": "2024-04-30",
-     "value": 7.59
+     "value": 9.27
     },
     {
      "month": "2024-05-31",
-     "value": 4.9
+     "value": 6.58
     },
     {
      "month": "2024-06-30",
-     "value": 6.54
+     "value": 8.18
     },
     {
      "month": "2024-07-31",
-     "value": 3.64
+     "value": 5.28
     },
     {
      "month": "2024-08-31",
-     "value": 4.57
+     "value": 6.21
     },
     {
      "month": "2024-09-30",
-     "value": 12.77
+     "value": 13.95
     },
     {
      "month": "2024-10-31",
-     "value": 12.71
+     "value": 13.89
     },
     {
      "month": "2024-11-30",
-     "value": 9.81
+     "value": 10.99
     },
     {
      "month": "2024-12-31",
-     "value": 17.47
+     "value": 18.48
     },
     {
      "month": "2025-01-31",
-     "value": 22.34
+     "value": 23.35
     },
     {
      "month": "2025-02-28",
-     "value": 20.22
+     "value": 21.23
     },
     {
      "month": "2025-03-31",
-     "value": 19.66
+     "value": 20.54
     },
     {
      "month": "2025-04-30",
-     "value": 17.0
+     "value": 17.88
     },
     {
      "month": "2025-05-31",
-     "value": 8.88
+     "value": 9.76
     },
     {
      "month": "2025-06-30",
-     "value": 11.13
+     "value": 11.97
     },
     {
      "month": "2025-07-31",
-     "value": 10.63
+     "value": 11.46
     },
     {
      "month": "2025-08-31",
-     "value": 29.1
+     "value": 29.93
     },
     {
      "month": "2025-09-30",
-     "value": 20.68
+     "value": 22.09
     },
     {
      "month": "2025-10-31",
-     "value": 18.58
+     "value": 19.99
     },
     {
      "month": "2025-11-30",
-     "value": 20.3
+     "value": 21.71
     },
     {
      "month": "2025-12-31",
@@ -4422,14 +4422,14 @@
     },
     {
      "month": "2026-08-31",
-     "value": 30.6
+     "value": 30.17
     }
    ]
   },
   "margin": {
    "title": "Margin Pulse",
    "latest_month": "2026-08-31",
-   "latest_value": -17.0,
+   "latest_value": -17.8,
    "history": [
     {
      "month": "2008-02-29",
@@ -5321,7 +5321,7 @@
     },
     {
      "month": "2026-08-31",
-     "value": -17.0
+     "value": -17.81
     }
    ]
   }
@@ -5472,15 +5472,15 @@
     "series": "bh.rigcount_na_total",
     "label": "Baker Hughes NA rig count",
     "weight": 0.1,
-    "score": 1.8587494111614977,
-    "raw_score": 1.8587494111614977,
-    "z": 0.04646873527903744,
-    "value": 808.0,
+    "score": 1.2578924865177745,
+    "raw_score": 1.2578924865177745,
+    "z": 0.031447312162944364,
+    "value": 806.6666666666666,
     "stale_months": 0,
     "as_of": "2026-08-31",
     "inverted": false,
     "weight_used": 0.125,
-    "contribution": 0.23234367639518722
+    "contribution": 0.15723656081472182
    },
    {
     "series": "bh.rigcount_intl_total",
@@ -5500,15 +5500,15 @@
     "series": "rba.audusd",
     "label": "AUD/USD (inverted)",
     "weight": 0.15,
-    "score": -69.93604717077703,
-    "raw_score": 69.93604717077703,
-    "z": 1.7484011792694256,
-    "value": 0.7065461538461538,
+    "score": -71.78428759788905,
+    "raw_score": 71.78428759788905,
+    "z": 1.7946071899472262,
+    "value": 0.7077666666666667,
     "stale_months": 0,
     "as_of": "2026-08-31",
     "inverted": true,
     "weight_used": 0.18749999999999997,
-    "contribution": -13.113008844520692
+    "contribution": -13.459553924604194
    }
   ],
   "margin": [
@@ -5530,15 +5530,15 @@
     "series": "rba.audusd",
     "label": "AUD/USD",
     "weight": 0.35,
-    "score": -69.93604717077703,
-    "raw_score": 69.93604717077703,
-    "z": 1.7484011792694256,
-    "value": 0.7065461538461538,
+    "score": -71.78428759788905,
+    "raw_score": 71.78428759788905,
+    "z": 1.7946071899472262,
+    "value": 0.7077666666666667,
     "stale_months": 0,
     "as_of": "2026-08-31",
     "inverted": true,
     "weight_used": 0.43749999999999994,
-    "contribution": -30.597020637214946
+    "contribution": -31.405625824076456
    },
    {
     "series": "tungsten.flag_count",
