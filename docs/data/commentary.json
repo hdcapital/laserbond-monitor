@@ -12,10 +12,10 @@
   "facts_hash": "a42f10b9ffd4c459"
  },
  "margin": {
-  "text": "Margin Pulse tracks weighted z-scores of its inputs against their own trailing five-year norms, scaled from -100 to +100. At -19.4 on 31 August 2026, it is below its five-year norm; it has weakened from -10.8 a month ago but improved from -23.7 three months ago. AUD/USD is the biggest negative contributor (-33.0), while fitter/welder vacancy tightness is the biggest positive (+13.6); the tungsten policy proxy is excluded pending sufficient history.",
+  "text": "Margin Pulse tracks weighted z-scores of fitter/welder vacancy tightness and AUD/USD against their own trailing five-year norms, scaled from -100 to +100. At -19.4 on 31 August 2026, it is below its five-year norm; it weakened from -10.8 a month earlier but improved from -23.7 three months earlier. AUD/USD is the biggest negative contributor (-33.0), while fitter/welder vacancy tightness is the biggest positive (+13.6); tungsten policy flags are excluded pending sufficient history.",
   "model": "gpt-5.6-terra",
-  "generated_at": "2026-09-01 00:07 UTC",
-  "facts_hash": "62019c1d0f695d81"
+  "generated_at": "2026-09-01 16:51 UTC",
+  "facts_hash": "855ee53d76b3d657"
  },
  "technology": {
   "text": "The pipeline holds 2 leads, 3 agreements and 2 commissioned cells, with $2.4 million in stated contracted value and no stated recognised value. Over the past six months, it added 2 leads, 3 agreements and 2 commissioned cells, including the $2.4 million Komatsu licensing agreement and its first modular laser cell completing commissioning.",
