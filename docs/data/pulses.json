@@ -2,8 +2,8 @@
  "pulses": {
   "services": {
    "title": "Services Pulse",
-   "latest_month": "2026-07-31",
-   "latest_value": -5.2,
+   "latest_month": "2026-08-31",
+   "latest_value": -6.5,
    "history": [
     {
      "month": "1984-06-30",
@@ -1999,42 +1999,46 @@
     },
     {
      "month": "2025-12-31",
-     "value": 20.35
+     "value": 19.96
     },
     {
      "month": "2026-01-31",
-     "value": 15.44
+     "value": 15.45
     },
     {
      "month": "2026-02-28",
-     "value": 2.84
+     "value": 2.85
     },
     {
      "month": "2026-03-31",
-     "value": -23.26
+     "value": -23.13
     },
     {
      "month": "2026-04-30",
-     "value": -22.65
+     "value": -22.16
     },
     {
      "month": "2026-05-31",
-     "value": -18.79
+     "value": -18.05
     },
     {
      "month": "2026-06-30",
-     "value": 0.39
+     "value": 3.06
     },
     {
      "month": "2026-07-31",
-     "value": -5.16
+     "value": -6.5
+    },
+    {
+     "month": "2026-08-31",
+     "value": -6.46
     }
    ]
   },
   "products": {
    "title": "Products Pulse",
-   "latest_month": "2026-08-31",
-   "latest_value": 29.4,
+   "latest_month": "2026-09-30",
+   "latest_value": 27.2,
    "history": [
     {
      "month": "1976-12-31",
@@ -4422,14 +4426,18 @@
     },
     {
      "month": "2026-08-31",
-     "value": 29.38
+     "value": 29.43
+    },
+    {
+     "month": "2026-09-30",
+     "value": 27.17
     }
    ]
   },
   "margin": {
    "title": "Margin Pulse",
-   "latest_month": "2026-08-31",
-   "latest_value": -19.4,
+   "latest_month": "2026-09-30",
+   "latest_value": -22.7,
    "history": [
     {
      "month": "2008-02-29",
@@ -5322,6 +5330,10 @@
     {
      "month": "2026-08-31",
      "value": -19.41
+    },
+    {
+     "month": "2026-09-30",
+     "value": -22.65
     }
    ]
   }
@@ -5332,29 +5344,29 @@
     "series": "abs.merch_exp.nsw_coal_value",
     "label": "NSW coal export value",
     "weight": 0.2,
-    "score": -13.230945599523771,
-    "raw_score": -13.230945599523771,
-    "z": -0.3307736399880943,
-    "value": 2623817.0,
+    "score": -24.56263729995881,
+    "raw_score": -24.56263729995881,
+    "z": -0.6140659324989702,
+    "value": 2298075.0,
     "stale_months": 1,
-    "as_of": "2026-06-30",
+    "as_of": "2026-07-31",
     "inverted": false,
     "weight_used": 0.2,
-    "contribution": -2.6461891199047543
+    "contribution": -4.912527459991762
    },
    {
     "series": "rba.commodity_index_aud",
     "label": "RBA commodity price index",
     "weight": 0.2,
-    "score": -21.51266984707176,
-    "raw_score": -21.51266984707176,
-    "z": -0.537816746176794,
-    "value": 103.3,
+    "score": -16.650384648725524,
+    "raw_score": -16.650384648725524,
+    "z": -0.4162596162181381,
+    "value": 105.0,
     "stale_months": 0,
-    "as_of": "2026-07-31",
+    "as_of": "2026-08-31",
     "inverted": false,
     "weight_used": 0.2,
-    "contribution": -4.302533969414352
+    "contribution": -3.330076929745105
    },
    {
     "series": "abs.capex.mining_expected",
@@ -5364,7 +5376,7 @@
     "raw_score": 54.151953599729865,
     "z": 1.3537988399932466,
     "value": 28199.0,
-    "stale_months": 1,
+    "stale_months": 2,
     "as_of": "2026-06-30",
     "inverted": false,
     "weight_used": 0.2,
@@ -5378,7 +5390,7 @@
     "raw_score": -88.39839656047432,
     "z": -2.209959914011858,
     "value": 48592978.0,
-    "stale_months": 4,
+    "stale_months": 5,
     "as_of": "2026-03-31",
     "inverted": false,
     "weight_used": 0.15,
@@ -5392,7 +5404,7 @@
     "raw_score": 40.17441962264732,
     "z": 1.004360490566183,
     "value": 13212.0,
-    "stale_months": 1,
+    "stale_months": 2,
     "as_of": "2026-06-30",
     "inverted": false,
     "weight_used": 0.1,
@@ -5406,7 +5418,7 @@
     "raw_score": -24.37866412263712,
     "z": -0.6094666030659279,
     "value": 44.2,
-    "stale_months": 0,
+    "stale_months": 1,
     "as_of": "2026-07-31",
     "inverted": false,
     "weight_used": 0.1,
@@ -5420,7 +5432,7 @@
     "raw_score": 52.67230599966671,
     "z": 1.3168076499916679,
     "value": 3170.3,
-    "stale_months": 1,
+    "stale_months": 2,
     "as_of": "2026-06-30",
     "inverted": false,
     "weight_used": 0.05,
@@ -5436,7 +5448,7 @@
     "raw_score": 0.23914633633251212,
     "z": 0.005978658408312803,
     "value": 8.0,
-    "stale_months": 2,
+    "stale_months": 3,
     "as_of": "2026-06-30",
     "inverted": false,
     "weight_used": 0.18749999999999997,
@@ -5454,9 +5466,9 @@
     "weight": 0.2,
     "score": 100.0,
     "raw_score": 100.0,
-    "z": 3.283103815580903,
-    "value": 31960.0,
-    "stale_months": 1,
+    "z": 3.384730165657814,
+    "value": 32172.0,
+    "stale_months": 2,
     "as_of": "2026-07-31",
     "inverted": false,
     "weight_used": 0.25,
@@ -5472,43 +5484,43 @@
     "series": "bh.rigcount_na_total",
     "label": "Baker Hughes NA rig count",
     "weight": 0.1,
-    "score": 0.3941367343047295,
-    "raw_score": 0.3941367343047295,
-    "z": 0.009853418357618238,
-    "value": 804.75,
+    "score": -6.602591563374611,
+    "raw_score": -6.602591563374611,
+    "z": -0.16506478908436528,
+    "value": 792.0,
     "stale_months": 0,
-    "as_of": "2026-08-31",
+    "as_of": "2026-09-30",
     "inverted": false,
     "weight_used": 0.125,
-    "contribution": 0.04926709178809119
+    "contribution": -0.8253239454218264
    },
    {
     "series": "bh.rigcount_intl_total",
     "label": "Baker Hughes intl rig count",
     "weight": 0.2,
-    "score": 73.72761931005346,
-    "raw_score": 73.72761931005346,
-    "z": 1.8431904827513361,
-    "value": 1096.0,
+    "score": 73.94629188392933,
+    "raw_score": 73.94629188392933,
+    "z": 1.8486572970982331,
+    "value": 1102.0,
     "stale_months": 1,
-    "as_of": "2026-07-31",
+    "as_of": "2026-08-31",
     "inverted": false,
     "weight_used": 0.25,
-    "contribution": 18.431904827513364
+    "contribution": 18.486572970982333
    },
    {
     "series": "rba.audusd",
     "label": "AUD/USD (inverted)",
     "weight": 0.15,
-    "score": -75.44868818076557,
-    "raw_score": 75.44868818076557,
-    "z": 1.8862172045191392,
-    "value": 0.71021,
+    "score": -82.85701261757191,
+    "raw_score": 82.85701261757191,
+    "z": 2.071425315439298,
+    "value": 0.71792,
     "stale_months": 0,
-    "as_of": "2026-08-31",
+    "as_of": "2026-09-30",
     "inverted": true,
     "weight_used": 0.18749999999999997,
-    "contribution": -14.146629033893545
+    "contribution": -15.535689865794732
    }
   ],
   "margin": [
@@ -5520,7 +5532,7 @@
     "raw_score": -24.17118174403143,
     "z": -0.6042795436007857,
     "value": 4524.6666700000005,
-    "stale_months": 1,
+    "stale_months": 2,
     "as_of": "2026-07-31",
     "inverted": true,
     "weight_used": 0.5625,
@@ -5530,15 +5542,15 @@
     "series": "rba.audusd",
     "label": "AUD/USD",
     "weight": 0.35,
-    "score": -75.44868818076557,
-    "raw_score": 75.44868818076557,
-    "z": 1.8862172045191392,
-    "value": 0.71021,
+    "score": -82.85701261757191,
+    "raw_score": 82.85701261757191,
+    "z": 2.071425315439298,
+    "value": 0.71792,
     "stale_months": 0,
-    "as_of": "2026-08-31",
+    "as_of": "2026-09-30",
     "inverted": true,
     "weight_used": 0.43749999999999994,
-    "contribution": -33.00880107908493
+    "contribution": -36.24994302018771
    },
    {
     "series": "tungsten.flag_count",
