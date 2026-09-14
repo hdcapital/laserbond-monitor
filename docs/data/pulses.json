@@ -3,7 +3,7 @@
   "services": {
    "title": "Services Pulse",
    "latest_month": "2026-08-31",
-   "latest_value": -6.5,
+   "latest_value": -4.2,
    "history": [
     {
      "month": "1984-06-30",
@@ -2031,14 +2031,14 @@
     },
     {
      "month": "2026-08-31",
-     "value": -6.46
+     "value": -4.23
     }
    ]
   },
   "products": {
    "title": "Products Pulse",
    "latest_month": "2026-09-30",
-   "latest_value": 27.2,
+   "latest_value": 27.1,
    "history": [
     {
      "month": "1976-12-31",
@@ -4430,14 +4430,14 @@
     },
     {
      "month": "2026-09-30",
-     "value": 27.17
+     "value": 27.09
     }
    ]
   },
   "margin": {
    "title": "Margin Pulse",
    "latest_month": "2026-09-30",
-   "latest_value": -22.7,
+   "latest_value": -23.2,
    "history": [
     {
      "month": "2008-02-29",
@@ -5333,7 +5333,7 @@
     },
     {
      "month": "2026-09-30",
-     "value": -22.65
+     "value": -23.24
     }
    ]
   }
@@ -5414,15 +5414,15 @@
     "series": "pilbara.iron_ore_throughput_mt",
     "label": "Pilbara Ports iron ore",
     "weight": 0.1,
-    "score": -24.37866412263712,
-    "raw_score": -24.37866412263712,
-    "z": -0.6094666030659279,
-    "value": 44.2,
-    "stale_months": 1,
-    "as_of": "2026-07-31",
+    "score": -2.0794268994972795,
+    "raw_score": -2.0794268994972795,
+    "z": -0.05198567248743199,
+    "value": 46.6,
+    "stale_months": 0,
+    "as_of": "2026-08-31",
     "inverted": false,
     "weight_used": 0.1,
-    "contribution": -2.437866412263712
+    "contribution": -0.20794268994972798
    },
    {
     "series": "abs.exploration.metres_drilled_total",
@@ -5484,15 +5484,15 @@
     "series": "bh.rigcount_na_total",
     "label": "Baker Hughes NA rig count",
     "weight": 0.1,
-    "score": -6.602591563374611,
-    "raw_score": -6.602591563374611,
-    "z": -0.16506478908436528,
-    "value": 792.0,
+    "score": -5.219040724800015,
+    "raw_score": -5.219040724800015,
+    "z": -0.1304760181200004,
+    "value": 795.0,
     "stale_months": 0,
     "as_of": "2026-09-30",
     "inverted": false,
     "weight_used": 0.125,
-    "contribution": -0.8253239454218264
+    "contribution": -0.6523800906000019
    },
    {
     "series": "bh.rigcount_intl_total",
@@ -5512,15 +5512,15 @@
     "series": "rba.audusd",
     "label": "AUD/USD (inverted)",
     "weight": 0.15,
-    "score": -82.85701261757191,
-    "raw_score": 82.85701261757191,
-    "z": 2.071425315439298,
-    "value": 0.71792,
+    "score": -84.1902230303609,
+    "raw_score": 84.1902230303609,
+    "z": 2.1047555757590226,
+    "value": 0.71887,
     "stale_months": 0,
     "as_of": "2026-09-30",
     "inverted": true,
     "weight_used": 0.18749999999999997,
-    "contribution": -15.535689865794732
+    "contribution": -15.785666818192666
    }
   ],
   "margin": [
@@ -5542,15 +5542,15 @@
     "series": "rba.audusd",
     "label": "AUD/USD",
     "weight": 0.35,
-    "score": -82.85701261757191,
-    "raw_score": 82.85701261757191,
-    "z": 2.071425315439298,
-    "value": 0.71792,
+    "score": -84.1902230303609,
+    "raw_score": 84.1902230303609,
+    "z": 2.1047555757590226,
+    "value": 0.71887,
     "stale_months": 0,
     "as_of": "2026-09-30",
     "inverted": true,
     "weight_used": 0.43749999999999994,
-    "contribution": -36.24994302018771
+    "contribution": -36.833222575782884
    },
    {
     "series": "tungsten.flag_count",
