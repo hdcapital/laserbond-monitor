@@ -2038,7 +2038,7 @@
   "products": {
    "title": "Products Pulse",
    "latest_month": "2026-09-30",
-   "latest_value": 27.6,
+   "latest_value": 28.5,
    "history": [
     {
      "month": "1976-12-31",
@@ -4430,14 +4430,14 @@
     },
     {
      "month": "2026-09-30",
-     "value": 27.62
+     "value": 28.52
     }
    ]
   },
   "margin": {
    "title": "Margin Pulse",
    "latest_month": "2026-09-30",
-   "latest_value": -21.9,
+   "latest_value": -24.9,
    "history": [
     {
      "month": "2008-02-29",
@@ -5329,11 +5329,11 @@
     },
     {
      "month": "2026-08-31",
-     "value": -19.41
+     "value": -24.07
     },
     {
      "month": "2026-09-30",
-     "value": -21.88
+     "value": -24.87
     }
    ]
   }
@@ -5466,10 +5466,10 @@
     "weight": 0.2,
     "score": 100.0,
     "raw_score": 100.0,
-    "z": 3.384730165657814,
-    "value": 32172.0,
-    "stale_months": 2,
-    "as_of": "2026-07-31",
+    "z": 3.2544990002083467,
+    "value": 32609.0,
+    "stale_months": 1,
+    "as_of": "2026-08-31",
     "inverted": false,
     "weight_used": 0.25,
     "contribution": 25.0
@@ -5484,15 +5484,15 @@
     "series": "bh.rigcount_na_total",
     "label": "Baker Hughes NA rig count",
     "weight": 0.1,
-    "score": -5.68026445514421,
-    "raw_score": -5.68026445514421,
-    "z": -0.14200661137860524,
-    "value": 794.0,
+    "score": -4.181160921608902,
+    "raw_score": -4.181160921608902,
+    "z": -0.10452902304022256,
+    "value": 797.25,
     "stale_months": 0,
     "as_of": "2026-09-30",
     "inverted": false,
     "weight_used": 0.125,
-    "contribution": -0.7100330568930261
+    "contribution": -0.5226451152011128
    },
    {
     "series": "bh.rigcount_intl_total",
@@ -5512,15 +5512,15 @@
     "series": "rba.audusd",
     "label": "AUD/USD (inverted)",
     "weight": 0.15,
-    "score": -81.08715480221798,
-    "raw_score": 81.08715480221798,
-    "z": 2.0271788700554496,
-    "value": 0.7166666666666667,
+    "score": -77.27350663921435,
+    "raw_score": 77.27350663921435,
+    "z": 1.9318376659803589,
+    "value": 0.7139949999999999,
     "stale_months": 0,
     "as_of": "2026-09-30",
     "inverted": true,
     "weight_used": 0.18749999999999997,
-    "contribution": -15.20384152541587
+    "contribution": -14.488782494852689
    }
   ],
   "margin": [
@@ -5528,29 +5528,29 @@
     "series": "jsa.ivi_trades_tightness",
     "label": "Fitter/welder vacancy tightness",
     "weight": 0.45,
-    "score": 24.17118174403143,
-    "raw_score": -24.17118174403143,
-    "z": -0.6042795436007857,
-    "value": 4524.6666700000005,
-    "stale_months": 2,
-    "as_of": "2026-07-31",
+    "score": 15.895657845129668,
+    "raw_score": -15.895657845129668,
+    "z": -0.3973914461282417,
+    "value": 4668.33334,
+    "stale_months": 1,
+    "as_of": "2026-08-31",
     "inverted": true,
     "weight_used": 0.5625,
-    "contribution": 13.596289731017679
+    "contribution": 8.941307537885438
    },
    {
     "series": "rba.audusd",
     "label": "AUD/USD",
     "weight": 0.35,
-    "score": -81.08715480221798,
-    "raw_score": 81.08715480221798,
-    "z": 2.0271788700554496,
-    "value": 0.7166666666666667,
+    "score": -77.27350663921435,
+    "raw_score": 77.27350663921435,
+    "z": 1.9318376659803589,
+    "value": 0.7139949999999999,
     "stale_months": 0,
     "as_of": "2026-09-30",
     "inverted": true,
     "weight_used": 0.43749999999999994,
-    "contribution": -35.47563022597036
+    "contribution": -33.807159154656276
    },
    {
     "series": "tungsten.flag_count",
