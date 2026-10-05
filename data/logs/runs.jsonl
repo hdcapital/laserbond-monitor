@@ -636,3 +636,5 @@
 {"ts": "2026-10-04T12:46:36.104137+00:00", "source": "tungsten_news", "status": "ok", "rows": 162, "error": ""}
 {"ts": "2026-10-04T21:49:50.262388+00:00", "source": "asx_announcements", "status": "ok", "rows": 20, "error": ""}
 {"ts": "2026-10-04T21:50:00.440109+00:00", "source": "tungsten_news", "status": "ok", "rows": 163, "error": ""}
+{"ts": "2026-10-05T06:05:28.187915+00:00", "source": "asx_announcements", "status": "ok", "rows": 20, "error": ""}
+{"ts": "2026-10-05T06:05:38.477686+00:00", "source": "tungsten_news", "status": "ok", "rows": 162, "error": ""}
