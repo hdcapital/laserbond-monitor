@@ -5585,9 +5585,9 @@
   "stage_counts": {
    "lead": 2,
    "trial": 0,
-   "agreement": 3,
-   "cell_ordered": 0,
-   "commissioned": 2,
+   "agreement": 4,
+   "cell_ordered": 1,
+   "commissioned": 3,
    "recurring": 0
   },
   "stage_counts_6m_ago": {
@@ -5601,15 +5601,51 @@
   "stage_deltas_6m": {
    "lead": 2,
    "trial": 0,
-   "agreement": 3,
-   "cell_ordered": 0,
-   "commissioned": 2,
+   "agreement": 4,
+   "cell_ordered": 1,
+   "commissioned": 3,
    "recurring": 0
   },
-  "contracted_value_aud_where_stated": 2400000.0,
+  "contracted_value_aud_where_stated": 4800000.0,
   "recognised_aud_where_stated": 0.0,
-  "contracted_unrecognised_aud_where_stated": 2400000.0,
+  "contracted_unrecognised_aud_where_stated": 4800000.0,
   "events": [
+   {
+    "id": "8d7c049979745d04",
+    "announcement_id": "2924-03148730-2A1704217",
+    "date": "2026-10-14",
+    "stage": "cell_ordered",
+    "counterparty": "Komatsu",
+    "value_aud": NaN,
+    "recognised_aud": null,
+    "description": "The second agreement \"provides for a second modular laser cladding cell at Komatsu's Perth facility, due for delivery in FY27.\"",
+    "source_pdf_url": "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03148730-2A1704217",
+    "retrieved_at": "2026-10-15 05:02:46.153738+00:00"
+   },
+   {
+    "id": "74928bae887ed858",
+    "announcement_id": "2924-03148730-2A1704217",
+    "date": "2026-10-14",
+    "stage": "agreement",
+    "counterparty": "Komatsu",
+    "value_aud": 2400000.0,
+    "recognised_aud": null,
+    "description": "Laserbond \"executed its first licensing agreement with Komatsu in August 2025\" and \"the agreement was valued at $2.4 million.\"",
+    "source_pdf_url": "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03148730-2A1704217",
+    "retrieved_at": "2026-10-15 05:02:46.153738+00:00"
+   },
+   {
+    "id": "a9306e08b5190d5e",
+    "announcement_id": "2924-03148730-2A1704217",
+    "date": "2026-10-14",
+    "stage": "commissioned",
+    "counterparty": "Komatsu",
+    "value_aud": NaN,
+    "recognised_aud": null,
+    "description": "Komatsu's first laser cell was \"completed on time and on budget, and site operation has commenced.\"",
+    "source_pdf_url": "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03148730-2A1704217",
+    "retrieved_at": "2026-10-15 05:02:46.153738+00:00"
+   },
    {
     "id": "7a8f2472d99e3348",
     "announcement_id": "2924-03123571-2A1690739",

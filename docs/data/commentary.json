@@ -18,9 +18,9 @@
   "facts_hash": "4fd62c4f73d612dd"
  },
  "technology": {
-  "text": "The pipeline holds 2 leads, 3 agreements and 2 commissioned cells, with $2.4 million in stated contracted value and no stated recognised value. Over the past six months, it added 2 leads, 3 agreements and 2 commissioned cells, including the $2.4 million Komatsu licensing agreement and its first modular laser cell completing commissioning.",
+  "text": "The pipeline holds 2 leads, 4 agreements, 1 cell ordered and 3 commissioned cells, with $4.8 million in stated contracted value, all unrecognised. Over the past six months it added 2 leads, 4 agreements, 1 cell order and 3 commissioned cells, including Komatsu\u2019s $2.4 million first licensing agreement and a second cell ordered for Perth.",
   "model": "gpt-5.6-terra",
-  "generated_at": "2026-08-20 21:52 UTC",
-  "facts_hash": "7540646987f5a6c2"
+  "generated_at": "2026-10-15 05:03 UTC",
+  "facts_hash": "397a72e92bce76c1"
  }
 }
