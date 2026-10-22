@@ -5585,9 +5585,9 @@
   "stage_counts": {
    "lead": 2,
    "trial": 0,
-   "agreement": 4,
+   "agreement": 6,
    "cell_ordered": 1,
-   "commissioned": 3,
+   "commissioned": 4,
    "recurring": 0
   },
   "stage_counts_6m_ago": {
@@ -5601,15 +5601,51 @@
   "stage_deltas_6m": {
    "lead": 2,
    "trial": 0,
-   "agreement": 4,
+   "agreement": 6,
    "cell_ordered": 1,
-   "commissioned": 3,
+   "commissioned": 4,
    "recurring": 0
   },
-  "contracted_value_aud_where_stated": 4800000.0,
+  "contracted_value_aud_where_stated": 7200000.0,
   "recognised_aud_where_stated": 0.0,
-  "contracted_unrecognised_aud_where_stated": 4800000.0,
+  "contracted_unrecognised_aud_where_stated": 7200000.0,
   "events": [
+   {
+    "id": "35cfccb9c6b7cc8e",
+    "announcement_id": "2924-03151433-2A1705449",
+    "date": "2026-10-21",
+    "stage": "agreement",
+    "counterparty": "Komatsu",
+    "value_aud": NaN,
+    "recognised_aud": null,
+    "description": "Laserbond \"signed a second licensing agreement with Komatsu... covering a second modular laser cladding cell for Komatsu\u2019s Perth facility.\"",
+    "source_pdf_url": "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03151433-2A1705449",
+    "retrieved_at": "2026-10-22 01:05:13.485228+00:00"
+   },
+   {
+    "id": "f3cb26c6b097a77f",
+    "announcement_id": "2924-03151433-2A1705449",
+    "date": "2026-10-21",
+    "stage": "commissioned",
+    "counterparty": "Komatsu",
+    "value_aud": 2400000.0,
+    "recognised_aud": null,
+    "description": "The first Komatsu agreement, \"signed in August 2025 and valued at $2.4 million,\" delivered a cell that \"is now in operation.\"",
+    "source_pdf_url": "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03151433-2A1705449",
+    "retrieved_at": "2026-10-22 01:05:13.485228+00:00"
+   },
+   {
+    "id": "ceb1aca7622134ea",
+    "announcement_id": "2924-03151433-2A1705449",
+    "date": "2026-10-21",
+    "stage": "agreement",
+    "counterparty": "Metal 7 Inc",
+    "value_aud": NaN,
+    "recognised_aud": null,
+    "description": "Laserbond entered a Collaboration Agreement with Metal 7 under which Metal 7 owns customer relationships while Laserbond retains and licenses its intellectual property.",
+    "source_pdf_url": "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03151433-2A1705449",
+    "retrieved_at": "2026-10-22 01:05:13.485228+00:00"
+   },
    {
     "id": "8d7c049979745d04",
     "announcement_id": "2924-03148730-2A1704217",
