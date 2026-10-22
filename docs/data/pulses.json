@@ -5524,15 +5524,15 @@
     "series": "rba.audusd",
     "label": "AUD/USD (inverted)",
     "weight": 0.15,
-    "score": -47.900540860265856,
-    "raw_score": 47.900540860265856,
-    "z": 1.1975135215066464,
+    "score": -47.90054086026583,
+    "raw_score": 47.90054086026583,
+    "z": 1.1975135215066457,
     "value": 0.6964666666666667,
     "stale_months": 0,
     "as_of": "2026-10-31",
     "inverted": true,
     "weight_used": 0.18749999999999997,
-    "contribution": -8.981351411299848
+    "contribution": -8.981351411299842
    }
   ],
   "margin": [
@@ -5554,15 +5554,15 @@
     "series": "rba.audusd",
     "label": "AUD/USD",
     "weight": 0.35,
-    "score": -47.900540860265856,
-    "raw_score": 47.900540860265856,
-    "z": 1.1975135215066464,
+    "score": -47.90054086026583,
+    "raw_score": 47.90054086026583,
+    "z": 1.1975135215066457,
     "value": 0.6964666666666667,
     "stale_months": 0,
     "as_of": "2026-10-31",
     "inverted": true,
     "weight_used": 0.43749999999999994,
-    "contribution": -20.95648662636631
+    "contribution": -20.956486626366296
    },
    {
     "series": "tungsten.flag_count",
