@@ -2042,7 +2042,7 @@
   "products": {
    "title": "Products Pulse",
    "latest_month": "2026-10-31",
-   "latest_value": 36.4,
+   "latest_value": 36.0,
    "history": [
     {
      "month": "1976-12-31",
@@ -4438,14 +4438,14 @@
     },
     {
      "month": "2026-10-31",
-     "value": 36.41
+     "value": 36.03
     }
    ]
   },
   "margin": {
    "title": "Margin Pulse",
    "latest_month": "2026-10-31",
-   "latest_value": -12.0,
+   "latest_value": -16.0,
    "history": [
     {
      "month": "2008-02-29",
@@ -5341,11 +5341,11 @@
     },
     {
      "month": "2026-09-30",
-     "value": -23.96
+     "value": -27.02
     },
     {
      "month": "2026-10-31",
-     "value": -12.02
+     "value": -15.96
     }
    ]
   }
@@ -5524,15 +5524,15 @@
     "series": "rba.audusd",
     "label": "AUD/USD (inverted)",
     "weight": 0.15,
-    "score": -47.90054086026583,
-    "raw_score": 47.90054086026583,
-    "z": 1.1975135215066457,
-    "value": 0.6964666666666667,
+    "score": -49.913225478260706,
+    "raw_score": 49.913225478260706,
+    "z": 1.2478306369565177,
+    "value": 0.6977941176470589,
     "stale_months": 0,
     "as_of": "2026-10-31",
     "inverted": true,
     "weight_used": 0.18749999999999997,
-    "contribution": -8.981351411299842
+    "contribution": -9.358729777173881
    }
   ],
   "margin": [
@@ -5540,29 +5540,29 @@
     "series": "jsa.ivi_trades_tightness",
     "label": "Fitter/welder vacancy tightness",
     "weight": 0.45,
-    "score": 15.895657845129668,
-    "raw_score": -15.895657845129668,
-    "z": -0.3973914461282417,
-    "value": 4668.33334,
-    "stale_months": 2,
-    "as_of": "2026-08-31",
+    "score": 10.455200847182999,
+    "raw_score": -10.455200847182999,
+    "z": -0.261380021179575,
+    "value": 4765.66666,
+    "stale_months": 1,
+    "as_of": "2026-09-30",
     "inverted": true,
     "weight_used": 0.5625,
-    "contribution": 8.941307537885438
+    "contribution": 5.8810504765404366
    },
    {
     "series": "rba.audusd",
     "label": "AUD/USD",
     "weight": 0.35,
-    "score": -47.90054086026583,
-    "raw_score": 47.90054086026583,
-    "z": 1.1975135215066457,
-    "value": 0.6964666666666667,
+    "score": -49.913225478260706,
+    "raw_score": 49.913225478260706,
+    "z": 1.2478306369565177,
+    "value": 0.6977941176470589,
     "stale_months": 0,
     "as_of": "2026-10-31",
     "inverted": true,
     "weight_used": 0.43749999999999994,
-    "contribution": -20.956486626366296
+    "contribution": -21.83703614673906
    },
    {
     "series": "tungsten.flag_count",

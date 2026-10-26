@@ -833,3 +833,18 @@
 {"ts": "2026-10-26T14:17:27.818432+00:00", "source": "tungsten_news", "status": "ok", "rows": 102, "error": ""}
 {"ts": "2026-10-26T18:54:16.196354+00:00", "source": "asx_announcements", "status": "ok", "rows": 20, "error": ""}
 {"ts": "2026-10-26T18:54:26.461154+00:00", "source": "tungsten_news", "status": "ok", "rows": 158, "error": ""}
+{"ts": "2026-10-26T20:42:06.381974+00:00", "source": "qld_coal", "status": "ok", "rows": 367, "error": ""}
+{"ts": "2026-10-26T20:43:59.970312+00:00", "source": "pilbara_ports", "status": "ok", "rows": 163, "error": ""}
+{"ts": "2026-10-26T20:44:05.366629+00:00", "source": "abs_capex", "status": "ok", "rows": 313, "error": ""}
+{"ts": "2026-10-26T20:44:07.720861+00:00", "source": "abs_exploration", "status": "ok", "rows": 1314, "error": ""}
+{"ts": "2026-10-26T20:44:09.657873+00:00", "source": "nsw_coal_exports", "status": "ok", "rows": 374, "error": ""}
+{"ts": "2026-10-26T20:44:29.997738+00:00", "source": "oem_orders", "status": "ok", "rows": 0, "error": ""}
+{"ts": "2026-10-26T20:44:31.661786+00:00", "source": "rba", "status": "ok", "rows": 1693, "error": ""}
+{"ts": "2026-10-26T20:44:33.235294+00:00", "source": "aisi", "status": "ok", "rows": 6, "error": ""}
+{"ts": "2026-10-26T20:44:33.540703+00:00", "source": "fred_steel", "status": "ok", "rows": 415, "error": ""}
+{"ts": "2026-10-26T20:44:34.025635+00:00", "source": "baker_hughes", "status": "error", "rows": 0, "error": "baker_hughes: no workbook parsed; errors=[]\nTraceback (most recent call last):\n  File \"/home/runner/work/laserbond-monitor/laserbond-monitor/src/lbl_tracker/ingest/__init__.py\", line 40, in run\n    stats = mod.ingest()\n            ^^^^^^^^^^^^\n  File \"/home/runner/work/laserbond-monitor/laserbond-monitor/src/lbl_tracker/ingest/baker_hughes.py\", line 282, in ingest\n    return write_observations(SOURCE, fetch())\n                                      ^^^^^^^\n  File \"/home/runner/work/laserbond-monitor/laserbond-monitor/src/lbl_tracker/ingest/baker_hughes.py\", line 277, in fetch\n    raise RuntimeError(f\"baker_hughes: no workbook parsed; errors={errors}\")\nRuntimeError: baker_hughes: no workbook parsed; errors=[]\n"}
+{"ts": "2026-10-26T20:44:51.694415+00:00", "source": "cat_edgar", "status": "ok", "rows": 30, "error": ""}
+{"ts": "2026-10-26T20:45:03.998386+00:00", "source": "jsa_ivi", "status": "ok", "rows": 4693, "error": ""}
+{"ts": "2026-10-26T20:45:14.259544+00:00", "source": "tungsten_news", "status": "ok", "rows": 159, "error": ""}
+{"ts": "2026-10-26T20:45:15.896813+00:00", "source": "asx_announcements", "status": "ok", "rows": 20, "error": ""}
+{"ts": "2026-10-26T20:45:15.897610+00:00", "source": "importgenius", "status": "ok", "rows": 0, "error": ""}

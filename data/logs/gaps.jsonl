@@ -228,3 +228,7 @@
 {"ts": "2026-10-19T23:56:14.554787+00:00", "source": "baker_hughes", "series_id": "bh.rigcount_na_total", "detail": "NA workbook links not found"}
 {"ts": "2026-10-19T23:56:14.555004+00:00", "source": "baker_hughes", "series_id": "bh.rigcount_intl_total", "detail": "international workbook links not found"}
 {"ts": "2026-10-19T23:56:14.555573+00:00", "source": "baker_hughes", "series_id": "*", "detail": "ingest failed: baker_hughes: no workbook parsed; errors=[]"}
+{"ts": "2026-10-26T20:44:29.997295+00:00", "source": "oem_orders", "series_id": "weir.orders", "detail": "https://www.global.weir/newsroom/global-news/2026/micromines-2026-half-year-release-improves-how-mining-teams-and-workflows-connect-to-support-better-decision-making/: bad period_end None"}
+{"ts": "2026-10-26T20:44:34.024615+00:00", "source": "baker_hughes", "series_id": "bh.rigcount_na_total", "detail": "NA workbook links not found"}
+{"ts": "2026-10-26T20:44:34.024931+00:00", "source": "baker_hughes", "series_id": "bh.rigcount_intl_total", "detail": "international workbook links not found"}
+{"ts": "2026-10-26T20:44:34.025755+00:00", "source": "baker_hughes", "series_id": "*", "detail": "ingest failed: baker_hughes: no workbook parsed; errors=[]"}
