@@ -183,7 +183,8 @@ def probe_baker_hughes():
             _p(f"-- {page} FAILED: {exc}")
     files = baker_hughes.discover_files(session)
     _p(f"resolved: {files}")
-    for kind, urls in files.items():
+    for kind in ("na", "intl"):
+        urls = files[kind]
         for url in urls[:2]:
             content = get(url, session=session).content
             try:

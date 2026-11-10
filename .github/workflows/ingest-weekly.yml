@@ -75,7 +75,15 @@ jobs:
           # SEC serves "Undeclared Automated Tool" to GitHub-hosted runner
           # IP ranges regardless of User-Agent (verified live); that known
           # infrastructure block is reported in SOURCES.md, not as a red run.
-          failed = [r["source"] for r in results if r.get("status") == "error"
+          # Likewise a publisher edge that 403s every page to runners raises
+          # SourceBlockedError ("BLOCKED: ..."): surfaced as a warning
+          # annotation + SOURCES.md BLOCKED row. Any other error (layout
+          # drift, parse failure, partial 403s) still turns the run red.
+          errors = [r for r in results if r.get("status") == "error"]
+          blocked = [r for r in errors if str(r.get("error", "")).startswith("BLOCKED")]
+          for r in blocked:
+              print(f"::warning::{r['source']} {r['error']}")
+          failed = [r["source"] for r in errors if r not in blocked
                     and "Undeclared" not in str(r.get("error", ""))]
           if failed:
               print(f"::error::sources failed this run: {failed}")

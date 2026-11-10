@@ -98,8 +98,14 @@ def test_fred_steel():
 
 
 def test_baker_hughes():
+    from lbl_tracker.http import SourceBlockedError
     from lbl_tracker.ingest.baker_hughes import fetch
-    df = fetch()
+    try:
+        df = fetch()
+    except SourceBlockedError as exc:
+        # Only a 403 on *every* page lands here (infrastructure block, see
+        # SOURCES.md row h); layout drift or partial failures still fail.
+        pytest.skip(str(exc))
     assert_obs_schema(df)
     assert_fresh(df, "bh.rigcount_na_total", 21)
     assert_fresh(df, "bh.rigcount_intl_total", 75)
