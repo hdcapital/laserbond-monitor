@@ -1,21 +1,21 @@
 {
  "services": {
-  "text": "Services Pulse tracks weighted z-scores of its inputs against their own trailing five-year norms, scaled from -100 to +100. At 20.6 on 31 October 2026, it is above its five-year norm; it has eased slightly from 20.9 a month earlier but risen from 16.8 three months ago and -22.1 six months ago. ABS mining capex expectations is the biggest positive contributor (+10.8), while NSW coal export value is the biggest negative (-5.0).",
+  "text": "Services Pulse tracks weighted z-scores of its listed inputs against their own trailing five-year norms, scaled from -100 to +100. At 18.9 on 31 October 2026, it is above its five-year norm; it eased slightly from 19.2 a month earlier but remains up from 16.8 three months ago and -22.1 six months ago. ABS mining capex expectations is the largest positive contributor (+10.8), while NSW coal export value is the largest negative (-6.7).",
   "model": "gpt-5.6-terra",
-  "generated_at": "2026-11-02 20:38 UTC",
-  "facts_hash": "8e51a750f562f6c5"
+  "generated_at": "2026-11-10 02:54 UTC",
+  "facts_hash": "70972d49bd2c0060"
  },
  "products": {
-  "text": "Products Pulse tracks weighted z-scores of listed inputs against their own trailing five-year norms, scaled from -100 to +100. At +35.0 in November 2026, it is above its five-year norm; it has eased slightly from +35.7 a month ago but risen from +29.4 three months ago and +10.7 six months ago. US new orders for iron and steel mills is the biggest positive contributor (+25.0), while inverted AUD/USD is the biggest negative (-10.4); AISI capacity utilisation and discontinued CAT sales are excluded.",
+  "text": "Products Pulse combines weighted z-scores of its inputs against their own trailing five-year norms, scaled from -100 to +100. At 36.7 in November 2026, it is above its five-year norm and has risen from 29.4 three months earlier and 10.7 six months earlier. US new orders for iron and steel mills are the biggest positive contributor (+25.0), while inverted AUD/USD is the biggest negative contributor (-8.7); AISI capacity utilisation and discontinued CAT retail sales are excluded.",
   "model": "gpt-5.6-terra",
-  "generated_at": "2026-11-02 20:38 UTC",
-  "facts_hash": "b14de25807e2ea41"
+  "generated_at": "2026-11-10 02:54 UTC",
+  "facts_hash": "bf4778474c6c9d32"
  },
  "margin": {
-  "text": "Margin Pulse tracks weighted z-scores of fitter/welder vacancy tightness and AUD/USD against their own trailing 5-year norms, scaled from -100 to +100. At -18.3 in November 2026, it is below its 5-year norm; it has improved from -24.1 three months ago but slipped from -16.7 a month ago and 24.9 a year ago. AUD/USD is the biggest negative contributor (-24.2), while fitter/welder vacancy tightness is the biggest positive contributor (+5.9); tungsten policy flags are excluded until sufficient history accumulates.",
+  "text": "Margin Pulse tracks weighted z-scores of its inputs against their own trailing five-year norms, scaled from -100 to +100. At -14.4 in November 2026, it is below its five-year norm, improving from -24.1 three months earlier but down from 24.9 a year earlier; fitter/welder vacancy tightness is the biggest positive contributor (+5.9) and inverted AUD/USD the biggest negative (-20.2). Tungsten policy flags are excluded until sufficient history is available.",
   "model": "gpt-5.6-terra",
-  "generated_at": "2026-11-03 07:09 UTC",
-  "facts_hash": "5d6a3e67c3f386a1"
+  "generated_at": "2026-11-10 02:54 UTC",
+  "facts_hash": "8b1b26357295b529"
  },
  "technology": {
   "text": "The pipeline holds 2 leads, 6 agreements, 1 cell ordered and 4 commissioned cells, with $7.2 million in stated contracted value, all unrecognised where stated. Over the past six months, it added these positions, including Komatsu\u2019s $2.4 million first licensing agreement and operational first cell, a second Komatsu agreement and cell order, and a Metal 7 collaboration agreement.",
