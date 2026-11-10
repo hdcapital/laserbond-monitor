@@ -97,3 +97,50 @@ def test_no_data_pulse(env):
     frame, attribution = env.compute_pulse("demo", _obs("other", ["2025-01-31"], [1.0]))
     assert frame.empty
     assert all(a.get("status") == "NO DATA" for a in attribution)
+
+
+@pytest.fixture()
+def env3(tmp_path, monkeypatch):
+    """Three-input pulse: the 0.6-weight input can go stale on its own."""
+    monkeypatch.setenv("LBL_REPO_ROOT", str(tmp_path))
+    (tmp_path / "config.yaml").write_text("""
+store: {parquet_dir: data/parquet, logs_dir: data/logs}
+zscore: {window_months: 60, min_history_months: 24, clip_sigma: 2.5}
+pulses:
+  demo3:
+    title: Demo3
+    components:
+      - {series: syn.big, weight: 0.6, invert: false, max_stale_months: 2, label: Big}
+      - {series: syn.b, weight: 0.2, invert: false, max_stale_months: 2, label: B}
+      - {series: syn.c, weight: 0.2, invert: false, max_stale_months: 2, label: C}
+""")
+    import importlib
+
+    import lbl_tracker.config as config
+    importlib.reload(config)
+    config.load_config.cache_clear()
+    import lbl_tracker.analytics.pulses as pulses
+    importlib.reload(pulses)
+    return pulses
+
+
+def test_headline_is_no_data_when_latest_month_falls_below_threshold(env3, monkeypatch):
+    months = pd.date_range("2018-01-31", periods=84, freq="ME")
+    wiggle = np.tile([0, 3, -3, 1], 21)
+    obs = pd.concat([
+        # the heavy input stops 6 months before the others (e.g. a blocked source)
+        _obs("syn.big", months[:-6], (np.linspace(0, 50, 84) + wiggle)[:-6]),
+        _obs("syn.b", months, np.linspace(0, 80, 84) + wiggle),
+        _obs("syn.c", months, np.linspace(10, 30, 84) + wiggle),
+    ])
+    monkeypatch.setattr(env3, "read_observations", lambda: obs)
+    result = env3.compute_all(write=False)
+    pulse = result["pulses"]["demo3"]
+    # latest month only has 40% of weight -> NO DATA, not the last scored value
+    assert pulse["latest_month"] == months[-1].date().isoformat()
+    assert pulse["latest_value"] is None
+    assert pulse["weight_available"] == pytest.approx(0.4)
+    # big last observed at months[-7]; its 2-month cap keeps it in until months[-5]
+    assert pulse["last_scored_month"] == months[-5].date().isoformat()
+    # no input "contributes" to an unscored month
+    assert all(a.get("contribution") is None for a in result["attribution"]["demo3"])

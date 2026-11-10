@@ -9,6 +9,9 @@ never feeds back into any score.
 
 Regeneration is fact-hashed: a summary is rewritten only when the numbers
 under it change, so scheduled runs cost nothing while data is unchanged.
+Text is only ever shown for the figures it was written from: if the figures
+change and regeneration is impossible (no key, API error, empty reply) the
+outdated summary is removed rather than left beside new numbers.
 Output: docs/data/commentary.json.
 """
 from __future__ import annotations
@@ -34,7 +37,10 @@ tracks and how (weighted z-scores of the listed inputs vs their own trailing
 5-year norms, scaled to -100..+100); (2) what the latest reading says relative
 to that 5-year norm; (3) the recent trend and which inputs are driving it,
 naming the biggest positive and negative contributors. Mention missing inputs
-only if they matter. STRICT RULES: use only numbers given here; no forecasts,
+only if they matter - but ALWAYS say so if latest_value is null (the latest
+month is NO DATA: too little input weight available) or if any input has a
+source_status of BLOCKED (its value is the last one retrieved, not current).
+STRICT RULES: use only numbers given here; no forecasts,
 no investment advice, no speculation about causes beyond what the inputs show.
 Reply with the sentences only - no headings, no markdown.
 
@@ -74,15 +80,19 @@ def _trend(history: list) -> dict:
 
 
 def _pulse_facts(name: str, pulse: dict, attribution: list) -> dict:
-    from ..dashboard.build import DISCONTINUED
+    from ..dashboard.build import DISCONTINUED, blocked_series_notes
     from ..store import read_series
     spec = cfg("pulses", name, default={})
+    blocked = blocked_series_notes()
     inputs = []
     for comp in attribution:
         if comp.get("status") == "NO DATA":
             sid = comp.get("series")
             if sid in DISCONTINUED:
                 status = "source discontinued upstream; excluded from the score"
+            elif sid in blocked:
+                status = (f"source BLOCKED - publisher refuses automated access, no "
+                          f"new data; excluded from the score ({blocked[sid]})")
             else:
                 try:
                     s = read_series(sid).dropna(subset=["value"])
@@ -110,7 +120,7 @@ def _pulse_facts(name: str, pulse: dict, attribution: list) -> dict:
             inputs.append({"input": comp.get("label"), "weight": comp.get("weight"),
                            "status": status})
         else:
-            inputs.append({
+            entry = {
                 "input": comp.get("label"),
                 "weight": comp.get("weight"),
                 "latest_source_value": _round(comp.get("value"), 2),
@@ -118,12 +128,21 @@ def _pulse_facts(name: str, pulse: dict, attribution: list) -> dict:
                 "contribution_to_pulse": _round(comp.get("contribution")),
                 "inverted": comp.get("inverted", False),
                 "as_of": comp.get("as_of"),
-            })
+                "months_since_latest_data": comp.get("stale_months"),
+            }
+            if comp.get("series") in blocked:
+                entry["source_status"] = (
+                    "BLOCKED - publisher refuses automated access; this is the last "
+                    "value retrieved and it will drop out of the score once older "
+                    f"than the staleness cap ({blocked[comp['series']]})")
+            inputs.append(entry)
     return {
         "pulse": spec.get("title", name),
         "scale": "-100 (far below 5yr norm) .. +100 (far above 5yr norm)",
         "latest_value": pulse.get("latest_value"),
         "latest_month": pulse.get("latest_month"),
+        "share_of_input_weight_available": pulse.get("weight_available"),
+        "last_scored_month": pulse.get("last_scored_month"),
         "trend": _trend(pulse.get("history", [])),
         "inputs": inputs,
     }
@@ -159,12 +178,6 @@ def generate() -> dict:
     data = json.loads(pulses_path.read_text())
     existing = json.loads(OUT_PATH.read_text()) if OUT_PATH.exists() else {}
 
-    if not llm_client.have_key():
-        log.warning("commentary: OPENAI_API_KEY not set - keeping existing "
-                    "commentary untouched")
-        return existing
-
-    out, generated = dict(existing), 0
     targets = []
     for name, pulse in data.get("pulses", {}).items():
         facts = _pulse_facts(name, pulse, data.get("attribution", {}).get(name, []))
@@ -173,15 +186,32 @@ def generate() -> dict:
     if tech.get("available"):
         targets.append(("technology", TECH_PROMPT, _tech_facts(tech)))
 
+    have_key = llm_client.have_key()
+    if not have_key:
+        log.warning("commentary: OPENAI_API_KEY not set - no regeneration")
+
+    # Only text written from the CURRENT figures (matching facts hash) may be
+    # shown. If it cannot be regenerated (no key, API failure, empty reply)
+    # the outdated text is dropped rather than left beside new numbers.
+    out, generated, dropped = {}, 0, 0
     for key, prompt, facts in targets:
         digest = _facts_hash(facts)
         if existing.get(key, {}).get("facts_hash") == digest:
+            out[key] = existing[key]
             continue
-        try:
-            text = llm_client.complete(
-                prompt.format(facts=json.dumps(facts, indent=1, default=str)))
-        except Exception as exc:  # noqa: BLE001 - stale commentary beats a dead build
-            log.warning("commentary: %s generation failed: %s", key, exc)
+        text = ""
+        if have_key:
+            try:
+                text = (llm_client.complete(
+                    prompt.format(facts=json.dumps(facts, indent=1, default=str)))
+                    or "").strip()
+            except Exception as exc:  # noqa: BLE001 - no commentary beats a dead build
+                log.warning("commentary: %s generation failed: %s", key, exc)
+        if not text:
+            if key in existing:
+                dropped += 1
+                log.warning("commentary: %s figures changed and could not be "
+                            "regenerated - outdated text removed", key)
             continue
         out[key] = {
             "text": text,
@@ -193,5 +223,6 @@ def generate() -> dict:
 
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUT_PATH.write_text(json.dumps(out, indent=1))
-    log.info("commentary: %d regenerated, %d total", generated, len(out))
+    log.info("commentary: %d regenerated, %d dropped as outdated, %d total",
+             generated, dropped, len(out))
     return out

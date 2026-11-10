@@ -163,6 +163,51 @@ def log_run(source: str, status: str, rows: int = 0, error: str = "") -> None:
         fh.write(json.dumps(entry) + "\n")
 
 
+def blocked_sources() -> dict[str, dict]:
+    """Sources whose most recent run failed with an infrastructure block
+    (error text starting "BLOCKED", see http.SourceBlockedError).
+
+    Returns {source: {"since": ts of the first failed run after the last
+    success, "last_ok": ts of the last successful run or None, "detail":
+    first line of the error, "series": [series_id, ...] stored for it}}.
+    Derived from data/logs/runs.jsonl, so it clears itself on the first
+    successful run - nothing to maintain by hand."""
+    path = logs_dir() / "runs.jsonl"
+    if not path.exists():
+        return {}
+    runs: dict[str, list[dict]] = {}
+    with open(path) as fh:
+        for line in fh:
+            try:
+                entry = json.loads(line)
+            except ValueError:
+                continue
+            runs.setdefault(entry.get("source", ""), []).append(entry)
+    out = {}
+    for source, entries in runs.items():
+        entries.sort(key=lambda e: e.get("ts", ""))
+        latest = entries[-1]
+        if latest.get("status") != "error" or \
+                not str(latest.get("error", "")).startswith("BLOCKED"):
+            continue
+        # "since" = first failure after the last successful run (earlier
+        # failures may predate the BLOCKED label but share the cause).
+        since, last_ok = latest["ts"], None
+        for entry in reversed(entries):
+            if entry.get("status") == "ok":
+                last_ok = entry["ts"]
+                break
+            since = entry["ts"]
+        obs = read_observations([source])
+        out[source] = {
+            "since": since,
+            "last_ok": last_ok,
+            "detail": str(latest["error"]).split("\n", 1)[0],
+            "series": sorted(obs["series_id"].unique()) if len(obs) else [],
+        }
+    return out
+
+
 def build_duckdb() -> Path:
     """(Re)build the DuckDB database as views over the parquet store."""
     db_path = REPO_ROOT / cfg("store", "duckdb_path", default="data/lbl.duckdb")

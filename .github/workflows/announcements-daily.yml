@@ -31,7 +31,10 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
         run: |
-          python -m lbl_tracker.cli ingest asx_announcements tungsten_news --strict \
+          # No --strict here: under `bash -e` without pipefail, tee swallowed
+          # its exit code anyway. The gate below runs after the commit so
+          # successful sources' data is never lost to a failing one.
+          python -m lbl_tracker.cli ingest asx_announcements tungsten_news \
             | tee poll-result.json
 
       - name: Refresh pulses + dashboard
@@ -55,3 +58,6 @@ jobs:
             git pull --rebase origin "${GITHUB_REF_NAME}"
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
+
+      - name: Fail loudly if any source errored
+        run: python -m lbl_tracker.cli check-results poll-result.json

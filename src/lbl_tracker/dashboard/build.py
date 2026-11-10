@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 import pandas as pd
 
 from ..config import REPO_ROOT
-from ..store import read_events, read_observations
+from ..store import blocked_sources, read_events, read_observations
 
 log = logging.getLogger("lbl_tracker.dashboard")
 
@@ -106,7 +106,21 @@ def _series_payload(obs: pd.DataFrame) -> list[dict]:
     return payload
 
 
-def _freshness(obs: pd.DataFrame, now: pd.Timestamp) -> list[dict]:
+def blocked_series_notes(blocked: dict | None = None) -> dict[str, str]:
+    """{series_id: note} for every series of a currently BLOCKED source."""
+    blocked = blocked_sources() if blocked is None else blocked
+    notes = {}
+    for source, info in blocked.items():
+        note = (f"{info['detail']} (failing since {info['since'][:10]}; last "
+                f"successful pull {(info['last_ok'] or 'never')[:10]})")
+        for sid in info["series"]:
+            notes[sid] = note
+    return notes
+
+
+def _freshness(obs: pd.DataFrame, now: pd.Timestamp,
+               blocked: dict[str, str] | None = None) -> list[dict]:
+    blocked = blocked or {}
     rows = []
     present = obs.groupby("series_id") if len(obs) else []
     by_series = {sid: g for sid, g in present}
@@ -125,12 +139,14 @@ def _freshness(obs: pd.DataFrame, now: pd.Timestamp) -> list[dict]:
         max_age = MAX_AGE_OVERRIDES.get(sid, max(2.5 * gap_days, 45))
         if sid in DISCONTINUED:
             status = "DISCONTINUED"
+        elif sid in blocked:
+            status = "BLOCKED"
         else:
             status = "OK" if age <= max_age else "STALE"
         rows.append({"series": sid, "label": SERIES_META.get(sid, (sid,))[0],
                      "last_date": pd.Timestamp(last["date"]).date().isoformat(),
                      "last_value": float(last["value"]), "rows": int(len(g)),
-                     "status": status, "note": DISCONTINUED.get(sid),
+                     "status": status, "note": DISCONTINUED.get(sid) or blocked.get(sid),
                      "source_url": str(last["source_url"])})
     return rows
 
@@ -164,10 +180,12 @@ def build() -> str:
                        "headline": r["headline"], "url": r["url"]}
                       for _, r in announcements.iterrows()]
 
+    blocked = blocked_series_notes()
     payload = {
         "built_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
         "series": _series_payload(obs),
-        "freshness": _freshness(obs, now),
+        "freshness": _freshness(obs, now, blocked),
+        "blocked": blocked,
         "pulses": pulses,
         "commentary": commentary,
         "backtest": backtest,
@@ -178,8 +196,10 @@ def build() -> str:
     docs = REPO_ROOT / "docs"
     (docs / "data").mkdir(parents=True, exist_ok=True)
     (docs / "data" / "dashboard.json").write_text(json.dumps(payload, default=str))
+    # Escape "<" so feed text (RSS/announcement headlines, LLM output) can
+    # never close the inline <script> element.
     html = TEMPLATE.replace("/*__PAYLOAD__*/null",
-                            json.dumps(payload, default=str))
+                            json.dumps(payload, default=str).replace("<", "\\u003c"))
     (docs / "index.html").write_text(html)
     (docs / ".nojekyll").write_text("")
     log.info("dashboard built: %d series, %d freshness rows",
@@ -252,6 +272,7 @@ td.num,th.num{text-align:right}
   border-radius:9px;border:1px solid var(--ring)}
 .badge.ok{color:var(--good-text)} .badge.ok::before{content:"✓ "}
 .badge.stale{color:var(--serious)} .badge.stale::before{content:"⚠ "}
+.badge.blocked{color:var(--serious)} .badge.blocked::before{content:"⛔ "}
 .badge.nodata{color:var(--muted)} .badge.nodata::before{content:"∅ "}
 .chartgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(430px,1fr));gap:14px}
 .chart-card svg{display:block;width:100%;height:auto}
@@ -336,8 +357,10 @@ const aiNote=k=>{
     const attr=(DATA.pulses.attribution||{})[name]||[];
     const card=document.createElement("div");card.className="card";
     let body;
+    const avail=(typeof p.weight_available==="number")?Math.round(p.weight_available*100):null;
     if(p.latest_value===null||p.latest_value===undefined){
-      body='<div class="nodata">NO DATA</div>';
+      body='<div class="nodata">NO DATA</div>'+(p.latest_month?
+        `<div class="sub">${esc(p.latest_month)}: ${avail===null?"too little":avail+"%"} of input weight available (needs 50%)${p.last_scored_month?` &middot; last scored ${esc(p.last_scored_month)}`:""}</div>`:"");
     }else{
       const v=p.latest_value, pct=Math.min(Math.abs(v),100)/2;
       const side=v>=0?'left:50%':'right:50%';
@@ -345,14 +368,15 @@ const aiNote=k=>{
       body=`<div class="hero">${v>0?"+":""}${v.toFixed(1)}</div>
         <div class="meter"><div class="fill" style="${side};width:${pct}%;background:${col}"></div><div class="mid"></div></div>
         <div class="axislbl"><span>&minus;100</span><span>0</span><span>+100</span></div>
-        <div class="sub">as of ${esc(p.latest_month)}</div>`;
+        <div class="sub">as of ${esc(p.latest_month)}${avail===null?"":` &middot; ${avail}% of input weight available`}</div>`;
     }
     const rows=attr.map(a=>{
       if(a.status==="NO DATA")
         return `<li><span>${esc(a.label)}</span><span class="badge nodata">NO DATA</span></li>`;
       const c=a.contribution===null?"—":(a.contribution>0?"+":"")+a.contribution.toFixed(1);
-      return `<li title="z=${a.z?.toFixed(2)} as of ${esc(a.as_of)}${a.inverted?" (inverted)":""}">
-        <span>${esc(a.label)}${a.inverted?" ↓":""}</span><span>${c}</span></li>`;
+      const blk=(DATA.blocked||{})[a.series];
+      return `<li title="z=${a.z?.toFixed(2)} as of ${esc(a.as_of)}${a.inverted?" (inverted)":""}${blk?" | "+esc(blk):""}">
+        <span>${esc(a.label)}${a.inverted?" ↓":""}${blk?' <span class="badge blocked">BLOCKED</span>':""}</span><span>${c}</span></li>`;
     }).join("");
     card.innerHTML=`<h3>${esc(p.title)}</h3>${body}${aiNote(name)}
       <ul class="attr">${rows}</ul>`;
@@ -398,7 +422,7 @@ const aiNote=k=>{
 /* ---- freshness ---- */
 (function(){
   const rows=DATA.freshness.map(f=>{
-    const cls=f.status==="OK"?"ok":(f.status==="STALE"?"stale":"nodata");
+    const cls=f.status==="OK"?"ok":(f.status==="STALE"?"stale":(f.status==="BLOCKED"?"blocked":"nodata"));
     const src=f.source_url?`<a href="${esc(f.source_url)}" rel="noopener">source</a>`:"—";
     return `<tr><td>${esc(f.label)}<div class="pill">${esc(f.series)}</div></td>
       <td>${esc(f.last_date||"—")}</td><td class="num">${fmt(f.last_value)}</td>

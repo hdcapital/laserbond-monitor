@@ -68,24 +68,20 @@ jobs:
           fi
 
       - name: Fail loudly if any source errored
-        run: |
-          python - <<'EOF'
-          import json, sys
-          results = json.load(open("ingest-result.json"))
-          # SEC serves "Undeclared Automated Tool" to GitHub-hosted runner
-          # IP ranges regardless of User-Agent (verified live); that known
-          # infrastructure block is reported in SOURCES.md, not as a red run.
-          failed = [r["source"] for r in results if r.get("status") == "error"
-                    and "Undeclared" not in str(r.get("error", ""))]
-          if failed:
-              print(f"::error::sources failed this run: {failed}")
-              sys.exit(1)
-          print("all sources ok")
-          EOF
+        # Runs after the commit so good data is kept even on a red run.
+        # Known infrastructure blocks (BLOCKED / SEC "Undeclared") become
+        # warning annotations; everything else fails - see
+        # lbl_tracker.ingest.classify_results.
+        run: python -m lbl_tracker.cli check-results ingest-result.json
 
   smoke:
     needs: ingest
+    # Run the drift gate even when ingest went red: one failing source must
+    # not hide drift in all the others (it went dark for 5 weeks that way).
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

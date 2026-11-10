@@ -18,6 +18,18 @@ DEFAULT_TIMEOUT = 60
 class SourceFetchError(RuntimeError):
     """A source endpoint failed or returned something unusable."""
 
+    def __init__(self, message: str, status: int | None = None):
+        super().__init__(message)
+        self.status = status
+
+
+class SourceBlockedError(SourceFetchError):
+    """The publisher's edge refuses our requests outright (e.g. every page
+    answers HTTP 403 "Access Denied" to GitHub-hosted runners). This is an
+    infrastructure block, not source drift: the message always starts with
+    "BLOCKED" so CI can report it without going red, and the source is
+    marked BLOCKED in SOURCES.md. We never try to evade such blocks."""
+
 
 def make_session(sec: bool = False, extra_headers: dict | None = None) -> requests.Session:
     session = requests.Session()
@@ -45,7 +57,8 @@ def get(url: str, *, session: requests.Session | None = None, sec: bool = False,
     log.info("GET %s -> %s (%.1fs, %d bytes)", url, resp.status_code,
              time.monotonic() - started, len(resp.content or b""))
     if resp.status_code != 200:
-        raise SourceFetchError(f"GET {url} -> HTTP {resp.status_code}: {resp.text[:300]}")
+        raise SourceFetchError(f"GET {url} -> HTTP {resp.status_code}: {resp.text[:300]}",
+                               status=resp.status_code)
     return resp
 
 
@@ -60,5 +73,5 @@ def get_impersonated(url: str, timeout: int = 90, **kwargs):
              time.monotonic() - started, len(resp.content or b""))
     if resp.status_code != 200:
         raise SourceFetchError(f"GET(impersonated) {url} -> HTTP {resp.status_code}: "
-                               f"{resp.text[:300]}")
+                               f"{resp.text[:300]}", status=resp.status_code)
     return resp

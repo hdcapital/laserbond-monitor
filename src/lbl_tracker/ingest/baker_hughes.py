@@ -19,7 +19,7 @@ from urllib.parse import urljoin
 import pandas as pd
 from bs4 import BeautifulSoup
 
-from ..http import get, make_session
+from ..http import SourceBlockedError, get, make_session
 from ..store import log_gap, now_utc, write_observations
 
 log = logging.getLogger("lbl_tracker.baker_hughes")
@@ -46,12 +46,15 @@ EXCLUDE = re.compile(r"pivot|by state|average|workover|through 2016|overview|"
 
 
 def discover_files(session) -> dict:
-    files = {"na": [], "intl": []}
+    """Return {"na": [...], "intl": [...], "page_errors": {page: (status, msg)}}."""
+    files = {"na": [], "intl": [], "page_errors": {}}
     for page in PAGES:
         try:
             soup = BeautifulSoup(get(page, session=session).text, "lxml")
         except Exception as exc:  # noqa: BLE001
             log.warning("bh: page %s failed: %s", page, exc)
+            files["page_errors"][page] = (getattr(exc, "status", None),
+                                          str(exc).split("\n", 1)[0][:160])
             continue
         for a in soup.find_all("a", href=True):
             href = a["href"]
@@ -66,7 +69,7 @@ def discover_files(session) -> dict:
                 files["na"].append(full)
             elif INTL_LINK.search(text) and full not in files["intl"]:
                 files["intl"].append(full)
-    log.info("bh files: %s", files)
+    log.info("bh files: na=%s intl=%s", files["na"], files["intl"])
     return files
 
 
@@ -255,6 +258,14 @@ def _parse_ww_matrix(raw: pd.DataFrame, url: str, retrieved) -> list[pd.DataFram
 def fetch() -> pd.DataFrame:
     session = make_session()
     files = discover_files(session)
+    page_errors = files["page_errors"]
+    if len(page_errors) == len(PAGES) and all(status == 403 for status, _ in
+                                               page_errors.values()):
+        # Every page refused (Akamai "Access Denied" to GitHub-runner IPs,
+        # first seen 2026-10-13). Report it as what it is; do not evade it.
+        detail = "BLOCKED: rigcount.bakerhughes.com answers HTTP 403 Access Denied on " \
+                 f"all {len(PAGES)} pages - publisher edge refuses this client/network"
+        raise SourceBlockedError(detail, status=403)
     retrieved = now_utc()
     frames, errors = [], []
     for url in files["na"]:
@@ -274,7 +285,8 @@ def fetch() -> pd.DataFrame:
     if errors:
         log.warning("baker_hughes parse errors: %s", errors)
     if not frames:
-        raise RuntimeError(f"baker_hughes: no workbook parsed; errors={errors}")
+        raise RuntimeError(f"baker_hughes: no workbook parsed; errors={errors}; "
+                           f"page_errors={page_errors}")
     return pd.concat(frames, ignore_index=True)
 
 

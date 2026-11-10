@@ -131,6 +131,7 @@ def render() -> tuple[str, str, str]:
     freshness = data.get("freshness", [])
     stale = [f for f in freshness if f["status"] == "STALE"]
     nodata = [f for f in freshness if f["status"] == "NO DATA"]
+    blocked = [f for f in freshness if f["status"] == "BLOCKED"]
     discontinued = [f for f in freshness if f["status"] == "DISCONTINUED"]
 
     # ---- text version -----------------------------------------------------
@@ -158,6 +159,11 @@ def render() -> tuple[str, str, str]:
         lines.append("Stale series (check source):")
         for f in stale:
             lines.append(f"  - {f['label']} (last: {f['last_date']})")
+    if blocked:
+        lines.append("")
+        lines.append("BLOCKED by publisher (no new data; stored history kept):")
+        for f in blocked:
+            lines.append(f"  - {f['label']} (last: {f['last_date']}): {f.get('note') or ''}")
     if nodata:
         lines.append("")
         lines.append("Awaiting first data: " + ", ".join(f["label"] for f in nodata))
@@ -238,6 +244,13 @@ def render() -> tuple[str, str, str]:
             f'{_esc(f["label"])} <span style="color:{MUTED};">(last '
             f'{_esc(f["last_date"])})</span></div>' for f in stale)
         health_bits.append(rows)
+    if blocked:
+        health_bits.append("".join(
+            f'<div style="font-size:12px;color:{INK2};padding:3px 0;">'
+            f'<span style="color:{SERIOUS};font-weight:700;">⛔ BLOCKED</span> '
+            f'{_esc(f["label"])} <span style="color:{MUTED};">(last '
+            f'{_esc(f["last_date"])} &middot; {_esc(f.get("note") or "")})</span></div>'
+            for f in blocked))
     if nodata:
         health_bits.append(
             f'<div style="font-size:12px;color:{MUTED};padding:3px 0;">∅ Awaiting '

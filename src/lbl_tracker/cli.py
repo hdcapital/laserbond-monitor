@@ -18,6 +18,12 @@ def main(argv: list[str] | None = None) -> int:
     p_ingest.add_argument("--strict", action="store_true",
                           help="exit non-zero if any source failed")
 
+    p_check = sub.add_parser(
+        "check-results",
+        help="CI gate over saved `ingest` output: exit 1 on any real failure; "
+             "known infrastructure blocks are GitHub warning annotations")
+    p_check.add_argument("path", help="JSON written by `lbl-tracker ingest`")
+
     p_probe = sub.add_parser("probe", help="live endpoint diagnostics (no writes)")
     p_probe.add_argument("sources", nargs="*")
 
@@ -44,6 +50,22 @@ def main(argv: list[str] | None = None) -> int:
         if failed:
             print(f"FAILED sources: {[r['source'] for r in failed]}", file=sys.stderr)
         return 1 if (failed and args.strict) else 0
+
+    if args.command == "check-results":
+        from .ingest import classify_results
+        with open(args.path) as fh:
+            results = json.load(fh)
+        split = classify_results(results)
+        for r in split["blocked"]:
+            first = str(r.get("error", "")).split("\n", 1)[0]
+            print(f"::warning::{r['source']} {first}")
+        if split["failed"]:
+            print(f"::error::sources failed this run: "
+                  f"{[r['source'] for r in split['failed']]}")
+            return 1
+        print("all sources ok" + (" (blocked sources reported as warnings)"
+                                  if split["blocked"] else ""))
+        return 0
 
     if args.command == "probe":
         from .probe import main as probe_main
