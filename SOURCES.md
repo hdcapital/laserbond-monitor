@@ -46,3 +46,12 @@ series is ever stubbed: anything unavailable is NULL/NO DATA and logged to
   empty upstream; jobsandskills.gov.au WAF read-timeouts plain clients;
   lmip.gov.au / labourmarketinsights.gov.au no longer resolve; ASX legacy
   JSON API removed (Markit research API replaces it).
+* 2026-11-10 — Baker Hughes (row h) found failing every weekly run since
+  2026-10-13: Akamai returns HTTP 403 "Access Denied" on all
+  rigcount.bakerhughes.com listing pages to GitHub-hosted runners
+  (confirmed by the verify probe). Marked BLOCKED. Browser-fingerprint
+  impersonation was ruled out as circumventing the publisher's access
+  control. Products Pulse impact: the last values stay within their
+  staleness caps through Dec 2026; from Jan 2027 both drop out and
+  Products shows NO DATA unless Weir's next quarter lands (with FRED and
+  AUD current, available weight would otherwise be 35% of the 50% needed).

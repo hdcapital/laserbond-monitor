@@ -49,3 +49,20 @@ def run(name: str) -> dict:
 
 def run_all(names: list[str] | None = None) -> list[dict]:
     return [run(name) for name in (names or INGESTERS)]
+
+
+def classify_results(results: list[dict]) -> dict[str, list[dict]]:
+    """Split ingest results into failures that must turn CI red and known
+    infrastructure blocks that are reported as warnings:
+
+    * "BLOCKED..." - http.SourceBlockedError: the publisher's edge refuses
+      every request (e.g. Baker Hughes 403s all pages to GitHub runners).
+      Marked BLOCKED in SOURCES.md and on the dashboard/email.
+    * "Undeclared" - SEC's automated-tool filter (cat_edgar).
+
+    Anything else - layout drift, parse errors, partial outages - fails."""
+    errors = [r for r in results if r.get("status") == "error"]
+    blocked = [r for r in errors if str(r.get("error", "")).startswith("BLOCKED")
+               or "Undeclared" in str(r.get("error", ""))]
+    failed = [r for r in errors if r not in blocked]
+    return {"failed": failed, "blocked": blocked}

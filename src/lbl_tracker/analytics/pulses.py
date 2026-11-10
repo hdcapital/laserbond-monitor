@@ -121,13 +121,17 @@ def compute_pulse(name: str, obs: pd.DataFrame) -> tuple[pd.DataFrame, list[dict
         rows.append({"month": month, "pulse": name, "value": value,
                      "weight_available": weight_avail / total_weight})
         if month == months[-1]:
+            scored_month = not np.isnan(value)
             for comp in components:
                 part = next((p for p in parts if p["series"] == comp["series"]), None)
                 if part:
                     part = dict(part)
-                    part["weight_used"] = part["weight"] / weight_avail if weight_avail else 0
+                    # Below the availability threshold the month has no pulse,
+                    # so no input "contributes" to it.
+                    part["weight_used"] = (part["weight"] / weight_avail
+                                           if scored_month else None)
                     part["contribution"] = (part["score"] * part["weight"] / weight_avail
-                                            if weight_avail else None)
+                                            if scored_month else None)
                     attribution.append(part)
                 else:
                     attribution.append({"series": comp["series"],
@@ -186,13 +190,19 @@ def compute_all(write: bool = True) -> dict:
         frames.append(frame)
         result["attribution"][name] = attribution
         if len(frame):
-            latest = frame.dropna(subset=["value"]).tail(1)
+            # The headline is the LATEST month, scored or not: if it fell below
+            # the availability threshold it is NO DATA - never the last scored
+            # value carried forward (that would be a silent forward-fill).
+            latest = frame.tail(1).iloc[0]
+            scored = frame.dropna(subset=["value"]).tail(1)
             result["pulses"][name] = {
                 "title": cfg("pulses", name, "title", default=name),
-                "latest_month": (latest["month"].iloc[0].date().isoformat()
-                                 if len(latest) else None),
-                "latest_value": (round(float(latest["value"].iloc[0]), 1)
-                                 if len(latest) else None),
+                "latest_month": latest["month"].date().isoformat(),
+                "latest_value": (None if pd.isna(latest["value"])
+                                 else round(float(latest["value"]), 1)),
+                "weight_available": round(float(latest["weight_available"]), 3),
+                "last_scored_month": (scored["month"].iloc[0].date().isoformat()
+                                      if len(scored) else None),
                 "history": [
                     {"month": r["month"].date().isoformat(),
                      "value": (None if pd.isna(r["value"]) else round(float(r["value"]), 2))}
@@ -201,7 +211,8 @@ def compute_all(write: bool = True) -> dict:
         else:
             result["pulses"][name] = {
                 "title": cfg("pulses", name, "title", default=name),
-                "latest_month": None, "latest_value": None, "history": [],
+                "latest_month": None, "latest_value": None,
+                "weight_available": 0.0, "last_scored_month": None, "history": [],
             }
     if write and frames:
         out = pd.concat(frames, ignore_index=True)

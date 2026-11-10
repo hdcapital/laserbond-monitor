@@ -18,10 +18,16 @@ Live source status, history depth and verified endpoints: **[SOURCES.md](SOURCES
    logged (`data/logs/gaps.jsonl`). Every row carries
    `series_id, date, value, source_url, retrieved_at`.
 2. Ingesters were written against live responses; a source that stops
-   matching reality turns the smoke-test job red (**CI fails loudly on
-   source drift**) and is marked BLOCKED in SOURCES.md rather than stubbed.
+   matching reality turns CI red (**CI fails loudly on source drift**).
+   A publisher that refuses automated access outright (every page 403s -
+   `SourceBlockedError`) is an infrastructure block, not drift: it is
+   marked BLOCKED in SOURCES.md and on the dashboard/email (derived from
+   `data/logs/runs.jsonl`, clears on the next good run), CI reports it as
+   a warning, and it is never evaded or stubbed.
 3. No demo/seed/example numeric data anywhere in the repo. Dashboards
-   render **NO DATA** for missing series. (Unit tests use obviously
+   render **NO DATA** for missing series, and a pulse whose latest month
+   has under 50% of its input weight shows NO DATA - never the last
+   scored value carried forward. (Unit tests use obviously
    synthetic in-memory fixtures that never touch the store.)
 
 ## Layout
@@ -80,8 +86,8 @@ pytest -m live tests/smoke # live source-drift gate
 | Workflow | Schedule | Does |
 |---|---|---|
 | `verify` | on push + manual | unit tests, live probes, live smoke tests |
-| `ingest-weekly` | Mon 20:30 UTC | full ingest → pulses → dashboard → commit; then smoke gate |
-| `announcements-daily` | every 6h | ASX announcements + tungsten flags → dashboard → commit |
+| `ingest-weekly` | Mon 20:30 UTC | full ingest → pulses → dashboard → commit → `check-results` gate; live smoke tests (run even if ingest failed) |
+| `announcements-daily` | every 6h | ASX announcements + tungsten flags → dashboard → commit → `check-results` gate |
 | `email-monthly` | 1st, 21:00 UTC | monthly SMTP brief |
 
 Cron triggers run on the **default branch**; enable GitHub Pages
