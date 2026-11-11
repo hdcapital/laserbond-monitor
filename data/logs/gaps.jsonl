@@ -242,3 +242,4 @@
 {"ts": "2026-11-10T02:53:39.929447+00:00", "source": "baker_hughes", "series_id": "bh.rigcount_na_total", "detail": "NA workbook links not found"}
 {"ts": "2026-11-10T02:53:39.929692+00:00", "source": "baker_hughes", "series_id": "bh.rigcount_intl_total", "detail": "international workbook links not found"}
 {"ts": "2026-11-10T02:53:39.930332+00:00", "source": "baker_hughes", "series_id": "*", "detail": "ingest failed: baker_hughes: no workbook parsed; errors=[]"}
+{"ts": "2026-11-11T06:58:39.027593+00:00", "source": "tungsten_news", "series_id": "tungsten.flag_count", "detail": "PURGED 1 row(s): count for a month still in progress (only completed months are emitted) [2026-11-30=16.0]"}
