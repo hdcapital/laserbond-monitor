@@ -28,6 +28,7 @@ SERIES_META = {
     "pilbara.iron_ore_throughput_mt": ("Pilbara Ports iron ore (Port Hedland exports)", "Mt/month"),
     "abs.capex.mining_actual": ("ABS private new capex - mining, actual", "A$m/quarter"),
     "abs.capex.mining_expected": ("ABS private new capex - mining, expectations", "A$m/quarter"),
+    "abs.capex.mining_expected_yoy_pct": ("ABS mining capex expectations, YoY vs same survey quarter", "%"),
     "abs.exploration.metres_drilled_total": ("ABS mineral exploration metres drilled, Australia", "'000 m/quarter"),
     "abs.exploration.expenditure_wa": ("ABS mineral exploration expenditure, WA", "A$m/quarter"),
     "abs.merch_exp.nsw_coal_value": ("NSW coal export value (ABS merchandise exports, SITC 32)", "A$'000/month"),

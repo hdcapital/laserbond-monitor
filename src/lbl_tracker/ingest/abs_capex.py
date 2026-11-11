@@ -1,5 +1,21 @@
 """ABS 5625.0 Private New Capital Expenditure - mining, actual + expected.
 
+Series:
+  abs.capex.mining_actual             actual expenditure, A$m/quarter
+  abs.capex.mining_expected           ABS "Short Term Expected Expenditure"
+                                      as published
+  abs.capex.mining_expected_yoy_pct   same-survey-quarter YoY change of the
+                                      above, %
+
+Why the YoY series: the short-term expectation covers a different horizon
+depending on the survey quarter (verified on the stored 1987-2026 history:
+Jun/Dec-quarter readings are ~1.47x actual quarterly capex, Mar/Sep ~0.79x,
+and Jun > Mar / Dec > Sep in every one of 39 years). A z-score of the raw
+level therefore flips with the survey calendar. Comparing each reading with
+the same quarter a year earlier removes the horizon effect using published
+values only (no interpolation, no seasonal model); a point is emitted only
+when both quarters were published.
+
 Uses the ABS Data API (SDMX-JSON). The dataflow id is discovered from the
 /dataflow endpoint rather than hardcoded blind; the resolved id is cached
 here once verified (see SOURCES.md) but a rename falls back to discovery.
@@ -112,7 +128,32 @@ def fetch() -> pd.DataFrame:
 
     if not out_frames:
         raise RuntimeError(f"ABS CAPEX: nothing matched in flow {flow}")
-    return pd.concat(out_frames, ignore_index=True)
+    out = pd.concat(out_frames, ignore_index=True)
+    yoy = same_quarter_yoy(out[out["series_id"] == "abs.capex.mining_expected"])
+    if len(yoy):
+        out = pd.concat([out, yoy], ignore_index=True)
+    return out
+
+
+def same_quarter_yoy(expected: pd.DataFrame) -> pd.DataFrame:
+    """100 * (E_t / E_{t-4 quarters} - 1) for each quarter where both the
+    reading and the same quarter a year earlier were published."""
+    if expected.empty:
+        return expected.iloc[0:0]
+    ser = (expected.assign(q=pd.to_datetime(expected["date"]).dt.to_period("Q"))
+           .dropna(subset=["value"]).set_index("q").sort_index())
+    ser = ser[~ser.index.duplicated(keep="last")]
+    prior = ser["value"].reindex(ser.index - 4)
+    prior.index = ser.index
+    valid = prior.notna() & (prior != 0)
+    rows = ser[valid]
+    return pd.DataFrame({
+        "series_id": "abs.capex.mining_expected_yoy_pct",
+        "date": rows["date"].values,
+        "value": (100.0 * (rows["value"] / prior[valid] - 1.0)).values,
+        "source_url": rows["source_url"].values,
+        "retrieved_at": rows["retrieved_at"].values,
+    })
 
 
 def ingest() -> dict:

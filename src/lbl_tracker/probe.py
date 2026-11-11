@@ -245,6 +245,30 @@ def probe_cat_edgar():
         except Exception as exc:  # noqa: BLE001
             _p(f"== {hit.get('file_date')}: FAILED {exc}")
         _time.sleep(0.2)
+    # the stored history has a hole Jul 2019 - Jun 2020: parse the filings
+    # that would cover it and say exactly what happens to each
+    gap_era = [h for h in hits if "2019-08-01" <= str(h["file_date"]) <= "2020-08-31"]
+    _p(f"gap-era (2019-08..2020-08) filings: {[h['file_date'] for h in gap_era]}")
+    for hit in sorted(gap_era, key=lambda h: h["file_date"]):
+        try:
+            url = cat_edgar.exhibit_url(hit, session)
+            if not url:
+                _p(f"  {hit['file_date']}: no exhibit")
+                continue
+            html = get(url, session=session, sec=True).text
+            ri = "resource industries" in html.lower()
+            parsed = cat_edgar.parse_exhibit(html, url)
+            world = sorted(str(r["date"])[:7] + f"={r['value']}" for r in parsed
+                           if r["series_id"] == "cat.resource_industries_yoy_pct")
+            _p(f"  {hit['file_date']} {url.rsplit('/', 1)[-1]}: RI-text={ri} "
+               f"parsed={len(parsed)} world={world}")
+            if ri and not parsed:
+                text = " ".join(BeautifulSoup(html, "lxml").get_text(" ", strip=True).split())
+                i = text.lower().find("resource industries")
+                _p(f"    unparsed RI context: {text[max(0, i - 300):i + 900]}")
+        except Exception as exc:  # noqa: BLE001
+            _p(f"  {hit.get('file_date')}: FAILED {type(exc).__name__}: {exc}")
+        _time.sleep(0.15)
     # walk newest -> older until an exhibit mentions Resource Industries
     shown = 0
     for hit in hits[:40]:
@@ -404,6 +428,24 @@ def probe_oem_orders():
     weir = oem_orders.weir_documents()
     _p(f"Weir: {len(weir)} results articles; sample: "
        + "; ".join(d["url"].rsplit("/", 1)[-1][:40] for d in weir[:6]))
+    # Stored-figure revalidation uses the PLAIN client: report whether it
+    # gets article text, and what the strict check says for stored figures.
+    from .store import read_series
+    stored = pd.concat([read_series(s) for s in oem_orders.WEIR_SERIES]).dropna(subset=["value"])
+    session = make_session()
+    for url in list(dict.fromkeys(stored["source_url"]))[:4]:
+        try:
+            text = oem_orders._weir_text(get(url, session=session).text)
+        except Exception as exc:  # noqa: BLE001
+            _p(f"  plain fetch {url.rsplit('/', 2)[-2][:50]}: FAILED {exc}"[:300])
+            continue
+        verdicts = []
+        for _, row in stored[stored["source_url"] == url].iterrows():
+            near = ((r"\bminerals\b", r"\border") if "minerals" in row["series_id"]
+                    else (r"\border",))
+            verdicts.append(f"{row['series_id'].split('.')[1]}={row['value']:g}:"
+                            f"{'ok' if oem_orders._grounded(row['value'], text, True, near) else 'FAIL'}")
+        _p(f"  plain fetch {url.rsplit('/', 2)[-2][:50]}: {len(text)} chars; {verdicts}")
 
 
 PROBES = {

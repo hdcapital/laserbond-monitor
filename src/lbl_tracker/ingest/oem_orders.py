@@ -36,9 +36,9 @@ from io import BytesIO
 import pandas as pd
 
 from .. import llm_client
-from ..http import get_impersonated
-from ..store import (log_gap, now_utc, read_events, stable_id, write_events,
-                     write_observations)
+from ..http import get, get_impersonated, make_session
+from ..store import (log_gap, now_utc, purge_observations, read_events, read_series,
+                     run_once, stable_id, write_events, write_observations)
 
 log = logging.getLogger("lbl_tracker.oem_orders")
 
@@ -47,7 +47,9 @@ FLS_DOWNLOADS = "https://www.flsmidth.com/en/investors/financial-downloads"
 WEIR_SITEMAP = "https://www.global.weir/sitemap.xml"
 
 FLS_PROMPT = """From this excerpt of an FLSmidth quarterly/annual report, extract the
-order intake for the most recent reporting quarter it covers.
+order intake for the most recent reporting QUARTER it covers (three months -
+never a full-year, half-year or year-to-date total, and never a single
+product line or sub-segment).
 FLSmidth reported a Mining and a Cement business until the cement demerger
 (2024); afterwards the whole group is the mining business. Prefer the
 Mining figure where segments exist, else the group figure.
@@ -100,13 +102,23 @@ def fls_documents() -> list[dict]:
     return out
 
 
+# Results / IMS / trading-update articles only. The old filter's bare
+# "result" and "half-year" also caught a product release ("...half-year
+# release improves...") and a customer case study ("...results in
+# significant savings..."), which were then sent to the model.
+WEIR_RESULTS_URL = re.compile(
+    r"/newsroom/.*("
+    r"(full|half)[- ]year[- ]results|interim[- ]results|financial[- ]results|"
+    r"results[- ](for|\d{4})|\d{4}[- ]results|"
+    r"interim[- ]management[- ]statement|(^|[-/])ims([-/]|$)|"
+    r"trading[- ](update|statement))", re.I)
+
+
 def weir_documents() -> list[dict]:
     """Results/IMS articles from the Weir sitemap."""
     resp = get_impersonated(WEIR_SITEMAP)
     locs = re.findall(r"<loc>([^<]+)</loc>", resp.text)
-    pat = re.compile(r"/newsroom/[^<]*(result|ims|interim|trading[- ]statement|"
-                     r"trading[- ]update|half[- ]year)", re.I)
-    urls = [u for u in locs if pat.search(u)]
+    urls = [u for u in locs if WEIR_RESULTS_URL.search(u)]
     docs = [{"id": stable_id("weir", u), "url": u} for u in sorted(set(urls))]
     log.info("Weir: %d candidate results articles", len(docs))
     return docs
@@ -169,37 +181,138 @@ def _num(v):
 MIN_TEXT_CHARS = 800  # a real report/article; JS-rendered stubs are ~50 chars
 
 
-def _grounded(value, text: str, pct: bool = False) -> bool:
-    """A number the model 'extracted' must literally appear in the source
-    text - otherwise it came from model memory, which is fabrication.
-    For percentages, require the % (or 'per cent') form so a stray digit
-    elsewhere in the page cannot vouch for a made-up growth rate."""
+class ExtractionRejected(ValueError):
+    """The model's answer failed validation against the source document.
+    Permanent for that document: it is recorded and never re-sent (re-asking
+    until some number happens to pass would defeat the check)."""
+
+
+_NEG_CUES = re.compile(r"\b(down|decreas\w*|declin\w*|lower|fell|fall(?:en|ing)?|"
+                       r"drop(?:ped)?|reduc\w*|contract\w*|minus|negative)\b", re.I)
+_POS_CUES = re.compile(r"\b(up|increas\w*|grew|grow(?:th|n|ing)?|ris(?:e|en|ing)|rose|"
+                       r"higher|gain\w*|plus)\b", re.I)
+
+
+def _number_forms(v: float, pct: bool) -> set[str]:
+    forms = {f"{v:g}", f"{v:.1f}"}
+    if v == int(v):
+        forms |= {str(int(v)), f"{int(v):,}"}
+    return {re.escape(f) for f in forms}
+
+
+_NEG_AFTER = re.compile(r"\s*(lower|down|decrease\w*|declin\w*|less|below|reduction|"
+                        r"drop|fall)\b", re.I)
+_POS_AFTER = re.compile(r"\s*(higher|up|increase\w*|growth|rise|above|more)\b", re.I)
+
+
+def _sign_at(text: str, start: int, end: int | None = None) -> int:
+    """Sign implied by the words around a figure: an explicit minus; else
+    the word right after it ("2.5% lower"); else the NEAREST up/down cue in
+    the preceding 60 chars ("down 3%"); else +."""
+    if start > 0 and text[start - 1] in "-\u2212":
+        return -1
+    if end is not None:
+        if _NEG_AFTER.match(text, end):
+            return -1
+        if _POS_AFTER.match(text, end):
+            return 1
+    before = text[max(0, start - 60):start]
+    neg = [m.end() for m in _NEG_CUES.finditer(before)]
+    posi = [m.end() for m in _POS_CUES.finditer(before)]
+    if neg and (not posi or max(neg) > max(posi)):
+        return -1
+    return 1
+
+
+def _grounded(value, text: str, pct: bool = False, near: tuple[str, ...] = (),
+              window: int = 200) -> bool:
+    """A number the model 'extracted' must appear in the source text as a
+    whole number (not inside a bigger one: "5%" never matches "15%" or
+    "2.5%"), within `window` chars of every `near` keyword (e.g. "order"),
+    and - for percentages - with the stated sign ("down 3%" is -3, never
+    +3). Anything else came from model memory or the wrong line, which is
+    fabrication. None (not stated) is always fine."""
     if value is None:
         return True
-    v = abs(float(value))
-    if pct:
-        nums = {f"{v:g}", f"{v:.1f}"}
-        if v == int(v):
-            nums.add(str(int(v)))
-        forms = {n + s for n in nums for s in ("%", " %", " per cent", " percent")}
-    else:
-        forms = {f"{v:g}", f"{v:.1f}", f"{v:.0f}", f"{int(v):,}"}
-        if v == int(v):
-            forms.add(str(int(v)))
-    return any(f in text for f in forms)
+    v = float(value)
+    mag = abs(v)
+    unit = r"\s?(?:%|per\s?cent|percent)" if pct else r"(?![\d]|[.,]\d)"
+    pattern = re.compile(r"(?<![\d.,])(?:" + "|".join(sorted(_number_forms(mag, pct)))
+                         + r")" + unit, re.I)
+    near_res = [re.compile(k, re.I) for k in near]
+    for m in pattern.finditer(text):
+        ctx = text[max(0, m.start() - window):m.end() + window]
+        if not all(r.search(ctx) for r in near_res):
+            continue
+        if pct and v != 0 and _sign_at(text, m.start(), m.end()) != (1 if v > 0 else -1):
+            continue
+        return True
+    return False
+
+
+def _validate_fls(fact: dict, text: str, doc: dict) -> tuple[pd.Timestamp, float | None,
+                                                               float | None]:
+    period = pd.Timestamp(fact.get("period_end"))
+    if pd.isna(period):
+        raise ExtractionRejected(f"bad period_end {fact.get('period_end')!r}")
+    expected = doc.get("period_end")
+    if expected is not None and pd.Timestamp(expected).to_period("Q") != period.to_period("Q"):
+        raise ExtractionRejected(
+            f"period_end {period.date()} is not the quarter this report was "
+            f"published for ({pd.Timestamp(expected).date()})")
+    basis = fact.get("basis")
+    level = _num(fact.get("order_intake_dkkm"))
+    growth = _num(fact.get("organic_growth_pct"))
+    if (level is not None or growth is not None) and period < pd.Timestamp("2024-01-01") \
+            and basis != "mining":
+        raise ExtractionRejected(f"pre-demerger figure on basis {basis!r}; the series "
+                                 f"is the Mining business only")
+    if level is not None and not (800 <= level <= 15000):
+        raise ExtractionRejected(f"quarterly order intake implausible: {level}")
+    if not _grounded(level, text, near=(r"order intake",)):
+        raise ExtractionRejected(f"order intake {level} not stated near 'order intake'")
+    if not _grounded(growth, text, pct=True, near=(r"order",)):
+        raise ExtractionRejected(f"growth {growth} not stated (with that sign) near 'order'")
+    return period.normalize(), level, growth
+
+
+def _validate_weir(fact: dict, text: str) -> tuple[pd.Timestamp, dict]:
+    period = pd.Timestamp(fact.get("period_end"))
+    if pd.isna(period):
+        raise ExtractionRejected(f"bad period_end {fact.get('period_end')!r}")
+    values = {}
+    for field, sid, near in [
+        ("minerals_orders_yoy_pct", "weir.minerals_orders_growth_pct",
+         (r"\bminerals\b", r"\border")),
+        ("group_orders_yoy_pct", "weir.group_orders_growth_pct", (r"\border",)),
+    ]:
+        growth = _num(fact.get(field))
+        if growth is not None and abs(growth) > 80:
+            raise ExtractionRejected(f"{field} implausible: {growth}")
+        if not _grounded(growth, text, pct=True, near=near):
+            raise ExtractionRejected(f"{field} {growth} not stated (with that sign) "
+                                     f"near {near}")
+        values[sid] = growth
+    return period.normalize(), values
 
 
 def _rebuild_combined_weir() -> None:
     """weir.orders_growth_pct = Minerals-division growth where stated,
     else the group figure. Pure recombination of grounded observations -
     each point keeps the source URL of the figure it came from."""
-    from ..store import read_series
     m = read_series("weir.minerals_orders_growth_pct").dropna(subset=["value"])
     g = read_series("weir.group_orders_growth_pct").dropna(subset=["value"])
-    if m.empty and g.empty:
+    dates = sorted(set(pd.to_datetime(m["date"])) | set(pd.to_datetime(g["date"])))
+    # a combined point whose underlying figure was purged must go too
+    stale = [d for d in pd.to_datetime(read_series("weir.orders_growth_pct")["date"])
+             if d not in set(dates)]
+    if stale:
+        purge_observations("oem_orders_combined", "weir.orders_growth_pct",
+                           "underlying Minerals/group figure was purged", dates=stale)
+    if not dates:
         return
-    m, g = m.set_index("date"), g.set_index("date")
-    dates = sorted(set(m.index) | set(g.index))
+    m = m.assign(date=pd.to_datetime(m["date"])).set_index("date")
+    g = g.assign(date=pd.to_datetime(g["date"])).set_index("date")
     rows = []
     for dt in dates:
         src = m if dt in m.index else g
@@ -210,7 +323,106 @@ def _rebuild_combined_weir() -> None:
     write_observations("oem_orders_combined", pd.DataFrame(rows))
 
 
+FLS_SERIES = ("fls.order_intake_dkkm", "fls.order_intake_growth_pct")
+WEIR_SERIES = ("weir.minerals_orders_growth_pct", "weir.group_orders_growth_pct")
+
+
+def _purge_fls_v1() -> dict:
+    """The 2008-2019 FLS history extracted under the old checks mixed bases
+    (mining vs group), a full-year figure (2015: 18,490), sub-segment
+    fragments (443, 525, ...) and conflicting values for the same quarter
+    from different documents. It is unweighted, but it is not data."""
+    reason = ("extracted under pre-2026-11 checks: mixed mining/group basis, "
+              "full-year and fragment figures, conflicting same-quarter values")
+    return {sid: purge_observations(SOURCE, sid, reason) for sid in FLS_SERIES}
+
+
+def _purge_weir_nonresults_v1() -> dict:
+    """Rows extracted from pages that are not results/IMS articles (a
+    product release and a customer case study matched the old URL filter)."""
+    out = {}
+    obs = read_series(WEIR_SERIES[0])
+    obs = pd.concat([obs, read_series(WEIR_SERIES[1])])
+    bad = obs[~obs["source_url"].astype(str).str.contains(WEIR_RESULTS_URL)]
+    for sid, grp in bad.groupby("series_id"):
+        out[sid] = purge_observations(SOURCE, sid, "source page is not a Weir "
+                                      "results/IMS article", dates=list(grp["date"]))
+    return out
+
+
+def revalidate_weir(limit: int = 60) -> dict:
+    """Re-check every STORED Weir figure against its source article with the
+    strict grounding rule (whole number, near 'order' [+ 'Minerals'], right
+    sign). Uses the plain HTTP client. A figure that fails is purged with an
+    audit entry; an article that cannot be fetched is left for the next run.
+    No model call is made - this only verifies numbers already stored."""
+    docs = read_events("oem_orders_docs")
+    if docs.empty:
+        return {"checked": 0}
+    if "validated" not in docs.columns:
+        docs["validated"] = None
+    todo = docs[(docs["company"] == "weir") & (docs["status"] == "ok")
+                & ~docs["validated"].isin(["v2-ok", "v2-purged"])].head(limit)
+    stored = pd.concat([read_series(sid) for sid in WEIR_SERIES])
+    stored = stored.dropna(subset=["value"])
+    session = make_session()
+    updates, checked, purged, unreachable = [], 0, 0, 0
+    for _, doc in todo.iterrows():
+        rows = stored[stored["source_url"] == doc["url"]]
+        if rows.empty:
+            updates.append({**doc.to_dict(), "validated": "v2-ok"})
+            continue
+        try:
+            text = _weir_text(get(doc["url"], session=session).text)
+        except Exception as exc:  # noqa: BLE001 - retry next run
+            unreachable += 1
+            log.warning("weir revalidation: %s unreachable: %s", doc["url"], exc)
+            continue
+        if len(text) < MIN_TEXT_CHARS:
+            unreachable += 1
+            log.warning("weir revalidation: %s returned no article text", doc["url"])
+            continue
+        outcome = "v2-ok"
+        for _, row in rows.iterrows():
+            checked += 1
+            near = ((r"\bminerals\b", r"\border") if "minerals" in row["series_id"]
+                    else (r"\border",))
+            if not _grounded(row["value"], text, pct=True, near=near):
+                purge_observations(SOURCE, row["series_id"],
+                                   f"failed strict re-validation against {doc['url']} "
+                                   f"(value/sign not stated near {near})",
+                                   dates=[row["date"]])
+                purged += 1
+                outcome = "v2-purged"
+        updates.append({**doc.to_dict(), "validated": outcome})
+    if updates:
+        write_events("oem_orders_docs", pd.DataFrame(updates), key="id")
+    if unreachable:
+        log_gap(SOURCE, "weir.orders", f"revalidation pending for {unreachable} "
+                "article(s): not reachable with the plain client this run")
+    return {"checked": checked, "purged": purged, "unreachable": unreachable}
+
+
+def _conflicts(sid: str, period: pd.Timestamp, value, url: str, pending: list) -> bool:
+    """True if another document already gave a DIFFERENT figure for the same
+    series and quarter - two sources disagreeing means neither is trusted."""
+    if value is None:
+        return False
+    prior = read_series(sid).dropna(subset=["value"])
+    prior = prior[(pd.to_datetime(prior["date"]).dt.to_period("Q") == period.to_period("Q"))
+                  & (prior["source_url"] != url)]
+    others = [r for r in pending if r["series_id"] == sid and r["value"] is not None
+              and pd.Timestamp(r["date"]).to_period("Q") == period.to_period("Q")
+              and r["source_url"] != url]
+    return any(abs(float(v) - float(value)) > 1e-9
+               for v in list(prior["value"]) + [r["value"] for r in others])
+
+
 def ingest(backfill: bool = True) -> dict:
+    run_once("2026-11-purge-fls-v1", _purge_fls_v1)
+    run_once("2026-11-purge-weir-nonresults-v1", _purge_weir_nonresults_v1)
+    reval = revalidate_weir()
+
     processed = read_events("oem_orders_docs")
     done = set(processed["id"]) if len(processed) else set()
 
@@ -222,10 +434,11 @@ def ingest(backfill: bool = True) -> dict:
     if todo and not llm_client.have_key():
         log_gap(SOURCE, "fls.order_intake_dkkm",
                 f"{len(todo)} unprocessed documents but OPENAI_API_KEY not set")
-        return {"source": SOURCE, "status": "ok", "rows": 0,
+        _rebuild_combined_weir()
+        return {"source": SOURCE, "rows_written": 0, "revalidation": reval,
                 "note": "no key; discovery only"}
 
-    obs_rows, doc_rows, errors = [], [], 0
+    obs_rows, doc_rows, errors, rejected = [], [], 0, 0
     for d in todo:
         try:
             if d["company"] == "fls":
@@ -237,24 +450,9 @@ def ingest(backfill: bool = True) -> dict:
                 # no low max_tokens cap: reasoning models spend completion
                 # tokens on reasoning first and would return empty content
                 fact = llm_client.extract_json_from_text(text, FLS_PROMPT)
-                period = pd.Timestamp(fact.get("period_end"))
-                if pd.isna(period):
-                    raise ValueError(f"bad period_end {fact.get('period_end')!r}")
-                level = _num(fact.get("order_intake_dkkm"))
-                growth = _num(fact.get("organic_growth_pct"))
-                if level is not None and not (100 <= level <= 60000):
-                    raise ValueError(f"FLS order intake implausible: {level}")
-                for val, name, pct in [(level, "order intake", False),
-                                       (growth, "growth", True)]:
-                    if not _grounded(val, text, pct=pct):
-                        raise ValueError(
-                            f"FLS {name} {val} not present in source text - "
-                            f"refusing ungrounded extraction")
-                for sid, val in [("fls.order_intake_dkkm", level),
-                                 ("fls.order_intake_growth_pct", growth)]:
-                    obs_rows.append({"series_id": sid, "date": period,
-                                     "value": val, "source_url": d["url"],
-                                     "retrieved_at": now_utc()})
+                period, level, growth = _validate_fls(fact, text, d)
+                values = {"fls.order_intake_dkkm": level,
+                          "fls.order_intake_growth_pct": growth}
             else:
                 text = _weir_text(get_impersonated(d["url"]).text)
                 if len(text) < MIN_TEXT_CHARS:
@@ -263,37 +461,34 @@ def ingest(backfill: bool = True) -> dict:
                     doc_rows.append({**d, "status": "stub page - no text"})
                     continue
                 fact = llm_client.extract_json_from_text(text, WEIR_PROMPT)
-                period = pd.Timestamp(fact.get("period_end"))
-                if pd.isna(period):
-                    raise ValueError(f"bad period_end {fact.get('period_end')!r}")
-                for field, sid in [
-                    ("minerals_orders_yoy_pct", "weir.minerals_orders_growth_pct"),
-                    ("group_orders_yoy_pct", "weir.group_orders_growth_pct"),
-                ]:
-                    growth = _num(fact.get(field))
-                    if growth is not None and abs(growth) > 80:
-                        raise ValueError(f"Weir {field} implausible: {growth}")
-                    if not _grounded(growth, text, pct=True):
-                        raise ValueError(
-                            f"Weir {field} {growth} not present in source "
-                            f"text - refusing ungrounded extraction")
-                    obs_rows.append({"series_id": sid, "date": period,
-                                     "value": growth, "source_url": d["url"],
-                                     "retrieved_at": now_utc()})
-            doc_rows.append({**d, "status": "ok", "fact": str(fact)})
-        except Exception as exc:  # noqa: BLE001 - one bad doc must not kill the run
+                period, values = _validate_weir(fact, text)
+            clashes = [sid for sid, val in values.items()
+                       if _conflicts(sid, period, val, d["url"], obs_rows)]
+            if clashes:
+                raise ExtractionRejected(f"{clashes} for {period.date()} conflict with "
+                                         f"a figure already stored from another document")
+            for sid, val in values.items():
+                obs_rows.append({"series_id": sid, "date": period, "value": val,
+                                 "source_url": d["url"], "retrieved_at": now_utc()})
+            doc_rows.append({**d, "status": "ok", "fact": str(fact), "validated": "v2-ok"})
+        except ExtractionRejected as exc:
+            # permanent: never re-ask the model about this document
+            rejected += 1
+            log.warning("oem_orders: %s rejected: %s", d["url"], exc)
+            log_gap(SOURCE, f"{d['company']}.orders", f"{d['url']}: REJECTED {exc}")
+            doc_rows.append({**d, "status": f"rejected: {exc}"[:300]})
+        except Exception as exc:  # noqa: BLE001 - transient: retried next run
             errors += 1
             log.warning("oem_orders: %s failed: %s", d["url"], exc)
             log_gap(SOURCE, f"{d['company']}.orders", f"{d['url']}: {exc}")
 
-    stats = {"source": SOURCE, "status": "ok", "rows": 0,
-             "docs_processed": len(doc_rows), "errors": errors}
+    stats = {"source": SOURCE, "rows_written": 0, "docs_processed": len(doc_rows),
+             "rejected": rejected, "errors": errors, "revalidation": reval}
     if obs_rows:
         frame = pd.DataFrame(obs_rows)
         frame["date"] = pd.to_datetime(frame["date"])
-        res = write_observations(SOURCE, frame)
-        stats["rows"] = res["rows_written"]
-        _rebuild_combined_weir()
+        stats["rows_written"] = write_observations(SOURCE, frame)["rows_written"]
+    _rebuild_combined_weir()
     if doc_rows:
         for dr in doc_rows:
             dr.pop("period_end", None)
