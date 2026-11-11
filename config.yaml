@@ -70,7 +70,12 @@ pulses:
     components:
       - {series: abs.merch_exp.nsw_coal_value, weight: 0.20, invert: false, max_stale_months: 4, label: "NSW coal export value"}
       - {series: rba.commodity_index_aud, weight: 0.20, invert: false, max_stale_months: 3, label: "RBA commodity price index"}
-      - {series: abs.capex.mining_expected, weight: 0.20, invert: false, max_stale_months: 5, label: "ABS mining capex (expectations)"}
+      # 2026-11: the raw short-term expectation mixes survey horizons
+      # (Jun/Dec readings ~1.5x actual, Mar/Sep ~0.8x), so its z-score
+      # flipped with the survey quarter; the pulse now uses the
+      # same-quarter YoY change. The 0.20 weight was calibrated on the raw
+      # series - re-check it once lbl_segment_history.csv is populated.
+      - {series: abs.capex.mining_expected_yoy_pct, weight: 0.20, invert: false, max_stale_months: 5, label: "ABS mining capex expectations (YoY, same survey quarter)"}
       - {series: qld_coal.saleable_tonnes_total, weight: 0.15, invert: false, max_stale_months: 5, label: "QLD coal saleable tonnes"}
       - {series: abs.capex.mining_actual, weight: 0.10, invert: false, max_stale_months: 5, label: "ABS mining capex (actual)"}
       - {series: pilbara.iron_ore_throughput_mt, weight: 0.10, invert: false, max_stale_months: 3, label: "Pilbara Ports iron ore"}

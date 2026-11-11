@@ -8,7 +8,8 @@ backfilled.
 
 Stored:
   events/tungsten_flags        one row per headline (deduped)
-  tungsten.flag_count          monthly count of flagged headlines
+  tungsten.flag_count          monthly count of DISTINCT flagged headlines,
+                               completed months only
 """
 from __future__ import annotations
 
@@ -21,7 +22,8 @@ import pandas as pd
 
 from ..config import cfg
 from ..http import get, make_session
-from ..store import now_utc, read_events, stable_id, write_events, write_observations
+from ..store import (now_utc, purge_observations, read_events, stable_id, write_events,
+                     write_observations)
 
 log = logging.getLogger("lbl_tracker.tungsten")
 
@@ -78,28 +80,65 @@ def fetch_flags() -> pd.DataFrame:
     return pd.DataFrame(rows).drop_duplicates("id")
 
 
+SERIES_ID = "tungsten.flag_count"
+
+
+def _naive(ts) -> pd.Timestamp:
+    ts = pd.Timestamp(ts)
+    return ts.tz_convert("UTC").tz_localize(None) if ts.tzinfo else ts
+
+
+def monthly_counts(all_flags: pd.DataFrame, now) -> pd.Series:
+    """Distinct headlines per COMPLETED month since monitoring began.
+
+    * A headline matched by several keywords is stored once per keyword
+      (the event id includes the keyword) but is one news event: count
+      each (normalised title, publication day) once.
+    * The current month is still accumulating, so it is never emitted - a
+      part-month count would read as a collapse in flags.
+    * Months before monitoring began would be undercounted (shallow RSS
+      window), so they are never emitted either."""
+    if all_flags.empty:
+        return pd.Series(dtype=float)
+    flags = all_flags.copy()
+    flags["published"] = pd.to_datetime(flags["published"])
+    flags["_title"] = (flags["title"].astype(str).str.lower()
+                       .str.replace(r"\s+", " ", regex=True).str.strip())
+    flags["_day"] = flags["published"].dt.date
+    distinct = flags.drop_duplicates(["_title", "_day"])
+    start_month = _naive(pd.to_datetime(all_flags["retrieved_at"]).min()).to_period("M")
+    current = _naive(now).to_period("M")
+    monthly = distinct.groupby(distinct["published"].dt.to_period("M")).size()
+    keep = (monthly.index >= start_month) & (monthly.index < current)
+    return monthly[keep].astype(float)
+
+
 def ingest() -> dict:
+    from ..store import read_series
+
     flags = fetch_flags()
     stats = write_events("tungsten_flags", flags, key="id")
 
-    # Monthly flag-count series over the accumulated event store, counted
-    # only from the month monitoring began: the RSS window is shallow, so
-    # months before first ingest would be systematically undercounted -
-    # that would be a fabricated-looking history, so it is never emitted.
-    all_flags = read_events("tungsten_flags")
-    start_month = pd.to_datetime(all_flags["retrieved_at"]).min().to_period("M")
-    monthly = (all_flags.assign(month=pd.to_datetime(all_flags["published"])
-                                .dt.to_period("M"))
-               .groupby("month").size())
-    monthly = monthly[monthly.index >= start_month]
-    retrieved = now_utc()
+    now = now_utc()
+    monthly = monthly_counts(read_events("tungsten_flags"), now)
+    # Earlier versions emitted the running month; remove any stored count
+    # for a month that is not complete yet.
+    month_start = _naive(now).to_period("M").start_time
+    prior = read_series(SERIES_ID)
+    open_months = [d for d in pd.to_datetime(prior["date"]) if d >= month_start]
+    if open_months:
+        purge_observations(SOURCE, SERIES_ID, "count for a month still in progress "
+                           "(only completed months are emitted)", dates=open_months)
+    if monthly.empty:
+        return {"source": SOURCE, "rows_written": 0, "flags_total": stats["rows_total"],
+                "events_written": stats["rows_written"]}
     obs = pd.DataFrame({
-        "series_id": "tungsten.flag_count",
+        "series_id": SERIES_ID,
         "date": [p.end_time.normalize() for p in monthly.index],
-        "value": monthly.values.astype(float),
+        "value": monthly.values,
         "source_url": "https://news.google.com/rss/search (keyword monitor, proxy)",
-        "retrieved_at": retrieved,
+        "retrieved_at": now,
     })
     obs_stats = write_observations(SOURCE, obs)
     return {**obs_stats, "flags_total": stats["rows_total"],
-            "rows_written": stats["rows_written"]}
+            "events_written": stats["rows_written"]}

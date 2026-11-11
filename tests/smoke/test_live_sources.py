@@ -48,6 +48,7 @@ def test_abs_capex():
     assert_obs_schema(df)
     assert_fresh(df, "abs.capex.mining_actual", 200)
     assert_fresh(df, "abs.capex.mining_expected", 200)
+    assert_fresh(df, "abs.capex.mining_expected_yoy_pct", 200)
 
 
 def test_abs_exploration():

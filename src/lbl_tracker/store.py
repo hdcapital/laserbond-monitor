@@ -91,6 +91,53 @@ def write_observations(source: str, df: pd.DataFrame) -> dict:
     return stats
 
 
+def purge_observations(source: str, series_id: str, reason: str,
+                       dates: list | None = None) -> int:
+    """Delete stored rows that failed validation - the ONLY way a value
+    leaves the store (an upsert can never replace a value with NULL).
+
+    Every purge is audited in gaps.jsonl with the reason, count and dates,
+    so a removed number is always traceable. `dates=None` purges the whole
+    series. Returns the number of rows removed."""
+    path = _obs_path(source)
+    if not path.exists():
+        return 0
+    old = pd.read_parquet(path)
+    mask = old["series_id"] == series_id
+    if dates is not None:
+        wanted = set(pd.to_datetime(pd.Series(list(dates))).dt.normalize())
+        mask &= pd.to_datetime(old["date"]).dt.normalize().isin(wanted)
+    removed = old[mask]
+    if removed.empty:
+        return 0
+    old[~mask].to_parquet(path, index=False)
+    shown = ", ".join(f"{pd.Timestamp(d).date()}={v}" for d, v in
+                      zip(removed["date"], removed["value"]))
+    log_gap(source, series_id, f"PURGED {len(removed)} row(s): {reason} [{shown[:1500]}]")
+    return int(len(removed))
+
+
+def run_once(migration_id: str, fn) -> bool:
+    """Apply a one-off data correction exactly once per store.
+
+    Corrections run inside the scheduled CI ingest (the store is committed
+    by CI, so editing parquet files in a PR would race the bot's commits).
+    Applied ids are recorded in data/logs/migrations.jsonl; returns True if
+    `fn` ran now."""
+    path = logs_dir() / "migrations.jsonl"
+    if path.exists():
+        with open(path) as fh:
+            done = {json.loads(line).get("id") for line in fh if line.strip()}
+        if migration_id in done:
+            return False
+    result = fn()
+    with open(path, "a") as fh:
+        fh.write(json.dumps({"id": migration_id, "ts": now_utc().isoformat(),
+                             "result": result}, default=str) + "\n")
+    log.info("migration %s applied: %s", migration_id, result)
+    return True
+
+
 def read_observations(sources: list[str] | None = None) -> pd.DataFrame:
     obs_dir = data_dir() / "observations"
     frames = []

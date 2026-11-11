@@ -27,7 +27,7 @@ import time
 import pandas as pd
 
 from ..http import get, make_session
-from ..store import now_utc, write_observations
+from ..store import log_gap, now_utc, write_observations
 
 log = logging.getLogger("lbl_tracker.cat_edgar")
 
@@ -78,8 +78,10 @@ def parse_exhibit(html: str, url: str) -> list[dict]:
     import io as _io
     try:
         tables = pd.read_html(_io.StringIO(html))
-    except ValueError:
+    except ValueError:  # no <table> at all (earnings releases etc.)
         return []
+    # ImportError (bs4/html5lib fallback missing) deliberately propagates:
+    # it is an environment fault, not "this filing has no figures".
     out, seen = [], set()
     for table in tables:
         flat = table.fillna("").astype(str)  # pandas>=3: astype(str) keeps NaN
@@ -167,6 +169,16 @@ def exhibit_url(hit: dict, session) -> str | None:
     return None
 
 
+def missing_months(prior: pd.DataFrame) -> list[pd.Period]:
+    """Months absent from the World series between its first and last
+    stored month - holes inside the (discontinued) published history."""
+    if prior.empty:
+        return []
+    have = set(pd.to_datetime(prior["date"]).dt.to_period("M"))
+    span = pd.period_range(min(have), max(have), freq="M")
+    return [p for p in span if p not in have]
+
+
 def fetch() -> pd.DataFrame:
     from ..store import read_series
     session = make_session(sec=True)
@@ -175,14 +187,22 @@ def fetch() -> pd.DataFrame:
         raise RuntimeError("cat_edgar: no 8-K item-7.01 filings found")
 
     # Incremental: once the (discontinued) monthly history is in the store,
-    # only look at filings newer than what is already covered.
-    prior = read_series("cat.resource_industries_yoy_pct")
+    # only look at filings newer than what is already covered - PLUS the
+    # filings that would cover any hole inside the stored history (each
+    # filing reports its month and the two prior; filed ~3-6 weeks after).
+    prior = read_series("cat.resource_industries_yoy_pct").dropna(subset=["value"])
     cutoff = None
+    holes = missing_months(prior)
     if len(prior):
         cutoff = (pd.to_datetime(prior["date"]).max()
                   - pd.Timedelta(days=90)).date().isoformat()
-        hits = [h for h in hits if str(h["file_date"]) >= cutoff]
-        log.info("cat_edgar: %d filings newer than %s", len(hits), cutoff)
+        windows = [(p.start_time.date().isoformat(),
+                    (p.end_time + pd.Timedelta(days=120)).date().isoformat())
+                   for p in holes]
+        hits = [h for h in hits if str(h["file_date"]) >= cutoff
+                or any(lo <= str(h["file_date"]) <= hi for lo, hi in windows)]
+        log.info("cat_edgar: %d filings to read (newer than %s, or covering "
+                 "%d missing months)", len(hits), cutoff, len(holes))
 
     rows = []
     for hit in hits:
@@ -195,7 +215,17 @@ def fetch() -> pd.DataFrame:
             rows.extend(parsed)
         except Exception as exc:  # noqa: BLE001
             log.warning("cat_edgar: %s failed: %s", hit.get("adsh"), exc)
+            log_gap(SOURCE, "cat.resource_industries_yoy_pct",
+                    f"filing {hit.get('adsh')} ({hit.get('file_date')}) skipped: {exc}")
         time.sleep(0.15)
+    if holes:
+        got = {pd.Timestamp(r["date"]).to_period("M") for r in rows
+               if r["series_id"] == "cat.resource_industries_yoy_pct"}
+        still = [str(p) for p in holes if p not in got]
+        if still:
+            log_gap(SOURCE, "cat.resource_industries_yoy_pct",
+                    f"{len(still)} month(s) inside the published history still "
+                    f"unparsed: {still}")
     if not rows:
         if cutoff is not None:
             # discontinued series: no new monthly filings is the normal state

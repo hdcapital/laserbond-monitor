@@ -15,6 +15,9 @@ dependencies = [
     "pypdf>=4.0",
     "beautifulsoup4>=4.12",
     "lxml>=5.0",
+    # pandas.read_html falls back to bs4+html5lib when lxml rejects a page;
+    # without it CAT EDGAR filings were silently skipped (Jul 2019-Jun 2020)
+    "html5lib>=1.1",
     "PyYAML>=6.0",
     "python-dateutil>=2.8",
 ]
