@@ -1,0 +1,2 @@
+{"id": "2026-11-purge-fls-v1", "ts": "2026-11-17T03:05:47.402403+00:00", "result": {"fls.order_intake_dkkm": 43, "fls.order_intake_growth_pct": 43}}
+{"id": "2026-11-purge-weir-nonresults-v1", "ts": "2026-11-17T03:05:47.444285+00:00", "result": {"weir.group_orders_growth_pct": 1, "weir.minerals_orders_growth_pct": 2}}

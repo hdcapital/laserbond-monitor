@@ -990,3 +990,18 @@
 {"ts": "2026-11-16T07:08:46.777647+00:00", "source": "tungsten_news", "status": "ok", "rows": 3, "error": ""}
 {"ts": "2026-11-16T22:26:47.363534+00:00", "source": "asx_announcements", "status": "ok", "rows": 20, "error": ""}
 {"ts": "2026-11-16T22:27:02.237779+00:00", "source": "tungsten_news", "status": "ok", "rows": 3, "error": ""}
+{"ts": "2026-11-17T03:03:41.026899+00:00", "source": "qld_coal", "status": "ok", "rows": 367, "error": ""}
+{"ts": "2026-11-17T03:05:38.798924+00:00", "source": "pilbara_ports", "status": "ok", "rows": 165, "error": ""}
+{"ts": "2026-11-17T03:05:43.644517+00:00", "source": "abs_capex", "status": "ok", "rows": 466, "error": ""}
+{"ts": "2026-11-17T03:05:45.678322+00:00", "source": "abs_exploration", "status": "ok", "rows": 1314, "error": ""}
+{"ts": "2026-11-17T03:05:47.390107+00:00", "source": "nsw_coal_exports", "status": "ok", "rows": 375, "error": ""}
+{"ts": "2026-11-17T03:05:59.620856+00:00", "source": "oem_orders", "status": "ok", "rows": 2, "error": ""}
+{"ts": "2026-11-17T03:06:00.862992+00:00", "source": "rba", "status": "ok", "rows": 1710, "error": ""}
+{"ts": "2026-11-17T03:06:01.540599+00:00", "source": "aisi", "status": "ok", "rows": 4, "error": ""}
+{"ts": "2026-11-17T03:06:01.891244+00:00", "source": "fred_steel", "status": "ok", "rows": 416, "error": ""}
+{"ts": "2026-11-17T03:06:02.121114+00:00", "source": "baker_hughes", "status": "error", "rows": 0, "error": "BLOCKED: rigcount.bakerhughes.com answers HTTP 403 Access Denied on all 3 pages - publisher edge refuses this client/network\nTraceback (most recent call last):\n  File \"/home/runner/work/laserbond-monitor/laserbond-monitor/src/lbl_tracker/ingest/__init__.py\", line 40, in run\n    stats = mod.ingest()\n            ^^^^^^^^^^^^\n  File \"/home/runner/work/laserbond-monitor/laserbond-monitor/src/lbl_tracker/ingest/baker_hughes.py\", line 294, in ingest\n    return write_observations(SOURCE, fetch())\n                                      ^^^^^^^\n  File \"/home/runner/work/laserbond-monitor/laserbond-monitor/src/lbl_tracker/ingest/baker_hughes.py\", line 268, in fetch\n    raise SourceBlockedError(detail, status=403)\nlbl_tracker.http.SourceBlockedError: BLOCKED: rigcount.bakerhughes.com answers HTTP 403 Access Denied on all 3 pages - publisher edge refuses this client/network\n"}
+{"ts": "2026-11-17T03:06:26.215931+00:00", "source": "cat_edgar", "status": "ok", "rows": 90, "error": ""}
+{"ts": "2026-11-17T03:06:35.946607+00:00", "source": "jsa_ivi", "status": "ok", "rows": 4693, "error": ""}
+{"ts": "2026-11-17T03:06:45.868883+00:00", "source": "tungsten_news", "status": "ok", "rows": 3, "error": ""}
+{"ts": "2026-11-17T03:06:48.089620+00:00", "source": "asx_announcements", "status": "ok", "rows": 20, "error": ""}
+{"ts": "2026-11-17T03:06:48.090229+00:00", "source": "importgenius", "status": "ok", "rows": 0, "error": ""}
