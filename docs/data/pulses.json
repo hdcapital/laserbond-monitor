@@ -2048,7 +2048,7 @@
   "products": {
    "title": "Products Pulse",
    "latest_month": "2026-11-30",
-   "latest_value": 39.6,
+   "latest_value": 41.5,
    "weight_available": 0.8,
    "last_scored_month": "2026-11-30",
    "history": [
@@ -4450,14 +4450,14 @@
     },
     {
      "month": "2026-11-30",
-     "value": 39.56
+     "value": 41.55
     }
    ]
   },
   "margin": {
    "title": "Margin Pulse",
    "latest_month": "2026-11-30",
-   "latest_value": -10.6,
+   "latest_value": -2.9,
    "weight_available": 0.8,
    "last_scored_month": "2026-11-30",
    "history": [
@@ -5359,11 +5359,11 @@
     },
     {
      "month": "2026-10-31",
-     "value": -16.7
+     "value": -13.64
     },
     {
      "month": "2026-11-30",
-     "value": -10.65
+     "value": -2.94
     }
    ]
   }
@@ -5542,15 +5542,15 @@
     "series": "rba.audusd",
     "label": "AUD/USD (inverted)",
     "weight": 0.15,
-    "score": -37.78456416611113,
-    "raw_score": 37.78456416611113,
-    "z": 0.9446141041527782,
-    "value": 0.6907727272727273,
+    "score": -27.174523144886447,
+    "raw_score": 27.174523144886447,
+    "z": 0.6793630786221612,
+    "value": 0.683925,
     "stale_months": 0,
     "as_of": "2026-11-30",
     "inverted": true,
     "weight_used": 0.18749999999999997,
-    "contribution": -7.084605781145837
+    "contribution": -5.0952230896662085
    }
   ],
   "margin": [
@@ -5558,29 +5558,29 @@
     "series": "jsa.ivi_trades_tightness",
     "label": "Fitter/welder vacancy tightness",
     "weight": 0.45,
-    "score": 10.455200847182999,
-    "raw_score": -10.455200847182999,
-    "z": -0.261380021179575,
-    "value": 4765.66666,
-    "stale_months": 2,
-    "as_of": "2026-09-30",
+    "score": 15.900795453873076,
+    "raw_score": -15.900795453873076,
+    "z": -0.3975198863468269,
+    "value": 4676.3333299999995,
+    "stale_months": 1,
+    "as_of": "2026-10-31",
     "inverted": true,
     "weight_used": 0.5625,
-    "contribution": 5.8810504765404366
+    "contribution": 8.944197442803604
    },
    {
     "series": "rba.audusd",
     "label": "AUD/USD",
     "weight": 0.35,
-    "score": -37.78456416611113,
-    "raw_score": 37.78456416611113,
-    "z": 0.9446141041527782,
-    "value": 0.6907727272727273,
+    "score": -27.174523144886447,
+    "raw_score": 27.174523144886447,
+    "z": 0.6793630786221612,
+    "value": 0.683925,
     "stale_months": 0,
     "as_of": "2026-11-30",
     "inverted": true,
     "weight_used": 0.43749999999999994,
-    "contribution": -16.530746822673617
+    "contribution": -11.888853875887818
    },
    {
     "series": "tungsten.flag_count",
