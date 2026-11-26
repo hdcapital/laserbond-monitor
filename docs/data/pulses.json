@@ -5605,7 +5605,7 @@
    "trial": 0,
    "agreement": 6,
    "cell_ordered": 1,
-   "commissioned": 4,
+   "commissioned": 5,
    "recurring": 0
   },
   "stage_counts_6m_ago": {
@@ -5621,13 +5621,25 @@
    "trial": 0,
    "agreement": 6,
    "cell_ordered": 1,
-   "commissioned": 4,
+   "commissioned": 5,
    "recurring": 0
   },
   "contracted_value_aud_where_stated": 7200000.0,
   "recognised_aud_where_stated": 0.0,
   "contracted_unrecognised_aud_where_stated": 7200000.0,
   "events": [
+   {
+    "id": "92ef68c6d46581e0",
+    "announcement_id": "2924-03167587-2A1713318",
+    "date": "2026-11-26",
+    "stage": "commissioned",
+    "counterparty": "Komatsu",
+    "value_aud": NaN,
+    "recognised_aud": null,
+    "description": "\"Komatsu's first laser cladding cell, delivered on time and on budget, is now in operation.\"",
+    "source_pdf_url": "https://cdn-api.markitdigital.com/apiman-gateway/ASX/asx-research/1.0/file/2924-03167587-2A1713318",
+    "retrieved_at": "2026-11-26 21:50:09.204603+00:00"
+   },
    {
     "id": "35cfccb9c6b7cc8e",
     "announcement_id": "2924-03151433-2A1705449",
